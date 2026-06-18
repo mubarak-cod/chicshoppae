@@ -15,7 +15,7 @@ const slides = [
     secondaryLink: "/shop?filter=collections",
     accent: "#C4895A",
     badge: "New Arrivals",
-    image: "https://res.cloudinary.com/dmtfdnuap/image/upload/v1771478494/4eb78e23-ba0a-44ef-8a11-30b8fc0b8fe8.png",
+    image: "/images/one.jpg",
   },
   {
     id: 2,
@@ -28,7 +28,7 @@ const slides = [
     secondaryLink: "/shop?filter=collections",
     accent: "#7A6550",
     badge: "Staff Picks",
-    image: "https://res.cloudinary.com/dmtfdnuap/image/upload/v1771478273/63ae7494-33fc-4490-bed5-89676ab3c782.png",
+   image: "/images/eight.jpg",
   },
   {
     id: 3,
@@ -41,34 +41,38 @@ const slides = [
     secondaryLink: "/shop",
     accent: "#9B5E3A",
     badge: "Limited",
-    image: "https://res.cloudinary.com/dmtfdnuap/image/upload/v1771478494/4eb78e23-ba0a-44ef-8a11-30b8fc0b8fe8.png",
+   image: "/images/three.jpg",
   },
 ];
 
 export default function HeroSection() {
   const [current, setCurrent] = useState(0);
-  const [prev, setPrev] = useState(null);
-  const [direction, setDirection] = useState("next");
   const [animating, setAnimating] = useState(false);
+  const [direction, setDirection] = useState("next");
   const [paused, setPaused] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
 
   const DURATION = 5000;
+
+  // Detect mobile/tablet — disable complex animation below 1024px
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 1024);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
 
   const goTo = useCallback(
     (index, dir = "next") => {
       if (animating || index === current) return;
       setDirection(dir);
-      setPrev(current);
       setAnimating(true);
       setCurrent(index);
       setProgress(0);
-      setTimeout(() => {
-        setPrev(null);
-        setAnimating(false);
-      }, 650);
+      setTimeout(() => setAnimating(false), isMobile ? 300 : 650);
     },
-    [animating, current]
+    [animating, current, isMobile]
   );
 
   const next = useCallback(() => {
@@ -83,10 +87,7 @@ export default function HeroSection() {
     if (paused) return;
     const interval = setInterval(() => {
       setProgress((p) => {
-        if (p >= 100) {
-          next();
-          return 0;
-        }
+        if (p >= 100) { next(); return 0; }
         return p + 100 / (DURATION / 100);
       });
     }, 100);
@@ -94,15 +95,17 @@ export default function HeroSection() {
   }, [paused, next]);
 
   const slide = slides[current];
-  const prevSlide = prev !== null ? slides[prev] : null;
 
   return (
     <>
       <style>{`
+        /* ── DESKTOP: two-column absolute positioned slides ── */
         .hero {
           position: relative;
           width: 100%;
-          min-height: 92vh;
+          height: 92vh;
+          min-height: 580px;
+          max-height: 900px;
           overflow: hidden;
           background: var(--bg-primary);
         }
@@ -113,7 +116,7 @@ export default function HeroSection() {
           display: grid;
           grid-template-columns: 1fr 1fr;
           align-items: center;
-          padding: 3rem 5vw;
+          padding: 0 5vw;
           gap: 2rem;
           will-change: transform, opacity;
         }
@@ -123,12 +126,12 @@ export default function HeroSection() {
         .hero-slide--exit-next  { animation: slideOutLeft 0.65s cubic-bezier(0.22,1,0.36,1) forwards; }
         .hero-slide--exit-prev  { animation: slideOutRight 0.65s cubic-bezier(0.22,1,0.36,1) forwards; }
 
-        @keyframes slideInRight  { from { transform: translateX(6%) scale(0.99); opacity: 0; } to { transform: translateX(0) scale(1); opacity: 1; } }
-        @keyframes slideInLeft   { from { transform: translateX(-6%) scale(0.99); opacity: 0; } to { transform: translateX(0) scale(1); opacity: 1; } }
-        @keyframes slideOutLeft  { from { transform: translateX(0) scale(1); opacity: 1; } to { transform: translateX(-5%) scale(0.99); opacity: 0; } }
-        @keyframes slideOutRight { from { transform: translateX(0) scale(1); opacity: 1; } to { transform: translateX(5%) scale(0.99); opacity: 0; } }
+        @keyframes slideInRight  { from { transform: translateX(5%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes slideInLeft   { from { transform: translateX(-5%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes slideOutLeft  { from { transform: translateX(0); opacity: 1; } to { transform: translateX(-4%); opacity: 0; } }
+        @keyframes slideOutRight { from { transform: translateX(0); opacity: 1; } to { transform: translateX(4%); opacity: 0; } }
 
-        /* ── TEXT SIDE ── */
+        /* ── TEXT ── */
         .hero-text {
           display: flex;
           flex-direction: column;
@@ -145,43 +148,37 @@ export default function HeroSection() {
           letter-spacing: 0.22em;
           text-transform: uppercase;
           color: var(--text-secondary);
-          animation: fadeUp 0.7s 0.1s both;
         }
 
         .hero-eyebrow-dot {
-          width: 6px;
-          height: 6px;
+          width: 6px; height: 6px;
           border-radius: 50%;
           background: var(--slide-accent);
           display: inline-block;
+          animation: pulse 2s infinite;
         }
 
         .hero-headline {
           font-family: 'Cormorant Garamond', serif;
-          font-size: clamp(40px, 6vw, 88px);
+          font-size: clamp(44px, 6vw, 88px);
           font-weight: 600;
           line-height: 1.0;
           color: var(--text-primary);
           letter-spacing: -0.01em;
         }
-
-        .hero-headline span { display: block; animation: fadeUp 0.7s both; }
-        .hero-headline span:nth-child(1) { animation-delay: 0.15s; }
-        .hero-headline span:nth-child(2) { animation-delay: 0.25s; }
+        .hero-headline span { display: block; }
 
         .hero-sub {
           font-size: 15px;
           line-height: 1.7;
           color: var(--text-secondary);
           max-width: 380px;
-          animation: fadeUp 0.7s 0.3s both;
         }
 
         .hero-ctas {
           display: flex;
           align-items: center;
           gap: 1rem;
-          animation: fadeUp 0.7s 0.4s both;
           flex-wrap: wrap;
         }
 
@@ -213,36 +210,25 @@ export default function HeroSection() {
           font-family: 'Inter', sans-serif;
         }
         .hero-cta-secondary:hover { color: var(--text-primary); gap: 10px; }
-        .hero-cta-secondary svg { transition: transform 0.2s; }
-        .hero-cta-secondary:hover svg { transform: translateX(3px); }
 
-        /* ── IMAGE SIDE ── */
+        /* ── IMAGE (desktop) ── */
         .hero-image-side {
           display: flex;
           align-items: center;
           justify-content: center;
           height: 100%;
           position: relative;
-          padding: 2rem 0;
         }
 
         .hero-image-frame {
-          position: relative;
           width: min(400px, 42vw);
-          height: min(520px, 68vh);
+          height: min(520px, 70vh);
           border-radius: 200px 200px 160px 160px;
           overflow: hidden;
-          animation: scaleIn 0.8s 0.05s cubic-bezier(0.22,1,0.36,1) both;
-        }
-
-        @keyframes scaleIn {
-          from { transform: scale(0.94); opacity: 0; }
-          to   { transform: scale(1); opacity: 1; }
         }
 
         .hero-img {
-          width: 100%;
-          height: 100%;
+          width: 100%; height: 100%;
           object-fit: cover;
           object-position: top center;
           display: block;
@@ -251,60 +237,49 @@ export default function HeroSection() {
         /* ── FLOATING BADGES ── */
         .hero-badge {
           position: absolute;
-          bottom: 28px;
-          left: -20px;
+          bottom: 28px; left: -20px;
           background: var(--bg-card, #FDFAF5);
           border: 0.5px solid var(--border);
           border-radius: 12px;
           padding: 10px 16px;
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          animation: fadeUp 0.7s 0.5s both;
+          display: flex; align-items: center; gap: 8px;
           box-shadow: 0 4px 20px rgba(0,0,0,0.06);
           z-index: 3;
         }
 
         .hero-badge-dot {
-          width: 8px;
-          height: 8px;
+          width: 8px; height: 8px;
           border-radius: 50%;
           background: var(--slide-accent);
           animation: pulse 2s infinite;
         }
 
         @keyframes pulse {
-          0%, 100% { opacity: 1; transform: scale(1); }
-          50% { opacity: 0.5; transform: scale(0.8); }
+          0%,100% { opacity:1; transform:scale(1); }
+          50% { opacity:0.5; transform:scale(0.8); }
         }
 
         .hero-badge-text {
-          font-size: 12px;
-          font-weight: 500;
+          font-size: 12px; font-weight: 500;
           color: var(--text-primary);
           letter-spacing: 0.04em;
         }
 
         .hero-stat {
           position: absolute;
-          top: 40px;
-          right: -16px;
+          top: 40px; right: -16px;
           background: var(--bg-card, #FDFAF5);
           border: 0.5px solid var(--border);
           border-radius: 12px;
           padding: 12px 18px;
-          animation: fadeUp 0.7s 0.55s both;
           box-shadow: 0 4px 20px rgba(0,0,0,0.06);
-          text-align: center;
-          z-index: 3;
+          text-align: center; z-index: 3;
         }
 
         .hero-stat-num {
           font-family: 'Cormorant Garamond', serif;
-          font-size: 26px;
-          font-weight: 600;
-          color: var(--text-primary);
-          line-height: 1;
+          font-size: 26px; font-weight: 600;
+          color: var(--text-primary); line-height: 1;
         }
 
         .hero-stat-label {
@@ -315,142 +290,164 @@ export default function HeroSection() {
           margin-top: 4px;
         }
 
-        /* ── ARROWS ── */
+        /* ── ARROWS & DOTS ── */
         .hero-arrow {
           position: absolute;
-          bottom: 2rem;
-          z-index: 10;
+          bottom: 2rem; z-index: 10;
           background: var(--bg-card, #FDFAF5);
           border: 0.5px solid var(--border);
-          width: 44px;
-          height: 44px;
+          width: 44px; height: 44px;
           border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
+          display: flex; align-items: center; justify-content: center;
           cursor: pointer;
           transition: background 0.2s, transform 0.2s;
           color: var(--text-primary);
         }
-
         .hero-arrow:hover { background: var(--bg-secondary); transform: scale(1.05); }
         .hero-arrow--left  { left: 5vw; }
         .hero-arrow--right { left: calc(5vw + 56px); }
 
-        /* ── DOTS ── */
         .hero-dots {
           position: absolute;
-          bottom: 2.4rem;
-          left: 50%;
+          bottom: 2.4rem; left: 50%;
           transform: translateX(-50%);
-          display: flex;
-          align-items: center;
-          gap: 8px;
+          display: flex; align-items: center; gap: 8px;
           z-index: 10;
         }
 
         .hero-dot {
-          height: 2px;
-          border-radius: 2px;
+          height: 2px; border-radius: 2px;
           background: var(--border-hover, rgba(26,23,20,0.25));
           cursor: pointer;
           transition: width 0.3s, background 0.3s;
           width: 24px;
-          position: relative;
-          overflow: hidden;
-          border: none;
-          padding: 0;
+          position: relative; overflow: hidden;
+          border: none; padding: 0;
         }
-
         .hero-dot--active { background: var(--text-primary); width: 48px; }
 
         .hero-dot-fill {
-          position: absolute;
-          inset: 0;
+          position: absolute; inset: 0;
           background: var(--slide-accent);
           transform-origin: left;
         }
 
-        @keyframes fadeUp {
-          from { opacity: 0; transform: translateY(16px); }
-          to   { opacity: 1; transform: translateY(0); }
-        }
-
-        /* ── TABLET (max 1024px) ── */
-        @media (max-width: 1024px) {
-          .hero-slide {
-            grid-template-columns: 1fr 1fr;
-            padding: 2rem 3vw;
-            gap: 1.5rem;
-          }
-          .hero-image-frame {
-            width: min(320px, 44vw);
-            height: min(420px, 60vh);
-          }
-          .hero-badge { left: -8px; }
-          .hero-stat  { right: -8px; }
-        }
-
-        /* ── MOBILE (max 768px) ── */
-        @media (max-width: 768px) {
+        /* ════════════════════════════════════════
+           TABLET + MOBILE — completely different layout
+           No absolute positioning, no complex animation
+           Text on top, image below, full width
+        ════════════════════════════════════════ */
+        @media (max-width: 1023px) {
           .hero {
-            min-height: unset;
             height: auto;
-            padding-bottom: 5.5rem;
+            min-height: unset;
+            max-height: unset;
+            overflow: visible;
           }
 
+          /* Hide the desktop absolute slide wrapper */
           .hero-slide {
-            position: relative;
-            grid-template-columns: 1fr;
-            padding: 1.5rem 1.25rem 1rem;
-            gap: 1.5rem;
+            position: static !important;
+            display: block;
+            padding: 0;
+            animation: none !important;
           }
 
-          .hero-slide--enter-next,
-          .hero-slide--enter-prev,
+          /* Only show the current slide, hide exit slide */
           .hero-slide--exit-next,
           .hero-slide--exit-prev {
-            position: absolute;
-            inset: 0;
+            display: none !important;
           }
 
-          .hero-image-side { order: -1; }
+          /* Simple fade for enter */
+          .hero-slide--enter-next,
+          .hero-slide--enter-prev {
+            animation: mobileFade 0.3s ease forwards !important;
+          }
+
+          @keyframes mobileFade {
+            from { opacity: 0; }
+            to   { opacity: 1; }
+          }
+
+          /* ── TEXT: full width, top ── */
+          .hero-text {
+            max-width: 100%;
+            width: 100%;
+            padding: 2.5rem 1.5rem 1.5rem;
+            gap: 1.1rem;
+            text-align: center;
+            align-items: center;
+          }
+
+          .hero-headline {
+            font-size: clamp(38px, 9vw, 58px);
+          }
+
+          .hero-sub {
+            max-width: 480px;
+            font-size: 14.5px;
+          }
+
+          .hero-ctas {
+            justify-content: center;
+          }
+
+          /* ── IMAGE: full width, below text ── */
+          .hero-image-side {
+            width: 100%;
+            height: auto;
+            padding: 1rem 1.5rem 1.5rem;
+            justify-content: center;
+            align-items: center;
+          }
 
           .hero-image-frame {
-            width: min(260px, 72vw);
-            height: min(320px, 52vw);
-            border-radius: 130px 130px 90px 90px;
-            margin: 0 auto;
+            width: min(320px, 70vw);
+            height: min(400px, 60vw);
+            border-radius: 160px 160px 120px 120px;
           }
-
-          .hero-headline { font-size: clamp(36px, 10vw, 52px); }
-          .hero-sub { font-size: 14px; }
 
           .hero-badge {
-            bottom: 12px;
-            left: 0;
-          }
-          .hero-stat {
-            top: 12px;
-            right: 0;
+            bottom: 16px;
+            left: max(calc(50% - 260px), 8px);
           }
 
-          .hero-arrow--left  { left: 1.25rem; bottom: 1.5rem; }
-          .hero-arrow--right { left: calc(1.25rem + 56px); bottom: 1.5rem; }
-          .hero-dots { bottom: 1.8rem; }
+          .hero-stat {
+            top: 16px;
+            right: max(calc(50% - 260px), 8px);
+          }
+
+          /* Arrows sit below image */
+          .hero-arrow {
+            position: static;
+            margin: 0;
+          }
+
+          .hero-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            padding: 1rem 0 2rem;
+          }
+
+          .hero-dots {
+            position: static;
+            transform: none;
+          }
         }
 
-        /* ── SMALL MOBILE (max 480px) ── */
         @media (max-width: 480px) {
           .hero-image-frame {
-            width: 75vw;
-            height: 55vw;
-            border-radius: 110px 110px 80px 80px;
+            width: 78vw;
+            height: 62vw;
+            border-radius: 130px 130px 90px 90px;
           }
-          .hero-headline { font-size: clamp(32px, 9vw, 46px); }
-          .hero-ctas { gap: 0.75rem; }
-          .hero-cta-primary { padding: 12px 20px; font-size: 11px; }
           .hero-stat { display: none; }
+          .hero-text { padding: 2rem 1.25rem 1rem; }
+          .hero-headline { font-size: clamp(34px, 9vw, 48px); }
+          .hero-image-side { padding: 0.5rem 1.25rem 1rem; }
         }
       `}</style>
 
@@ -460,57 +457,144 @@ export default function HeroSection() {
         onMouseLeave={() => setPaused(false)}
         style={{ "--slide-accent": slide.accent }}
       >
-        {/* EXIT slide */}
-        {prevSlide && (
-          <div
-            className={`hero-slide hero-slide--exit-${direction}`}
-            style={{ "--slide-accent": prevSlide.accent }}
-          >
-            <HeroContent slide={prevSlide} />
-            <HeroImage slide={prevSlide} />
-          </div>
+        {/* Desktop: exit slide (absolute, animating out) */}
+        {!isMobile && (
+          <>
+            {/* rendered via desktop-only logic below */}
+          </>
         )}
 
-        {/* ENTER slide */}
-        <div
-          className={`hero-slide ${animating ? `hero-slide--enter-${direction}` : ""}`}
-          style={{ "--slide-accent": slide.accent }}
-        >
-          <HeroContent slide={slide} />
-          <HeroImage slide={slide} progress={progress} />
-        </div>
+        {isMobile ? (
+          /* ── MOBILE/TABLET LAYOUT ── */
+          <div
+            className={`hero-slide ${animating ? `hero-slide--enter-${direction}` : ""}`}
+            style={{ "--slide-accent": slide.accent }}
+          >
+            <HeroContent slide={slide} />
+            <div className="hero-image-side">
+              <div className="hero-image-frame">
+                <img src={slide.image} alt={slide.headline[0]} className="hero-img" loading="eager" />
+              </div>
+              <div className="hero-badge">
+                <span className="hero-badge-dot" />
+                <span className="hero-badge-text">{slide.badge}</span>
+              </div>
+              <div className="hero-stat">
+                <div className="hero-stat-num">100+</div>
+                <div className="hero-stat-label">Styles</div>
+              </div>
+            </div>
 
-        {/* ARROWS */}
-        <button className="hero-arrow hero-arrow--left" onClick={prev_slide} aria-label="Previous slide">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-            <polyline points="15 18 9 12 15 6" />
-          </svg>
-        </button>
-        <button className="hero-arrow hero-arrow--right" onClick={next} aria-label="Next slide">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-            <polyline points="9 18 15 12 9 6" />
-          </svg>
-        </button>
-
-        {/* DOTS */}
-        <div className="hero-dots">
-          {slides.map((s, i) => (
-            <button
-              key={s.id}
-              className={`hero-dot ${i === current ? "hero-dot--active" : ""}`}
-              onClick={() => goTo(i, i > current ? "next" : "prev")}
-              aria-label={`Go to slide ${i + 1}`}
-            >
-              {i === current && (
-                <span
-                  className="hero-dot-fill"
-                  style={{ transform: `scaleX(${progress / 100})` }}
-                />
-              )}
-            </button>
-          ))}
-        </div>
+            {/* Controls below image on mobile */}
+            <div className="hero-controls">
+              <button className="hero-arrow" onClick={prev_slide} aria-label="Previous slide">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="15 18 9 12 15 6" />
+                </svg>
+              </button>
+              <div className="hero-dots">
+                {slides.map((s, i) => (
+                  <button
+                    key={s.id}
+                    className={`hero-dot ${i === current ? "hero-dot--active" : ""}`}
+                    onClick={() => goTo(i, i > current ? "next" : "prev")}
+                    aria-label={`Go to slide ${i + 1}`}
+                  >
+                    {i === current && (
+                      <span className="hero-dot-fill" style={{ transform: `scaleX(${progress / 100})` }} />
+                    )}
+                  </button>
+                ))}
+              </div>
+              <button className="hero-arrow" onClick={next} aria-label="Next slide">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="9 18 15 12 9 6" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        ) : (
+          /* ── DESKTOP LAYOUT ── */
+          <>
+            {/* We need prev for desktop exit animation — track it */}
+            <DesktopSlider
+              slides={slides}
+              current={current}
+              direction={direction}
+              animating={animating}
+              progress={progress}
+              goTo={goTo}
+              next={next}
+              prev_slide={prev_slide}
+            />
+          </>
+        )}
       </section>
+    </>
+  );
+}
+
+/* Desktop keeps the old exit/enter dual-slide animation */
+function DesktopSlider({ slides, current, direction, animating, progress, goTo, next, prev_slide }) {
+  const [prevIndex, setPrevIndex] = useState(null);
+
+  useEffect(() => {
+    if (animating) {
+      // prevIndex is set before current changes — capture it
+    } else {
+      setPrevIndex(null);
+    }
+  }, [animating]);
+
+  // Track previous on direction change
+  const prevSlide = prevIndex !== null ? slides[prevIndex] : null;
+  const slide = slides[current];
+
+  return (
+    <>
+      {prevSlide && (
+        <div
+          className={`hero-slide hero-slide--exit-${direction}`}
+          style={{ "--slide-accent": prevSlide.accent }}
+        >
+          <HeroContent slide={prevSlide} />
+          <HeroImageDesktop slide={prevSlide} />
+        </div>
+      )}
+
+      <div
+        className={`hero-slide ${animating ? `hero-slide--enter-${direction}` : ""}`}
+        style={{ "--slide-accent": slide.accent }}
+      >
+        <HeroContent slide={slide} />
+        <HeroImageDesktop slide={slide} progress={progress} />
+      </div>
+
+      <button className="hero-arrow hero-arrow--left" onClick={prev_slide} aria-label="Previous slide">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+          <polyline points="15 18 9 12 15 6" />
+        </svg>
+      </button>
+      <button className="hero-arrow hero-arrow--right" onClick={next} aria-label="Next slide">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+          <polyline points="9 18 15 12 9 6" />
+        </svg>
+      </button>
+
+      <div className="hero-dots">
+        {slides.map((s, i) => (
+          <button
+            key={s.id}
+            className={`hero-dot ${i === current ? "hero-dot--active" : ""}`}
+            onClick={() => goTo(i, i > current ? "next" : "prev")}
+            aria-label={`Go to slide ${i + 1}`}
+          >
+            {i === current && (
+              <span className="hero-dot-fill" style={{ transform: `scaleX(${progress / 100})` }} />
+            )}
+          </button>
+        ))}
+      </div>
     </>
   );
 }
@@ -529,14 +613,11 @@ function HeroContent({ slide }) {
       </h1>
       <p className="hero-sub">{slide.sub}</p>
       <div className="hero-ctas">
-        <Link href={slide.ctaLink} className="hero-cta-primary">
-          {slide.cta}
-        </Link>
+        <Link href={slide.ctaLink} className="hero-cta-primary">{slide.cta}</Link>
         <Link href={slide.secondaryLink} className="hero-cta-secondary">
           {slide.secondaryCta}
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-            <line x1="5" y1="12" x2="19" y2="12" />
-            <polyline points="12 5 19 12 12 19" />
+            <line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" />
           </svg>
         </Link>
       </div>
@@ -544,23 +625,16 @@ function HeroContent({ slide }) {
   );
 }
 
-function HeroImage({ slide }) {
+function HeroImageDesktop({ slide }) {
   return (
     <div className="hero-image-side">
       <div className="hero-image-frame">
-        <img
-          src={slide.image}
-          alt={slide.headline[0]}
-          className="hero-img"
-          loading="eager"
-        />
+        <img src={slide.image} alt={slide.headline[0]} className="hero-img" loading="eager" />
       </div>
-
       <div className="hero-badge">
         <span className="hero-badge-dot" />
         <span className="hero-badge-text">{slide.badge}</span>
       </div>
-
       <div className="hero-stat">
         <div className="hero-stat-num">100+</div>
         <div className="hero-stat-label">Styles</div>
