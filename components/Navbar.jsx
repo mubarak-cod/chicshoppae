@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
+import Image from "next/image";
 
 export default function Navbar() {
   const [darkMode, setDarkMode] = useState(false);
@@ -43,7 +44,7 @@ export default function Navbar() {
 
           {/* Logo */}
           <Link href="/" className="logo">
-            <span className="logo-name">Chic Shoppae</span>
+            <Image height={50} width={70} src="/images/logo.jpg" alt="Chic Shoppae" />
             <span className="logo-tag">Fashion &amp; Style</span>
           </Link>
 
