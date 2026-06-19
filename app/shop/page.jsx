@@ -305,7 +305,7 @@ export default function ShopPage() {
 
         @media (max-width: 768px) {
           .shop-hero {
-            height: clamp(210px, 38vw, 320px);
+            height: 80vh;
           }
 
           .shop-hero-copy {
