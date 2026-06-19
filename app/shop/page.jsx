@@ -125,7 +125,7 @@ export default function ShopPage() {
       <style>{`
         .shop-hero {
           width: 100%;
-          height: clamp(240px, 42vw, 580px);
+          height: 80vh;
           position: relative;
           overflow: hidden;
           background: var(--bg-primary);
