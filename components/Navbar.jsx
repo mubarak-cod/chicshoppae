@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
 import Image from "next/image";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 export default function Navbar() {
   const [darkMode, setDarkMode] = useState(false);
@@ -12,6 +13,9 @@ export default function Navbar() {
   const [searchQuery, setSearchQuery] = useState("");
   const [scrolled, setScrolled] = useState(false);
   const { cartItems } = useCart();
+  const pathname = usePathname();
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
   // Apply theme to root
   useEffect(() => {
@@ -30,7 +34,54 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  useEffect(() => {
+    if (!mobileOpen) return;
+    const handleEscape = (event) => {
+      if (event.key === "Escape") setMobileOpen(false);
+    };
+    window.addEventListener("keydown", handleEscape);
+    return () => window.removeEventListener("keydown", handleEscape);
+  }, [mobileOpen]);
+
   const cartCount = cartItems?.reduce((acc, item) => acc + item.quantity, 0) || 0;
+  const isHome = pathname === "/";
+  const isShop = pathname === "/shop";
+  const shopFilter = searchParams.get("filter");
+
+  const activeLinkStyle = {
+    color: "var(--text-primary)",
+    borderBottomColor: "var(--text-primary)",
+  };
+
+  const getLinkStyle = (href) => {
+    const isActive =
+      (href === "/" && isHome) ||
+      (href === "/shop" && isShop) ||
+      (href === "/about" && pathname === "/about") ||
+      (href === "/shop?filter=new" && pathname === "/shop" && shopFilter === "new") ||
+      (href === "/shop?filter=collections" && pathname === "/" && isHome);
+
+    return isActive ? activeLinkStyle : undefined;
+  };
+
+  const handleCollectionsClick = (event) => {
+    event.preventDefault();
+    setMobileOpen(false);
+    if (pathname !== "/") {
+      router.push("/");
+      setTimeout(() => {
+        document.querySelector(".collections-section")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 100);
+      return;
+    }
+    document.querySelector(".collections-section")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  const handleNewArrivalsClick = (event) => {
+    event.preventDefault();
+    setMobileOpen(false);
+    router.push("/shop?filter=new");
+  };
 
   return (
     <>
@@ -44,34 +95,38 @@ export default function Navbar() {
 
           {/* Logo */}
           <Link href="/" className="logo">
-            <Image height={50} width={70} src="/images/logo.jpg" alt="Chic Shoppae" />
+            <Image height={50} width={70} src="/images/logo.jpg" alt="Chic Shoppae" priority />
             <span className="logo-tag">Fashion &amp; Style</span>
           </Link>
 
           {/* Desktop Links */}
           <ul className="nav-links">
-            <li><Link href="/">Home</Link></li>
-            <li><Link href="/shop">Shop</Link></li>
-            <li><Link href="/shop?filter=collections">Collections</Link></li>
-            <li><Link href="/shop?filter=new">New Arrivals</Link></li>
-            <li><Link href="/about">About</Link></li>
+            <li><Link href="/" style={getLinkStyle("/")}>Home</Link></li>
+            <li><Link href="/shop" style={getLinkStyle("/shop")}>Shop</Link></li>
+            <li><a href="/#collections" style={getLinkStyle("/shop?filter=collections")} onClick={handleCollectionsClick}>Collections</a></li>
+            <li><Link href="/shop?filter=new" style={getLinkStyle("/shop?filter=new")}>New Arrivals</Link></li>
+            <li><Link href="/about" style={getLinkStyle("/about")}>About</Link></li>
           </ul>
 
           {/* Actions */}
           <div className="nav-actions">
 
             {/* Search */}
-            <button
-              className="icon-btn"
-              onClick={() => setSearchOpen(!searchOpen)}
-              aria-label="Search"
-            >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-              </svg>
-            </button>
+            {isShop && (
+              <>
+                <button
+                  className="icon-btn"
+                  onClick={() => setSearchOpen(!searchOpen)}
+                  aria-label="Search"
+                >
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                  </svg>
+                </button>
 
-            <div className="divider" />
+                <div className="divider" />
+              </>
+            )}
 
             {/* Wishlist */}
             <button className="icon-btn" aria-label="Wishlist">
@@ -160,11 +215,11 @@ export default function Navbar() {
         {/* Mobile Menu */}
         {mobileOpen && (
           <div className="mobile-menu">
-            <Link href="/" onClick={() => setMobileOpen(false)}>Home</Link>
-            <Link href="/shop" onClick={() => setMobileOpen(false)}>Shop</Link>
-            <Link href="/shop?filter=collections" onClick={() => setMobileOpen(false)}>Collections</Link>
-            <Link href="/shop?filter=new" onClick={() => setMobileOpen(false)}>New Arrivals</Link>
-            <Link href="/about" onClick={() => setMobileOpen(false)}>About</Link>
+            <Link href="/" style={getLinkStyle("/")} onClick={() => setMobileOpen(false)}>Home</Link>
+            <Link href="/shop" style={getLinkStyle("/shop")} onClick={() => setMobileOpen(false)}>Shop</Link>
+            <a href="/#collections" style={getLinkStyle("/shop?filter=collections")} onClick={handleCollectionsClick}>Collections</a>
+            <Link href="/shop?filter=new" style={getLinkStyle("/shop?filter=new")} onClick={handleNewArrivalsClick}>New Arrivals</Link>
+            <Link href="/about" style={getLinkStyle("/about")} onClick={() => setMobileOpen(false)}>About</Link>
             <div className="mobile-bottom">
               <button
                 className={`theme-toggle ${darkMode ? "theme-toggle--dark" : ""}`}

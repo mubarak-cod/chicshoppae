@@ -362,7 +362,7 @@ export default function MidBanner() {
                   <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="0.8" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: 0.25 }}>
                     <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>
                   </svg>
-                 {/* <Image src="/images/customers.png" className="mb-img" width={200} height={200} alt="happy customers" /> */}
+                 <Image src="/images/customers.png" className="mb-img" width={200} height={200} alt="happy customers" />
                 </div>
                 {/* Replace with: <img src="cloudinary-url" className="mb-img" alt="" /> */}
               </div>
