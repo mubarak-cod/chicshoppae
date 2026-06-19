@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
 import Image from "next/image";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 export default function Navbar() {
   const [darkMode, setDarkMode] = useState(false);
@@ -15,7 +15,6 @@ export default function Navbar() {
   const { cartItems } = useCart();
   const pathname = usePathname();
   const router = useRouter();
-  const searchParams = useSearchParams();
 
   // Apply theme to root
   useEffect(() => {
@@ -44,25 +43,15 @@ export default function Navbar() {
   }, [mobileOpen]);
 
   const cartCount = cartItems?.reduce((acc, item) => acc + item.quantity, 0) || 0;
-  const isHome = pathname === "/";
-  const isShop = pathname === "/shop";
-  const shopFilter = searchParams.get("filter");
+  const isActiveRoute = (route) => pathname === route;
+  const isShop = isActiveRoute("/shop");
 
   const activeLinkStyle = {
     color: "var(--text-primary)",
     borderBottomColor: "var(--text-primary)",
   };
 
-  const getLinkStyle = (href) => {
-    const isActive =
-      (href === "/" && isHome) ||
-      (href === "/shop" && isShop) ||
-      (href === "/about" && pathname === "/about") ||
-      (href === "/shop?filter=new" && pathname === "/shop" && shopFilter === "new") ||
-      (href === "/shop?filter=collections" && pathname === "/" && isHome);
-
-    return isActive ? activeLinkStyle : undefined;
-  };
+  const getLinkStyle = (route) => (isActiveRoute(route) ? activeLinkStyle : undefined);
 
   const handleCollectionsClick = (event) => {
     event.preventDefault();
@@ -95,7 +84,7 @@ export default function Navbar() {
 
           {/* Logo */}
           <Link href="/" className="logo">
-            <Image height={50} width={70} src="/images/logo.jpg" alt="Chic Shoppae" priority />
+            <Image height={30} width={70} src="/images/logo.jpg" alt="Chic Shoppae" priority />
             <span className="logo-tag">Fashion &amp; Style</span>
           </Link>
 
@@ -103,8 +92,8 @@ export default function Navbar() {
           <ul className="nav-links">
             <li><Link href="/" style={getLinkStyle("/")}>Home</Link></li>
             <li><Link href="/shop" style={getLinkStyle("/shop")}>Shop</Link></li>
-            <li><a href="/#collections" style={getLinkStyle("/shop?filter=collections")} onClick={handleCollectionsClick}>Collections</a></li>
-            <li><Link href="/shop?filter=new" style={getLinkStyle("/shop?filter=new")}>New Arrivals</Link></li>
+            <li><Link href="/" onClick={handleCollectionsClick}>Collections</Link></li>
+            <li><Link href="/shop?filter=new">New Arrivals</Link></li>
             <li><Link href="/about" style={getLinkStyle("/about")}>About</Link></li>
           </ul>
 
@@ -217,8 +206,8 @@ export default function Navbar() {
           <div className="mobile-menu">
             <Link href="/" style={getLinkStyle("/")} onClick={() => setMobileOpen(false)}>Home</Link>
             <Link href="/shop" style={getLinkStyle("/shop")} onClick={() => setMobileOpen(false)}>Shop</Link>
-            <a href="/#collections" style={getLinkStyle("/shop?filter=collections")} onClick={handleCollectionsClick}>Collections</a>
-            <Link href="/shop?filter=new" style={getLinkStyle("/shop?filter=new")} onClick={handleNewArrivalsClick}>New Arrivals</Link>
+            <Link href="/" onClick={handleCollectionsClick}>Collections</Link>
+            <Link href="/shop?filter=new" onClick={handleNewArrivalsClick}>New Arrivals</Link>
             <Link href="/about" style={getLinkStyle("/about")} onClick={() => setMobileOpen(false)}>About</Link>
             <div className="mobile-bottom">
               <button

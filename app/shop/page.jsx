@@ -3,379 +3,422 @@
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 
-const heroImages = [
-	"/images/one.jpg",
-	"/images/four.jpg",
-	"/images/five.jpg",
-	"/images/seven.jpg",
-	"/images/eight.jpg",
+const slides = [
+  {
+    id: 1,
+    image: "/images/one.jpg",
+    title: "New Season, New Energy",
+    description:
+      "Discover statement pieces and elevated essentials curated for the modern Chic Shoppae woman.",
+    ctaLabel: "Shop Now",
+    ctaHref: "/shop?filter=new",
+    badge: "Up to 40% Off",
+  },
+  {
+    id: 2,
+    image: "/images/four.jpg",
+    title: "Soft Glam, Sharp Style",
+    description:
+      "Polished looks that move easily from day plans to evening plans without losing their edge.",
+    ctaLabel: "Shop Now",
+    ctaHref: "/shop",
+    badge: "Limited Drop",
+  },
+  {
+    id: 3,
+    image: "/images/five.jpg",
+    title: "Designed To Be Noticed",
+    description:
+      "A premium edit of fashion-forward silhouettes, tailored textures, and effortless confidence.",
+    ctaLabel: "Shop Now",
+    ctaHref: "/shop",
+    badge: "Fresh Picks",
+  },
+  {
+    id: 4,
+    image: "/images/seven.jpg",
+    title: "Luxury Looks, Everyday Ease",
+    description:
+      "Wear-now styles with a refined feel, made to keep your wardrobe feeling current and elevated.",
+    ctaLabel: "Shop Now",
+    ctaHref: "/shop",
+    badge: "New Arrivals",
+  },
+  {
+    id: 5,
+    image: "/images/eight.jpg",
+    title: "The Chic Edit Is Here",
+    description:
+      "Browse curated fashion favorites with a polished finish and a modern, feminine edge.",
+    ctaLabel: "Shop Now",
+    ctaHref: "/shop",
+    badge: "Best Sellers",
+  },
 ];
 
-const shopProducts = [
-	{ id: 1, name: "Rosette Mini Dress", price: 18500, category: "Gowns", images: ["/images/chan1.jpg"] },
-	{ id: 2, name: "Linen Co-ord Set", price: 22000, category: "2-Piece Sets", images: ["/images/chan2.jpg"] },
-	{ id: 3, name: "Satin Slip Dress", price: 15500, category: "Gowns", images: ["/images/chan3.jpg"] },
-	{ id: 4, name: "Puff Sleeve Blouse", price: 9800, category: "Tops", images: ["/images/chan4.jpg"] },
-	{ id: 5, name: "Wide Leg Trousers", price: 13500, category: "Trousers", images: ["/images/chan5.jpg"] },
-	{ id: 6, name: "Ruched Bodycon", price: 17000, category: "Gowns", images: ["/images/chan6.jpg"] },
-	{ id: 7, name: "Blazer Dress", price: 25000, category: "Gowns", images: ["/images/one.jpg"] },
-	{ id: 8, name: "Crochet Top", price: 7500, category: "Tops", images: ["/images/five.jpg"] },
-	{ id: 9, name: "Pleated Midi Dress", price: 21000, category: "Gowns", images: ["/images/four.jpg"] },
-	{ id: 10, name: "Ribbed Knit Set", price: 16500, category: "2-Piece Sets", images: ["/images/seven.jpg"] },
-	{ id: 11, name: "Floral Wrap Dress", price: 19000, category: "Gowns", images: ["/images/eight.jpg"] },
-	{ id: 12, name: "Silk Palazzo", price: 23500, category: "Trousers", images: ["/images/three.jpg"] },
-];
-
-const categoryMap = {
-	Gowns: "Gowns",
-	Tops: "Tops",
-	"2-Piece Sets": "2-Piece Sets",
-	Trousers: "Trousers",
-};
-
-function ShopHero() {
-	const [index, setIndex] = useState(0);
-
-	useEffect(() => {
-		const timer = setInterval(() => {
-			setIndex((current) => (current + 1) % heroImages.length);
-		}, 4500);
-		return () => clearInterval(timer);
-	}, []);
-
-	const go = (nextIndex) => {
-		setIndex((nextIndex + heroImages.length) % heroImages.length);
-	};
-
-	return (
-		<section className="shop-hero">
-			<style>{`
-				.shop-hero {
-					height: 90vh;
-					min-height: 620px;
-					position: relative;
-					overflow: hidden;
-					background: var(--bg-primary);
-					border-bottom: 0.5px solid var(--border);
-				}
-
-				.shop-hero-inner {
-					height: 100%;
-					max-width: 1280px;
-					margin: 0 auto;
-					padding: 0 1.5rem;
-					display: grid;
-					grid-template-columns: 1fr 1fr;
-					align-items: center;
-					gap: 2rem;
-				}
-
-				.shop-hero-copy {
-					position: relative;
-					z-index: 2;
-					max-width: 520px;
-				}
-
-				.shop-hero-eyebrow {
-					font-size: 11px;
-					letter-spacing: 0.22em;
-					text-transform: uppercase;
-					color: var(--text-secondary);
-					margin-bottom: 1rem;
-				}
-
-				.shop-hero-title {
-					font-family: 'Cormorant Garamond', serif;
-					font-size: clamp(48px, 6vw, 90px);
-					line-height: 0.95;
-					color: var(--text-primary);
-					margin-bottom: 1rem;
-				}
-
-				.shop-hero-text {
-					color: var(--text-secondary);
-					line-height: 1.7;
-					max-width: 440px;
-				}
-
-				.shop-hero-carousel {
-					position: relative;
-					width: 100%;
-					height: min(70vh, 640px);
-					border-radius: 24px;
-					overflow: hidden;
-					background: var(--bg-card);
-					box-shadow: 0 20px 60px rgba(0,0,0,0.12);
-				}
-
-				.shop-hero-slide {
-					position: absolute;
-					inset: 0;
-				}
-
-				.shop-hero-image {
-					width: 100%;
-					height: 100%;
-					object-fit: cover;
-					object-position: center top;
-					display: block;
-				}
-
-				.shop-hero-arrow {
-					position: absolute;
-					top: 50%;
-					transform: translateY(-50%);
-					width: 44px;
-					height: 44px;
-					border-radius: 999px;
-					border: 0.5px solid var(--border);
-					background: rgba(245,240,232,0.75);
-					color: var(--text-primary);
-					display: flex;
-					align-items: center;
-					justify-content: center;
-					z-index: 3;
-					cursor: pointer;
-				}
-
-				[data-theme="dark"] .shop-hero-arrow {
-					background: rgba(17,16,16,0.72);
-				}
-
-				.shop-hero-arrow--left { left: 16px; }
-				.shop-hero-arrow--right { right: 16px; }
-
-				.shop-hero-dots {
-					position: absolute;
-					left: 50%;
-					bottom: 18px;
-					transform: translateX(-50%);
-					display: flex;
-					gap: 8px;
-					z-index: 3;
-				}
-
-				.shop-hero-dot {
-					width: 24px;
-					height: 2px;
-					border: none;
-					border-radius: 999px;
-					background: rgba(26,23,20,0.25);
-					overflow: hidden;
-				}
-
-				[data-theme="dark"] .shop-hero-dot {
-					background: rgba(240,235,227,0.2);
-				}
-
-				.shop-hero-dot-active {
-					background: var(--text-primary);
-				}
-
-				.shop-hero-progress {
-					height: 100%;
-					background: var(--accent);
-					transform-origin: left;
-				}
-
-				.shop-hero-card-grid {
-					display: grid;
-					grid-template-columns: repeat(3, minmax(0, 1fr));
-					gap: 1rem;
-				}
-
-				.shop-card {
-					background: var(--bg-card);
-					border: 0.5px solid var(--border);
-					border-radius: 18px;
-					overflow: hidden;
-					text-decoration: none;
-					color: inherit;
-					box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-				}
-
-				.shop-card-img {
-					position: relative;
-					aspect-ratio: 3 / 4;
-					background: var(--bg-secondary);
-				}
-
-				.shop-card-body {
-					padding: 1rem;
-					display: flex;
-					flex-direction: column;
-					gap: 0.35rem;
-				}
-
-				.shop-card-cat {
-					font-size: 10px;
-					letter-spacing: 0.16em;
-					text-transform: uppercase;
-					color: var(--text-muted);
-				}
-
-				.shop-card-name {
-					font-family: 'Cormorant Garamond', serif;
-					font-size: 20px;
-					line-height: 1.1;
-					color: var(--text-primary);
-				}
-
-				.shop-card-price {
-					font-size: 14px;
-					color: var(--text-secondary);
-				}
-
-				.shop-card-cta {
-					margin-top: 0.25rem;
-					font-size: 10px;
-					letter-spacing: 0.1em;
-					text-transform: uppercase;
-					color: var(--text-primary);
-				}
-
-				@media (max-width: 1023px) {
-					.shop-hero { height: auto; min-height: unset; }
-					.shop-hero-inner { grid-template-columns: 1fr; padding: 2.5rem 1.5rem 1.5rem; }
-					.shop-hero-carousel { height: 60vh; min-height: 420px; }
-					.shop-hero-card-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-				}
-
-				@media (max-width: 640px) {
-					.shop-hero-inner { padding: 2rem 1rem 1rem; }
-					.shop-hero-carousel { height: 54vh; min-height: 360px; border-radius: 18px; }
-					.shop-hero-arrow { width: 40px; height: 40px; }
-					.shop-hero-card-grid { grid-template-columns: 1fr; }
-				}
-			`}</style>
-
-			<div className="shop-hero-inner">
-				<div className="shop-hero-copy">
-					<div className="shop-hero-eyebrow">Shop the drop</div>
-					<h1 className="shop-hero-title">New pieces, styled to move with you.</h1>
-					<p className="shop-hero-text">
-						Explore the latest arrivals, seasonal edits, and statement looks from Chic Shoppae.
-						Replace these carousel images with final product photography when ready.
-					</p>
-				</div>
-
-				<div className="shop-hero-carousel">
-					<AnimatePresence mode="wait">
-						<motion.div
-							key={index}
-							className="shop-hero-slide"
-							initial={{ opacity: 0, scale: 1.03 }}
-							animate={{ opacity: 1, scale: 1 }}
-							exit={{ opacity: 0, scale: 1.03 }}
-							transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-						>
-							<Image
-								src={heroImages[index]}
-								alt="Replaceable shop hero image"
-								fill
-								priority={index === 0}
-								placeholder="empty"
-								className="shop-hero-image"
-								sizes="(max-width: 1023px) 100vw, 50vw"
-							/>
-						</motion.div>
-					</AnimatePresence>
-
-					<button className="shop-hero-arrow shop-hero-arrow--left" onClick={() => go(index - 1)} aria-label="Previous image">
-						<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-							<polyline points="15 18 9 12 15 6" />
-						</svg>
-					</button>
-					<button className="shop-hero-arrow shop-hero-arrow--right" onClick={() => go(index + 1)} aria-label="Next image">
-						<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-							<polyline points="9 18 15 12 9 6" />
-						</svg>
-					</button>
-
-					<div className="shop-hero-dots">
-						{heroImages.map((_, dotIndex) => (
-							<button
-								key={dotIndex}
-								className={`shop-hero-dot ${dotIndex === index ? "shop-hero-dot-active" : ""}`}
-								onClick={() => setIndex(dotIndex)}
-								aria-label={`Go to image ${dotIndex + 1}`}
-							>
-								{dotIndex === index && <span className="shop-hero-progress" style={{ width: "100%" }} />}
-							</button>
-						))}
-					</div>
-				</div>
-			</div>
-		</section>
-	);
-}
-
-function ShopGrid({ category }) {
-			const filtered = useMemo(() => {
-				if (!category) return shopProducts;
-				const normalizedCategory = categoryMap[category] || category;
-				return shopProducts.filter((product) => product.category === normalizedCategory);
-			}, [category]);
-
-	return (
-				<section className="fp-section">
-					<div className="fp-container">
-						<div className="fp-header">
-							<div className="fp-header-left">
-								<div>
-									<span className="section-eyebrow">Browse the shop</span>
-									<h2 className="section-title">{category ? category : "All products"}</h2>
-								</div>
-							</div>
-							<Link href="/shop" className="fp-see-all">View all</Link>
-						</div>
-
-						<div className="shop-hero-card-grid">
-							{filtered.map((product, index) => (
-								<motion.div
-									key={product.id}
-									initial={{ opacity: 0, y: 16 }}
-									whileInView={{ opacity: 1, y: 0 }}
-									viewport={{ once: true, amount: 0.2 }}
-									transition={{ duration: 0.45, delay: index * 0.04, ease: [0.22, 1, 0.36, 1] }}
-								>
-									<Link href={`/product/${product.id}`} className="shop-card">
-										<div className="shop-card-img">
-											<Image
-												src={product.images[0]}
-												alt={product.name}
-												fill
-												loading="lazy"
-												className="shop-hero-image"
-												sizes="(max-width: 640px) 100vw, (max-width: 1023px) 50vw, 33vw"
-											/>
-										</div>
-										<div className="shop-card-body">
-											<div className="shop-card-cat">{product.category}</div>
-											<div className="shop-card-name">{product.name}</div>
-											<div className="shop-card-price">₦{product.price.toLocaleString()}</div>
-											<div className="shop-card-cta">Shop Now</div>
-										</div>
-									</Link>
-								</motion.div>
-							))}
-						</div>
-					</div>
-				</section>
-	);
+function BannerContent({ slide }) {
+  return (
+    <motion.div
+      className="shop-hero-copy"
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: 10 }}
+      transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+    >
+      <span className="shop-hero-badge">{slide.badge}</span>
+      <h1 className="shop-hero-title">{slide.title}</h1>
+      <p className="shop-hero-description">{slide.description}</p>
+      <Link href={slide.ctaHref} className="shop-hero-cta">
+        {slide.ctaLabel}
+      </Link>
+    </motion.div>
+  );
 }
 
 export default function ShopPage() {
-	const searchParams = useSearchParams();
-	const category = searchParams.get("category");
+  const [current, setCurrent] = useState(0);
+  const [direction, setDirection] = useState(1);
+  const [paused, setPaused] = useState(false);
 
-	return (
-		<div>
-			<ShopHero />
-			<ShopGrid category={category} />
-		</div>
-	);
+  useEffect(() => {
+    if (paused) return;
+
+    const timer = setInterval(() => {
+      setDirection(1);
+      setCurrent((index) => (index + 1) % slides.length);
+    }, 4500);
+
+    return () => clearInterval(timer);
+  }, [paused]);
+
+  const goTo = (nextIndex) => {
+    setDirection(nextIndex > current ? 1 : -1);
+    setCurrent((nextIndex + slides.length) % slides.length);
+  };
+
+  const slideVariants = {
+    enter: (slideDirection) => ({
+      x: slideDirection > 0 ? 64 : -64,
+      opacity: 0,
+    }),
+    center: {
+      x: 0,
+      opacity: 1,
+    },
+    exit: (slideDirection) => ({
+      x: slideDirection > 0 ? -64 : 64,
+      opacity: 0,
+    }),
+  };
+
+  const currentSlide = slides[current];
+
+  return (
+    <section
+      className="shop-hero"
+      aria-label="Shop banner slider"
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+    >
+      <style>{`
+        .shop-hero {
+          width: 100%;
+          height: clamp(240px, 42vw, 580px);
+          position: relative;
+          overflow: hidden;
+          background: var(--bg-primary);
+          border-bottom: 0.5px solid var(--border);
+        }
+
+        .shop-hero-track {
+          position: relative;
+          width: 100%;
+          height: 100%;
+        }
+
+        .shop-hero-slide {
+          position: absolute;
+          inset: 0;
+          width: 100%;
+          height: 100%;
+        }
+
+        .shop-hero-image {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          object-position: center center;
+          display: block;
+        }
+
+        .shop-hero-overlay {
+          position: absolute;
+          inset: 0;
+          background:
+            linear-gradient(90deg, rgba(26, 23, 20, 0.78) 0%, rgba(26, 23, 20, 0.4) 38%, rgba(26, 23, 20, 0.12) 68%, rgba(26, 23, 20, 0.16) 100%),
+            linear-gradient(0deg, rgba(26, 23, 20, 0.18), rgba(26, 23, 20, 0.18));
+        }
+
+        [data-theme="dark"] .shop-hero-overlay {
+          background:
+            linear-gradient(90deg, rgba(17, 16, 16, 0.8) 0%, rgba(17, 16, 16, 0.42) 38%, rgba(17, 16, 16, 0.14) 68%, rgba(17, 16, 16, 0.18) 100%),
+            linear-gradient(0deg, rgba(17, 16, 16, 0.2), rgba(17, 16, 16, 0.2));
+        }
+
+        .shop-hero-content {
+          position: absolute;
+          inset: 0;
+          z-index: 2;
+          display: flex;
+          align-items: center;
+          margin-left: 20px;
+        }
+
+        .shop-hero-copy {
+          max-width: 620px;
+          padding: 0 clamp(1rem, 4vw, 3.5rem);
+          color: var(--bg-primary);
+        }
+
+        .shop-hero-badge {
+          display: inline-flex;
+          align-items: center;
+          width: fit-content;
+          margin-bottom: 1rem;
+          padding: 7px 12px;
+          border-radius: 999px;
+          background: rgba(245, 240, 232, 0.12);
+          border: 0.5px solid rgba(245, 240, 232, 0.18);
+          color: var(--bg-primary);
+          font-size: 11px;
+          letter-spacing: 0.12em;
+          text-transform: uppercase;
+          backdrop-filter: blur(8px);
+        }
+
+        .shop-hero-title {
+          font-family: 'Cormorant Garamond', serif;
+          font-size: clamp(30px, 4vw, 58px);
+          line-height: 0.95;
+          margin-bottom: 0.85rem;
+          letter-spacing: -0.02em;
+          text-wrap: balance;
+        }
+
+        .shop-hero-description {
+          max-width: 520px;
+          font-size: clamp(13px, 1.6vw, 17px);
+          line-height: 1.7;
+          color: rgba(245, 240, 232, 0.88);
+          margin-bottom: 1.25rem;
+        }
+
+        .shop-hero-cta {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          background: var(--bg-primary);
+          color: var(--text-primary);
+          border: none;
+          border-radius: 999px;
+          padding: 12px 20px;
+          text-decoration: none;
+          font-size: 12px;
+          letter-spacing: 0.1em;
+          text-transform: uppercase;
+          font-weight: 600;
+          transition: transform 0.2s ease, opacity 0.2s ease, background 0.2s ease;
+        }
+
+        .shop-hero-cta:hover {
+          transform: translateY(-1px);
+          opacity: 0.95;
+        }
+
+        .shop-hero-arrow {
+          position: absolute;
+          top: 50%;
+          transform: translateY(-50%);
+          width: 42px;
+          height: 42px;
+          border-radius: 999px;
+          border: 0.5px solid rgba(245, 240, 232, 0.2);
+          background: rgba(245, 240, 232, 0.12);
+          color: var(--bg-primary);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          z-index: 3;
+          cursor: pointer;
+          box-shadow: 0 10px 20px rgba(0, 0, 0, 0.14);
+          backdrop-filter: blur(10px);
+          transition: transform 0.2s ease, opacity 0.2s ease, background 0.2s ease;
+        }
+
+        .shop-hero-arrow:hover {
+          transform: translateY(-50%) scale(1.05);
+          background: rgba(245, 240, 232, 0.18);
+        }
+
+        .shop-hero-arrow--left {
+          left: 16px;
+        }
+
+        .shop-hero-arrow--right {
+          right: 16px;
+        }
+
+        .shop-hero-dots {
+          position: absolute;
+          left: 50%;
+          bottom: 18px;
+          transform: translateX(-50%);
+          display: flex;
+          gap: 8px;
+          z-index: 3;
+        }
+
+        .shop-hero-dot {
+          width: 24px;
+          height: 3px;
+          border: none;
+          border-radius: 999px;
+          background: rgba(245, 240, 232, 0.32);
+          padding: 0;
+          overflow: hidden;
+          cursor: pointer;
+        }
+
+        .shop-hero-dot-active {
+          background: rgba(245, 240, 232, 0.55);
+        }
+
+        .shop-hero-progress {
+          display: block;
+          width: 100%;
+          height: 100%;
+          background: var(--bg-primary);
+          transform-origin: left;
+        }
+
+        @media (max-width: 768px) {
+          .shop-hero {
+            height: clamp(210px, 38vw, 320px);
+          }
+
+          .shop-hero-copy {
+            padding: 0 1rem;
+          }
+
+          .shop-hero-title {
+            font-size: clamp(24px, 7vw, 34px);
+          }
+
+          .shop-hero-description {
+            max-width: 320px;
+            font-size: 12px;
+            margin-bottom: 1rem;
+          }
+
+          .shop-hero-arrow {
+            width: 36px;
+            height: 36px;
+          }
+
+          .shop-hero-arrow--left {
+            left: 10px;
+          }
+
+          .shop-hero-arrow--right {
+            right: 10px;
+          }
+
+          .shop-hero-dots {
+            bottom: 12px;
+            gap: 6px;
+          }
+
+          .shop-hero-dot {
+            width: 18px;
+            height: 3px;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .shop-hero-arrow,
+          .shop-hero-cta {
+            transition: none;
+          }
+        }
+      `}</style>
+
+      <div className="shop-hero-track">
+        <AnimatePresence initial={false} custom={direction} mode="wait">
+          <motion.div
+            key={currentSlide.id}
+            className="shop-hero-slide"
+            custom={direction}
+            variants={slideVariants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <Image
+              src={currentSlide.image}
+              alt={`Shop banner slide ${currentSlide.id}`}
+              fill
+              priority={current === 0}
+              loading={current === 0 ? "eager" : "lazy"}
+              sizes="100vw"
+              className="shop-hero-image"
+            />
+            <div className="shop-hero-overlay" />
+          </motion.div>
+        </AnimatePresence>
+
+        <div className="shop-hero-content">
+          <BannerContent slide={currentSlide} />
+        </div>
+
+        <button
+          className="shop-hero-arrow shop-hero-arrow--left"
+          onClick={() => goTo(current - 1)}
+          aria-label="Previous slide"
+          type="button"
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="15 18 9 12 15 6" />
+          </svg>
+        </button>
+
+        <button
+          className="shop-hero-arrow shop-hero-arrow--right"
+          onClick={() => goTo(current + 1)}
+          aria-label="Next slide"
+          type="button"
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="9 18 15 12 9 6" />
+          </svg>
+        </button>
+
+        <div className="shop-hero-dots" aria-label="Slide position">
+          {slides.map((slide, index) => (
+            <button
+              key={slide.id}
+              className={`shop-hero-dot ${index === current ? "shop-hero-dot-active" : ""}`}
+              onClick={() => goTo(index)}
+              aria-label={`Go to slide ${index + 1}`}
+              type="button"
+            >
+              {index === current && <span className="shop-hero-progress" />}
+            </button>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
 }
