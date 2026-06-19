@@ -52,6 +52,7 @@ export default function HeroSection() {
   const [paused, setPaused] = useState(false);
   const [progress, setProgress] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
+  const [contentReady, setContentReady] = useState(false);
 
   const DURATION = 5000;
 
@@ -62,6 +63,12 @@ export default function HeroSection() {
     window.addEventListener("resize", check);
     return () => window.removeEventListener("resize", check);
   }, []);
+
+  useEffect(() => {
+    setContentReady(false);
+    const frame = requestAnimationFrame(() => setContentReady(true));
+    return () => cancelAnimationFrame(frame);
+  }, [current, isMobile]);
 
   const goTo = useCallback(
     (index, dir = "next") => {
@@ -138,6 +145,20 @@ export default function HeroSection() {
           gap: 1.4rem;
           max-width: 520px;
           z-index: 2;
+          transition: opacity 0.55s cubic-bezier(0.22,1,0.36,1), transform 0.55s cubic-bezier(0.22,1,0.36,1);
+          will-change: opacity, transform;
+        }
+
+        .hero-image-side {
+          transition: opacity 0.55s cubic-bezier(0.22,1,0.36,1), transform 0.55s cubic-bezier(0.22,1,0.36,1);
+          transition-delay: 90ms;
+          will-change: opacity, transform;
+        }
+
+        .hero-slide--content-initial .hero-text,
+        .hero-slide--content-initial .hero-image-side {
+          opacity: 0;
+          transform: translateY(18px);
         }
 
         .hero-eyebrow {
@@ -467,7 +488,7 @@ export default function HeroSection() {
         {isMobile ? (
           /* ── MOBILE/TABLET LAYOUT ── */
           <div
-            className={`hero-slide ${animating ? `hero-slide--enter-${direction}` : ""}`}
+            className={`hero-slide ${animating ? `hero-slide--enter-${direction}` : ""} ${contentReady ? "" : "hero-slide--content-initial"}`}
             style={{ "--slide-accent": slide.accent }}
           >
             <HeroContent slide={slide} />
@@ -522,6 +543,7 @@ export default function HeroSection() {
               current={current}
               direction={direction}
               animating={animating}
+              contentReady={contentReady}
               progress={progress}
               goTo={goTo}
               next={next}
@@ -535,7 +557,7 @@ export default function HeroSection() {
 }
 
 /* Desktop keeps the old exit/enter dual-slide animation */
-function DesktopSlider({ slides, current, direction, animating, progress, goTo, next, prev_slide }) {
+function DesktopSlider({ slides, current, direction, animating, contentReady, progress, goTo, next, prev_slide }) {
   const [prevIndex, setPrevIndex] = useState(null);
 
   useEffect(() => {
@@ -563,7 +585,7 @@ function DesktopSlider({ slides, current, direction, animating, progress, goTo, 
       )}
 
       <div
-        className={`hero-slide ${animating ? `hero-slide--enter-${direction}` : ""}`}
+        className={`hero-slide ${animating ? `hero-slide--enter-${direction}` : ""} ${contentReady ? "" : "hero-slide--content-initial"}`}
         style={{ "--slide-accent": slide.accent }}
       >
         <HeroContent slide={slide} />

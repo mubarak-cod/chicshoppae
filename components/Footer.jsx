@@ -30,7 +30,7 @@ const aboutLinks = [
 const socials = [
   {
     name: "Instagram",
-    href: "https://instagram.com/chicshoppae",
+    href: "https://www.instagram.com/chic_shoppae?igsh=emVvaTA3bGVOdW1r&utm_source=qr",
     icon: (
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
         <rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
@@ -39,7 +39,7 @@ const socials = [
   },
   {
     name: "TikTok",
-    href: "https://tiktok.com/@chicshoppae",
+    href: "https://www.tiktok.com/@chic_shoppae?_r=1&_t=ZS97Hex5mwmjV",
     icon: (
       <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
         <path d="M16.6 5.82s.51.5 0 0A4.278 4.278 0 0 1 15.54 3h-3.09v12.4a2.59 2.59 0 0 1-2.59 2.5c-1.42 0-2.6-1.16-2.6-2.6 0-1.72 1.66-3.01 3.37-2.48V9.66c-3.45-.46-6.47 2.22-6.47 5.64 0 3.33 2.76 5.7 5.69 5.7 3.14 0 5.69-2.55 5.69-5.7V9.01a7.35 7.35 0 0 0 4.3 1.38V7.3s-1.88.09-3.24-1.48z"/>
@@ -48,7 +48,7 @@ const socials = [
   },
   {
     name: "WhatsApp",
-    href: "https://wa.me/2348000000000",
+    href: "https://wa.me/2349161802236",
     icon: (
       <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
         <path d="M12 2C6.48 2 2 6.48 2 12c0 1.85.5 3.58 1.36 5.07L2 22l5.07-1.32A9.94 9.94 0 0 0 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2zm0 18c-1.65 0-3.18-.46-4.5-1.25l-.32-.19-3.34.87.9-3.26-.21-.34A7.94 7.94 0 0 1 4 12c0-4.41 3.59-8 8-8s8 3.59 8 8-3.59 8-8 8zm4.4-5.8c-.24-.12-1.43-.71-1.65-.79-.22-.08-.38-.12-.55.12-.16.24-.63.79-.77.95-.14.16-.28.18-.52.06-.24-.12-1.01-.37-1.92-1.18-.71-.63-1.19-1.42-1.33-1.66-.14-.24-.01-.37.11-.49.11-.11.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.55-1.32-.75-1.81-.2-.48-.4-.42-.55-.42-.14 0-.3-.02-.46-.02-.16 0-.42.06-.64.3-.22.24-.84.82-.84 2s.86 2.32.98 2.48c.12.16 1.7 2.6 4.12 3.64.58.25 1.03.4 1.38.51.58.18 1.11.16 1.53.1.47-.07 1.43-.58 1.63-1.15.2-.57.2-1.05.14-1.15-.06-.1-.22-.16-.46-.28z"/>
@@ -82,10 +82,35 @@ export default function Footer() {
     <>
       <style>{`
         .footer {
-          background: var(--text-primary, #1A1714);
-          color: var(--bg-primary, #F5F0E8);
+          --footer-bg: #1A1714;
+          --footer-text-primary: #F5F0E8;
+          --footer-text-secondary: rgba(245,240,232,0.55);
+          --footer-text-tertiary: rgba(245,240,232,0.5);
+          --footer-text-muted: rgba(245,240,232,0.4);
+          --footer-border: rgba(245,240,232,0.12);
+          --footer-border-strong: rgba(245,240,232,0.18);
+          --footer-input-bg: rgba(245,240,232,0.05);
+          --footer-input-bg-focus: rgba(245,240,232,0.08);
+          --footer-input-border: rgba(245,240,232,0.2);
+          --footer-payment-border: rgba(245,240,232,0.15);
+          background: var(--footer-bg);
+          color: var(--footer-text-primary);
           position: relative;
           overflow: hidden;
+        }
+
+        [data-theme="dark"] .footer {
+          --footer-bg: #111010;
+          --footer-text-primary: #F0EBE3;
+          --footer-text-secondary: rgba(240,235,227,0.55);
+          --footer-text-tertiary: rgba(240,235,227,0.5);
+          --footer-text-muted: rgba(240,235,227,0.4);
+          --footer-border: rgba(240,235,227,0.12);
+          --footer-border-strong: rgba(240,235,227,0.18);
+          --footer-input-bg: rgba(240,235,227,0.05);
+          --footer-input-bg-focus: rgba(240,235,227,0.08);
+          --footer-input-border: rgba(240,235,227,0.2);
+          --footer-payment-border: rgba(240,235,227,0.15);
         }
 
         /* ── TOP GRADIENT LINE ── */
@@ -109,7 +134,7 @@ export default function Footer() {
           grid-template-columns: 1.3fr 1fr;
           gap: 3rem;
           padding-bottom: 3rem;
-          border-bottom: 0.5px solid rgba(245,240,232,0.12);
+          border-bottom: 0.5px solid var(--footer-border);
         }
 
         .footer-brand-name {
@@ -117,14 +142,14 @@ export default function Footer() {
           font-size: 30px;
           font-weight: 600;
           letter-spacing: 0.04em;
-          color: var(--bg-primary, #F5F0E8);
+          color: var(--footer-text-primary);
           margin-bottom: 0.5rem;
         }
 
         .footer-brand-desc {
           font-size: 13.5px;
           line-height: 1.75;
-          color: rgba(245,240,232,0.55);
+          color: var(--footer-text-secondary);
           max-width: 340px;
           margin-bottom: 1.5rem;
         }
@@ -138,11 +163,21 @@ export default function Footer() {
         .footer-social-btn {
           width: 38px; height: 38px;
           border-radius: 50%;
-          border: 0.5px solid rgba(245,240,232,0.18);
+          border: 0.5px solid var(--footer-border-strong);
           display: flex; align-items: center; justify-content: center;
-          color: rgba(245,240,232,0.75);
+          color: var(--footer-text-primary);
           text-decoration: none;
           transition: background 0.25s, transform 0.25s, color 0.25s, border-color 0.25s;
+        }
+
+        .footer-social-btn--whatsapp svg {
+          animation: footerWhatsAppFloat 3s ease-in-out infinite;
+          transform-origin: center;
+        }
+
+        @keyframes footerWhatsAppFloat {
+          0%, 100% { transform: translateY(0) scale(1); }
+          50% { transform: translateY(-3px) scale(1.06); }
         }
 
         .footer-social-btn:hover {
@@ -157,14 +192,14 @@ export default function Footer() {
           font-size: 13px;
           letter-spacing: 0.08em;
           text-transform: uppercase;
-          color: var(--bg-primary, #F5F0E8);
+          color: var(--footer-text-primary);
           margin-bottom: 0.5rem;
           font-weight: 500;
         }
 
         .footer-newsletter-desc {
           font-size: 13px;
-          color: rgba(245,240,232,0.5);
+          color: var(--footer-text-tertiary);
           margin-bottom: 1.1rem;
           line-height: 1.6;
         }
@@ -177,10 +212,10 @@ export default function Footer() {
         .footer-input {
           flex: 1;
           padding: 12px 16px;
-          border: 0.5px solid rgba(245,240,232,0.2);
+          border: 0.5px solid var(--footer-input-border);
           border-radius: 8px;
-          background: rgba(245,240,232,0.05);
-          color: var(--bg-primary, #F5F0E8);
+          background: var(--footer-input-bg);
+          color: var(--footer-text-primary);
           font-size: 13.5px;
           outline: none;
           font-family: 'Inter', sans-serif;
@@ -188,7 +223,7 @@ export default function Footer() {
         }
 
         .footer-input::placeholder { color: rgba(245,240,232,0.35); }
-        .footer-input:focus { border-color: #C4895A; background: rgba(245,240,232,0.08); }
+        .footer-input:focus { border-color: #C4895A; background: var(--footer-input-bg-focus); }
 
         .footer-sub-btn {
           background: linear-gradient(135deg, #E8A0BF, #C4895A);
@@ -222,14 +257,14 @@ export default function Footer() {
           grid-template-columns: repeat(3, 1fr);
           gap: 2rem;
           padding: 3rem 0;
-          border-bottom: 0.5px solid rgba(245,240,232,0.12);
+          border-bottom: 0.5px solid var(--footer-border);
         }
 
         .footer-col-title {
           font-size: 12px;
           letter-spacing: 0.1em;
           text-transform: uppercase;
-          color: var(--bg-primary, #F5F0E8);
+          color: var(--footer-text-primary);
           margin-bottom: 1.1rem;
           font-weight: 500;
         }
@@ -242,7 +277,7 @@ export default function Footer() {
 
         .footer-link {
           font-size: 13.5px;
-          color: rgba(245,240,232,0.55);
+          color: var(--footer-text-secondary);
           text-decoration: none;
           transition: color 0.2s, padding-left 0.2s;
           width: fit-content;
@@ -259,7 +294,7 @@ export default function Footer() {
           align-items: flex-start;
           gap: 8px;
           font-size: 13px;
-          color: rgba(245,240,232,0.55);
+          color: var(--footer-text-secondary);
           margin-bottom: 0.7rem;
           line-height: 1.5;
         }
@@ -278,7 +313,7 @@ export default function Footer() {
 
         .footer-copyright {
           font-size: 12.5px;
-          color: rgba(245,240,232,0.4);
+          color: var(--footer-text-muted);
         }
 
         .footer-payment-icons {
@@ -289,10 +324,10 @@ export default function Footer() {
 
         .footer-payment-badge {
           padding: 5px 10px;
-          border: 0.5px solid rgba(245,240,232,0.15);
+          border: 0.5px solid var(--footer-payment-border);
           border-radius: 6px;
           font-size: 10.5px;
-          color: rgba(245,240,232,0.5);
+          color: var(--footer-text-tertiary);
           letter-spacing: 0.03em;
         }
 
@@ -336,7 +371,7 @@ export default function Footer() {
                     href={s.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="footer-social-btn"
+                      className={`footer-social-btn ${s.name === "WhatsApp" ? "footer-social-btn--whatsapp" : ""}`}
                     aria-label={s.name}
                   >
                     {s.icon}
@@ -410,7 +445,7 @@ export default function Footer() {
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
                 </svg>
-                <span>+234 800 000 0000</span>
+                <span>+234 9161802236</span>
               </div>
               <div className="footer-contact-item">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
