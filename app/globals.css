@@ -1,7 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@300;400;500&display=swap");
 @import "tailwindcss";
-
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@300;400;500&display=swap');
-
 :root {
   --bg-primary:     #F5F0E8;
   --bg-secondary:   #EDE8DE;
