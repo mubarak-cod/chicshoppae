@@ -276,6 +276,10 @@ export default function ShopHero() {
              margin-left: 50px;
           }
 
+          .shop-hero-badge { 
+          margin-left: 50px;
+          }
+
           .shop-hero-arrow {
             width: 38px;
             height: 38px;
