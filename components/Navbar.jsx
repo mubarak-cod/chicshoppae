@@ -83,10 +83,22 @@ export default function Navbar() {
         <div className="nav-inner">
 
           {/* Logo */}
-          <Link href="/" className="logo">
-            <Image height={30} width={70} src="/images/logo.jpg" alt="Chic Shoppae" priority />
-            <span className="logo-tag">Fashion &amp; Style</span>
-          </Link>
+         <Link
+  href="/"
+  className="group flex items-center gap-2.5 no-underline shrink-0"
+>
+  <Image
+    className="w-9 h-9 rounded-[10px] object-cover border border-neutral-900/10 dark:border-neutral-50/10 shadow-sm transition-transform duration-300 ease-out group-hover:scale-105"
+    height={36}
+    width={36}
+    src="/images/logo.jpg"
+    alt="Chic Shoppae"
+    priority
+  />
+  <span className="text-[10.5px] tracking-[0.18em] uppercase text-neutral-500 dark:text-neutral-400 font-normal transition-colors duration-200 group-hover:text-neutral-900 dark:group-hover:text-neutral-100">
+    Fashion &amp; Style
+  </span>
+</Link>
 
           {/* Desktop Links */}
           <ul className="nav-links">
