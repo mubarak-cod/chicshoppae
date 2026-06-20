@@ -267,17 +267,17 @@ export default function ShopHero() {
           .shop-hero-title {
             font-size: clamp(28px, 8vw, 38px);
             max-width: 9ch;
-            margin-left: 50px;
+            margin-left: 40px;
           }
 
           .shop-hero-description {
             max-width: 320px;
             margin-bottom: 1.1rem;
-             margin-left: 50px;
+             margin-left: 40px;
           }
 
           .shop-hero-badge { 
-          margin-left: 50px;
+          margin-left: 40px;
           }
 
           .shop-hero-arrow {
