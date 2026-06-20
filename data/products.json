@@ -1,0 +1,68 @@
+[
+  {
+    "id": "aurora-blazer-set",
+    "title": "Aurora Blazer Set",
+    "description": "Tailored two-piece set with a soft structured finish for polished everyday wear.",
+    "price": 28500,
+    "originalPrice": 36000,
+    "discount": 21,
+    "colors": ["Black", "Sand", "Wine"],
+    "sizes": ["S", "M", "L"],
+    "images": ["/images/one.jpg", "/images/two.jpg", "/images/three.jpg", "/images/four.jpg"]
+  },
+  {
+    "id": "carmen-wrap-dress",
+    "title": "Carmen Wrap Dress",
+    "description": "Elegant wrap silhouette with a flattering waist tie and fluid movement.",
+    "price": 19800,
+    "originalPrice": 24500,
+    "discount": 19,
+    "colors": ["Red", "Black"],
+    "sizes": ["M", "L"],
+    "images": ["/images/five.jpg", "/images/six.jpg"]
+  },
+  {
+    "id": "noir-bag",
+    "title": "Noir Chain Bag",
+    "description": "Compact statement bag with a premium chain detail and structured body.",
+    "price": 17500,
+    "originalPrice": 21000,
+    "discount": 17,
+    "colors": ["Black", "Mocha"],
+    "sizes": [],
+    "images": ["/images/seven.jpg", "/images/eight.jpg", "/images/three.jpg", "/images/two.jpg"]
+  },
+  {
+    "id": "soft-luxe-top",
+    "title": "Soft Luxe Top",
+    "description": "Minimal, silky top designed to layer beautifully with denim and skirts.",
+    "price": 12400,
+    "originalPrice": 15000,
+    "discount": 17,
+    "colors": ["Ivory", "Olive", "Black"],
+    "sizes": ["S", "M", "L", "XL"],
+    "images": ["/images/two.jpg", "/images/three.jpg"]
+  },
+  {
+    "id": "midnight-trench",
+    "title": "Midnight Trench",
+    "description": "Lightweight outerwear for evening layering and clean silhouettes.",
+    "price": 32000,
+    "originalPrice": 39500,
+    "discount": 19,
+    "colors": ["Black", "Stone"],
+    "sizes": ["S", "M", "L"],
+    "images": ["/images/four.jpg", "/images/five.jpg", "/images/six.jpg", "/images/seven.jpg"]
+  },
+  {
+    "id": "studio-satin-skirt",
+    "title": "Studio Satin Skirt",
+    "description": "High-shine satin skirt with a graceful drape and elevated finish.",
+    "price": 14200,
+    "originalPrice": 17500,
+    "discount": 19,
+    "colors": ["Emerald", "Black", "Wine"],
+    "sizes": ["S", "M", "L"],
+    "images": ["/images/six.jpg", "/images/eight.jpg"]
+  }
+]
