@@ -6,8 +6,7 @@
     "price": 28500,
     "originalPrice": 36000,
     "discount": 21,
-    "colors": ["Black", "Sand", "Wine"],
-    "sizes": ["S", "M", "L"],
+   
     "images": ["/images/one.jpg", "/images/two.jpg", "/images/three.jpg", "/images/four.jpg"]
   },
   {
@@ -17,8 +16,7 @@
     "price": 19800,
     "originalPrice": 24500,
     "discount": 19,
-    "colors": ["Red", "Black"],
-    "sizes": ["M", "L"],
+   
     "images": ["/images/five.jpg", "/images/six.jpg"]
   },
   {
@@ -28,8 +26,7 @@
     "price": 17500,
     "originalPrice": 21000,
     "discount": 17,
-    "colors": ["Black", "Mocha"],
-    "sizes": [],
+  
     "images": ["/images/seven.jpg", "/images/eight.jpg", "/images/three.jpg", "/images/two.jpg"]
   },
   {
@@ -39,8 +36,7 @@
     "price": 12400,
     "originalPrice": 15000,
     "discount": 17,
-    "colors": ["Ivory", "Olive", "Black"],
-    "sizes": ["S", "M", "L", "XL"],
+   
     "images": ["/images/two.jpg", "/images/three.jpg"]
   },
   {
@@ -50,8 +46,7 @@
     "price": 32000,
     "originalPrice": 39500,
     "discount": 19,
-    "colors": ["Black", "Stone"],
-    "sizes": ["S", "M", "L"],
+   
     "images": ["/images/four.jpg", "/images/five.jpg", "/images/six.jpg", "/images/seven.jpg"]
   },
   {
@@ -61,8 +56,7 @@
     "price": 14200,
     "originalPrice": 17500,
     "discount": 19,
-    "colors": ["Emerald", "Black", "Wine"],
-    "sizes": ["S", "M", "L"],
+  
     "images": ["/images/six.jpg", "/images/eight.jpg"]
   }
 ]

@@ -346,7 +346,7 @@ export default function ProductCard({ product }) {
         </div>
 
         <div className="product-colors">
-          <span className="product-meta-label">Available colors</span>
+          <span className="product-meta-label">Available in </span>
           {product.colors?.map((color) => (
             <button
               key={color}
