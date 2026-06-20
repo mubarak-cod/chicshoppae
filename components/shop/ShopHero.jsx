@@ -285,9 +285,9 @@ export default function ShopHero() {
             height: 38px;
           }
 
-        //   .shop-hero-cta { 
-        //   margin-left: 35px;
-        //   }
+          .shop-hero-cta { 
+          margin-left: 35px;
+          }
 
           .shop-hero-arrow--left { left: 10px; }
           .shop-hero-arrow--right { right: 10px; }
