@@ -283,7 +283,7 @@ export default function ShopHero() {
           .shop-hero-arrow {
             width: 38px;
             height: 38px;
-            //  margin-left: 35px;
+           
           }
 
           .shop-hero-cta { 
