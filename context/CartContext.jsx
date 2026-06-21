@@ -5,6 +5,44 @@ import { createContext, useContext, useEffect, useMemo, useState } from "react";
 const CartContext = createContext();
 const STORAGE_KEY = "chic-shoppae-cart";
 
+function getColorKey(color) {
+  if (!color) return "";
+  if (typeof color === "string") return color.toLowerCase();
+  return String(color.name || color.hex || "").toLowerCase();
+}
+
+function normalizeProductColor(product, color) {
+  if (!product?.colors?.length) return null;
+
+  if (color && typeof color === "object") {
+    const match = product.colors.find((option) => getColorKey(option) === getColorKey(color));
+    return match || color;
+  }
+
+  if (typeof color === "string") {
+    const match = product.colors.find(
+      (option) =>
+        getColorKey(option) === getColorKey(color) ||
+        String(option.hex || "").toLowerCase() === String(color).toLowerCase()
+    );
+    return match || product.colors[0];
+  }
+
+  return product.colors[0];
+}
+
+function isSameVariant(item, id, selectedColor, selectedSize) {
+  return (
+    item.id === id &&
+    getColorKey(item.selectedColor) === getColorKey(selectedColor) &&
+    (item.selectedSize || "") === (selectedSize || "")
+  );
+}
+
+function normalizeColor(product, color) {
+  return normalizeProductColor(product, color);
+}
+
 export function CartProvider({ children }) {
   const [cartItems, setCartItems] = useState([]);
   const [hydrated, setHydrated] = useState(false);
@@ -30,26 +68,22 @@ export function CartProvider({ children }) {
   }, [cartItems, hydrated]);
 
   const addToCart = (product, options = {}) => {
+    const selectedColor = normalizeColor(product, options.selectedColor);
     const payload = {
       ...product,
-      selectedColor: options.selectedColor || product.colors?.[0] || null,
+      selectedColor,
       selectedSize: options.selectedSize || product.sizes?.[0] || null,
       quantity: options.quantity || 1,
     };
 
     setCartItems((prev) => {
       const exists = prev.find(
-        (item) =>
-          item.id === payload.id &&
-          item.selectedColor === payload.selectedColor &&
-          item.selectedSize === payload.selectedSize
+        (item) => isSameVariant(item, payload.id, payload.selectedColor, payload.selectedSize)
       );
 
       if (exists) {
         return prev.map((item) =>
-          item.id === payload.id &&
-          item.selectedColor === payload.selectedColor &&
-          item.selectedSize === payload.selectedSize
+          isSameVariant(item, payload.id, payload.selectedColor, payload.selectedSize)
             ? { ...item, quantity: item.quantity + payload.quantity }
             : item
         );
@@ -62,12 +96,7 @@ export function CartProvider({ children }) {
   const removeFromCart = (id, selectedColor, selectedSize) => {
     setCartItems((prev) =>
       prev.filter(
-        (item) =>
-          !(
-            item.id === id &&
-            item.selectedColor === selectedColor &&
-            item.selectedSize === selectedSize
-          )
+        (item) => !isSameVariant(item, id, selectedColor, selectedSize)
       )
     );
   };
@@ -80,13 +109,40 @@ export function CartProvider({ children }) {
 
     setCartItems((prev) =>
       prev.map((item) =>
-        item.id === id &&
-        item.selectedColor === selectedColor &&
-        item.selectedSize === selectedSize
+        isSameVariant(item, id, selectedColor, selectedSize)
           ? { ...item, quantity }
           : item
       )
     );
+  };
+
+  const updateCartItemColor = (id, selectedSize, currentColor, nextColor) => {
+    setCartItems((prev) => {
+      const currentIndex = prev.findIndex((item) => isSameVariant(item, id, currentColor, selectedSize));
+      if (currentIndex === -1) return prev;
+
+      const sourceProduct = prev[currentIndex];
+      const normalizedNextColor = normalizeProductColor(sourceProduct, nextColor) || nextColor;
+      const targetIndex = prev.findIndex((item) => isSameVariant(item, id, normalizedNextColor, selectedSize));
+
+      const nextItems = [...prev];
+
+      if (targetIndex !== -1 && targetIndex !== currentIndex) {
+        nextItems[targetIndex] = {
+          ...nextItems[targetIndex],
+          quantity: nextItems[targetIndex].quantity + nextItems[currentIndex].quantity,
+        };
+        nextItems.splice(currentIndex, 1);
+        return nextItems;
+      }
+
+      nextItems[currentIndex] = {
+        ...nextItems[currentIndex],
+        selectedColor: normalizedNextColor,
+      };
+
+      return nextItems;
+    });
   };
 
   const clearCart = () => setCartItems([]);
@@ -116,6 +172,7 @@ export function CartProvider({ children }) {
         addToCart,
         removeFromCart,
         updateQuantity,
+        updateCartItemColor,
         clearCart,
         cartCount,
         ...totals,

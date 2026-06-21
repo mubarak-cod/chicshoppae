@@ -1,10 +1,54 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
+import { useMemo } from "react";
 import { useCart } from "@/context/CartContext";
 
+function getColorKey(color) {
+  if (!color) return "";
+  if (typeof color === "string") return color.toLowerCase();
+  return String(color.name || color.hex || "").toLowerCase();
+}
+
+function getColorMeta(color) {
+  if (!color) return { name: "", hex: "#000000" };
+  if (typeof color === "string") {
+    return { name: color, hex: color.startsWith("#") ? color : "#000000" };
+  }
+  return {
+    name: color.name || color.hex || "",
+    hex: color.hex || "#000000",
+  };
+}
+
+function pickPreviewImage(item) {
+  const colors = item.colors || [];
+  const images = (item.images || []).filter(Boolean);
+
+  if (!images.length) return "/images/one.jpg";
+
+  const colorIndex = colors.findIndex((color) => getColorKey(color) === getColorKey(item.selectedColor));
+  const safeIndex = colorIndex < 0 ? 0 : colorIndex;
+  return images[safeIndex % images.length] || images[0];
+}
+
 export default function CartPage() {
-  const { cartItems, subtotal, shipping, discount, total, updateQuantity, removeFromCart } = useCart();
+  const {
+    cartItems,
+    subtotal,
+    shipping,
+    discount,
+    total,
+    updateQuantity,
+    removeFromCart,
+    updateCartItemColor,
+  } = useCart();
+
+  const itemCount = useMemo(
+    () => cartItems.reduce((count, item) => count + item.quantity, 0),
+    [cartItems]
+  );
 
   return (
     <section className="cart-page">
@@ -47,7 +91,13 @@ export default function CartPage() {
 
         .cart-subtitle {
           color: var(--text-secondary);
-          margin-bottom: 1.25rem;
+          margin-bottom: 1.1rem;
+        }
+
+        .cart-count {
+          color: var(--text-muted);
+          margin-bottom: 1rem;
+          font-size: 0.92rem;
         }
 
         .cart-item {
@@ -77,10 +127,14 @@ export default function CartPage() {
           margin-bottom: 0.35rem;
         }
 
-        .cart-item p,
         .cart-meta {
           color: var(--text-secondary);
           line-height: 1.6;
+        }
+
+        .cart-price {
+          font-weight: 700;
+          color: var(--text-primary);
         }
 
         .cart-actions {
@@ -98,6 +152,7 @@ export default function CartPage() {
           border: 1px solid var(--border);
           background: var(--bg-primary);
           color: var(--text-primary);
+          transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
         }
 
         .qty-button {
@@ -105,8 +160,47 @@ export default function CartPage() {
           height: 34px;
         }
 
+        .qty-button:hover,
+        .remove-button:hover,
+        .summary-button:hover {
+          transform: translateY(-1px);
+          border-color: var(--border-hover);
+        }
+
         .remove-button {
           padding: 8px 12px;
+        }
+
+        .shade-list {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 8px;
+          margin-top: 0.65rem;
+        }
+
+        .shade-button {
+          display: inline-flex;
+          align-items: center;
+          gap: 7px;
+          border: 1px solid var(--border);
+          background: var(--bg-primary);
+          color: var(--text-primary);
+          border-radius: 999px;
+          padding: 6px 9px 6px 6px;
+          font-size: 0.82rem;
+          cursor: pointer;
+        }
+
+        .shade-button[aria-pressed="true"] {
+          border-color: var(--text-primary);
+          box-shadow: 0 0 0 1px var(--text-primary) inset;
+        }
+
+        .shade-swatch {
+          width: 16px;
+          height: 16px;
+          border-radius: 999px;
+          border: 1px solid rgba(0,0,0,0.08);
         }
 
         .summary-line {
@@ -147,6 +241,11 @@ export default function CartPage() {
           color: var(--text-secondary);
         }
 
+        .cart-item-total {
+          text-align: right;
+          white-space: nowrap;
+        }
+
         @media (max-width: 960px) {
           .cart-layout { grid-template-columns: 1fr; }
           .cart-summary { position: static; }
@@ -154,7 +253,8 @@ export default function CartPage() {
 
         @media (max-width: 640px) {
           .cart-item { grid-template-columns: 1fr; }
-          .cart-image { width: 100%; max-width: 220px; }
+          .cart-image { width: 100%; max-width: 240px; }
+          .cart-item-total { text-align: left; }
         }
       `}</style>
 
@@ -162,6 +262,7 @@ export default function CartPage() {
         <div className="cart-panel">
           <h1 className="cart-title">Your Cart</h1>
           <p className="cart-subtitle">Review your selections before proceeding to checkout.</p>
+          <div className="cart-count">{itemCount} item{itemCount === 1 ? "" : "s"} in cart</div>
 
           {cartItems.length === 0 ? (
             <div className="cart-empty">
@@ -171,28 +272,63 @@ export default function CartPage() {
               </Link>
             </div>
           ) : (
-            cartItems.map((item) => (
-              <article key={`${item.id}-${item.selectedColor}-${item.selectedSize}`} className="cart-item">
-                <div className="cart-image">
-                  <img src={item.images?.[0]} alt={item.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                </div>
-                <div>
-                  <h3>{item.title}</h3>
-                  <div className="cart-meta">Color: {item.selectedColor || "N/A"}</div>
-                  <div className="cart-meta">Size: {item.selectedSize || "One size"}</div>
-                  <div className="cart-meta">₦{item.price.toLocaleString()}</div>
-                  <div className="cart-actions">
-                    <button className="qty-button" type="button" onClick={() => updateQuantity(item.id, item.quantity - 1, item.selectedColor, item.selectedSize)}>-</button>
-                    <span>{item.quantity}</span>
-                    <button className="qty-button" type="button" onClick={() => updateQuantity(item.id, item.quantity + 1, item.selectedColor, item.selectedSize)}>+</button>
-                    <button className="remove-button" type="button" onClick={() => removeFromCart(item.id, item.selectedColor, item.selectedSize)}>Remove</button>
+            cartItems.map((item) => {
+              const previewImage = pickPreviewImage(item);
+              return (
+                <article key={`${item.id}-${getColorKey(item.selectedColor)}-${item.selectedSize || ""}`} className="cart-item">
+                  <div className="cart-image">
+                    <Image
+                      src={previewImage}
+                      alt={item.name || item.title || "Cart item"}
+                      fill
+                      sizes="(max-width: 640px) 80vw, 108px"
+                      style={{ objectFit: "cover" }}
+                    />
                   </div>
-                </div>
-                <div className="cart-meta" style={{ textAlign: "right" }}>
-                  ₦{(item.price * item.quantity).toLocaleString()}
-                </div>
-              </article>
-            ))
+
+                  <div>
+                    <h3>{item.name || item.title}</h3>
+                    <div className="cart-meta">Category: {item.category}</div>
+                    <div className="cart-meta">Shade: {getColorMeta(item.selectedColor).name || "N/A"}</div>
+                    <div className="cart-meta">Size: {item.selectedSize || "N/A"}</div>
+                    <div className="cart-price">₦{Number(item.price).toLocaleString()}</div>
+
+                    {!!item.colors?.length && (
+                      <div className="shade-list" aria-label={`Change shade for ${item.name || item.title}`}>
+                        {item.colors.slice(0, 4).map((color) => {
+                          const meta = getColorMeta(color);
+                          const active = getColorKey(item.selectedColor) === getColorKey(color);
+                          return (
+                            <button
+                              key={meta.name || meta.hex}
+                              type="button"
+                              className="shade-button"
+                              aria-pressed={active}
+                              title={meta.name}
+                              onClick={() => updateCartItemColor(item.id, item.selectedSize, item.selectedColor, color)}
+                            >
+                              <span className="shade-swatch" style={{ background: meta.hex }} />
+                              <span>{meta.name}</span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    )}
+
+                    <div className="cart-actions">
+                      <button className="qty-button" type="button" onClick={() => updateQuantity(item.id, item.quantity - 1, item.selectedColor, item.selectedSize)}>-</button>
+                      <span>{item.quantity}</span>
+                      <button className="qty-button" type="button" onClick={() => updateQuantity(item.id, item.quantity + 1, item.selectedColor, item.selectedSize)}>+</button>
+                      <button className="remove-button" type="button" onClick={() => removeFromCart(item.id, item.selectedColor, item.selectedSize)}>Remove</button>
+                    </div>
+                  </div>
+
+                  <div className="cart-item-total cart-meta">
+                    ₦{(Number(item.price) * item.quantity).toLocaleString()}
+                  </div>
+                </article>
+              );
+            })
           )}
         </div>
 

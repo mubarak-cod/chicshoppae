@@ -2,6 +2,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { CartProvider } from "@/context/CartContext";
 import Navbar from "@/components/Navbar";
+import GlobalToaster from "@/components/GlobalToaster";
 
 
 const geistSans = Geist({
@@ -27,6 +28,7 @@ export default function RootLayout({ children }) {
       <body className="min-h-full flex flex-col">
                 <CartProvider>
           <Navbar />
+          <GlobalToaster />
           <main>{children}</main>
         </CartProvider>
 

@@ -145,20 +145,28 @@ export default function HeroSection() {
           gap: 1.4rem;
           max-width: 520px;
           z-index: 2;
-          transition: opacity 0.55s cubic-bezier(0.22,1,0.36,1), transform 0.55s cubic-bezier(0.22,1,0.36,1);
+          opacity: 0;
+          transform: translateY(12px);
+          transition: opacity 0.7s cubic-bezier(0.22,1,0.36,1), transform 0.7s cubic-bezier(0.22,1,0.36,1);
           will-change: opacity, transform;
         }
 
         .hero-image-side {
-          transition: opacity 0.55s cubic-bezier(0.22,1,0.36,1), transform 0.55s cubic-bezier(0.22,1,0.36,1);
-          transition-delay: 90ms;
+          opacity: 0;
+          transform: translateY(14px);
+          transition: opacity 0.82s cubic-bezier(0.22,1,0.36,1), transform 0.82s cubic-bezier(0.22,1,0.36,1);
+          transition-delay: 80ms;
           will-change: opacity, transform;
         }
 
         .hero-slide--content-initial .hero-text,
-        .hero-slide--content-initial .hero-image-side {
-          opacity: 0;
-          transform: translateY(18px);
+        .hero-slide--content-initial .hero-image-side,
+        .hero-slide--enter-next .hero-text,
+        .hero-slide--enter-prev .hero-text,
+        .hero-slide--enter-next .hero-image-side,
+        .hero-slide--enter-prev .hero-image-side {
+          opacity: 1;
+          transform: translateY(0);
         }
 
         .hero-eyebrow {
@@ -399,6 +407,8 @@ export default function HeroSection() {
             gap: 1.1rem;
             text-align: center;
             align-items: center;
+            opacity: 1;
+            transform: none;
           }
 
           .hero-headline {
@@ -421,6 +431,8 @@ export default function HeroSection() {
             padding: 1rem 1.5rem 1.5rem;
             justify-content: center;
             align-items: center;
+            opacity: 1;
+            transform: none;
           }
 
           .hero-image-frame {

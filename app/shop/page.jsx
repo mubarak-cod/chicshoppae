@@ -4,7 +4,7 @@ import PromoSection from "@/components/shop/PromoSection";
 import products  from "@/data/products.json";
 export default function ShopPage() {
   return (
-    <main className="min-h-screen bg-white">
+    <main className="min-h-screen bg-[var(--bg-primary)]">
       <ShopHero />
 
       <PromoSection />

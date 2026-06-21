@@ -111,6 +111,8 @@ export default function Footer() {
           --footer-input-bg-focus: rgba(240,235,227,0.08);
           --footer-input-border: rgba(240,235,227,0.2);
           --footer-payment-border: rgba(240,235,227,0.15);
+          background: #111010 !important;
+          color: #F0EBE3 !important;
         }
 
         /* ── TOP GRADIENT LINE ── */
@@ -178,6 +180,61 @@ export default function Footer() {
         @keyframes footerWhatsAppFloat {
           0%, 100% { transform: translateY(0) scale(1); }
           50% { transform: translateY(-3px) scale(1.06); }
+        }
+
+        .floating-whatsapp {
+          position: fixed;
+          right: 1.25rem;
+          bottom: 1.25rem;
+          width: 56px;
+          height: 56px;
+          border-radius: 50%;
+          background: linear-gradient(135deg, #25D366, #128C7E);
+          color: #fff;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 14px 32px rgba(18, 140, 126, 0.28);
+          z-index: 120;
+          text-decoration: none;
+          animation: floatingWhatsAppBob 3.2s ease-in-out infinite;
+          transition: transform 0.22s ease, box-shadow 0.22s ease;
+        }
+
+        .floating-whatsapp::before,
+        .floating-whatsapp::after {
+          content: '';
+          position: absolute;
+          inset: -8px;
+          border-radius: 50%;
+          border: 1px solid rgba(37, 211, 102, 0.25);
+          animation: floatingWhatsAppPulse 2.4s ease-out infinite;
+        }
+
+        .floating-whatsapp::after {
+          inset: -2px;
+          animation-delay: 1.2s;
+        }
+
+        .floating-whatsapp:hover {
+          transform: translateY(-2px) scale(1.04);
+          box-shadow: 0 18px 36px rgba(18, 140, 126, 0.34);
+        }
+
+        .floating-whatsapp svg {
+          position: relative;
+          z-index: 1;
+        }
+
+        @keyframes floatingWhatsAppBob {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-4px); }
+        }
+
+        @keyframes floatingWhatsAppPulse {
+          0% { transform: scale(0.88); opacity: 0.7; }
+          70% { transform: scale(1.12); opacity: 0; }
+          100% { transform: scale(1.12); opacity: 0; }
         }
 
         .footer-social-btn:hover {
@@ -471,6 +528,18 @@ export default function Footer() {
 
         </div>
       </footer>
+
+      <a
+        className="floating-whatsapp"
+        href="https://wa.me/2349161802236"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Chat with us on WhatsApp"
+      >
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M12 2C6.48 2 2 6.48 2 12c0 1.85.5 3.58 1.36 5.07L2 22l5.07-1.32A9.94 9.94 0 0 0 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2zm0 18c-1.65 0-3.18-.46-4.5-1.25l-.32-.19-3.34.87.9-3.26-.21-.34A7.94 7.94 0 0 1 4 12c0-4.41 3.59-8 8-8s8 3.59 8 8-3.59 8-8 8zm4.4-5.8c-.24-.12-1.43-.71-1.65-.79-.22-.08-.38-.12-.55.12-.16.24-.63.79-.77.95-.14.16-.28.18-.52.06-.24-.12-1.01-.37-1.92-1.18-.71-.63-1.19-1.42-1.33-1.66-.14-.24-.01-.37.11-.49.11-.11.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.55-1.32-.75-1.81-.2-.48-.4-.42-.55-.42-.14 0-.3-.02-.46-.02-.16 0-.42.06-.64.3-.22.24-.84.82-.84 2s.86 2.32.98 2.48c.12.16 1.7 2.6 4.12 3.64.58.25 1.03.4 1.38.51.58.18 1.11.16 1.53.1.47-.07 1.43-.58 1.63-1.15.2-.57.2-1.05.14-1.15-.06-.1-.22-.16-.46-.28z"/>
+        </svg>
+      </a>
     </>
   );
 }

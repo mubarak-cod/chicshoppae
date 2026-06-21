@@ -12,7 +12,7 @@ export default function Navbar() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [scrolled, setScrolled] = useState(false);
-  const { cartItems } = useCart();
+  const { cartCount } = useCart();
   const pathname = usePathname();
   const router = useRouter();
 
@@ -42,8 +42,6 @@ export default function Navbar() {
     return () => window.removeEventListener("keydown", handleEscape);
   }, [mobileOpen]);
 
-  const cartCount =
-    cartItems?.reduce((acc, item) => acc + item.quantity, 0) || 0;
   const isActiveRoute = (route) => pathname === route;
   const isShop = isActiveRoute("/shop");
 
