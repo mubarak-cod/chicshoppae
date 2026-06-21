@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useCart } from "@/context/CartContext";
 
 const tabs = ["New Arrivals", "Best Sellers", "Staff Picks"];
@@ -51,20 +52,41 @@ function useInView(threshold = 0.15) {
 
 function ProductCard({ product, index }) {
   const [wished, setWished] = useState(false);
-  const [added, setAdded] = useState(false);
+  const [justAdded, setJustAdded] = useState(false);
   const [selectedSize, setSelectedSize] = useState("");
   const [imgIndex, setImgIndex] = useState(0);
   const [ref, inView] = useInView();
-  const { addToCart } = useCart();
+  const { addToCart, cartItems } = useCart();
+  const router = useRouter();
   const isSoldOut = product.badge === "Sold Out";
+
+  // True once this product is actually sitting in the cart — persists
+  // across renders/navigation, not just a few seconds after clicking.
+  const inCart = cartItems?.some((item) => item.id === product.id);
 
   const handleAdd = (e) => {
     e.preventDefault();
     if (isSoldOut) return;
+
+    if (inCart) {
+      // Already in cart — button now acts as "Go to Cart"
+      router.push("/cart");
+      return;
+    }
+
     addToCart({ ...product, selectedSize });
-    setAdded(true);
-    setTimeout(() => setAdded(false), 1800);
+    setJustAdded(true);
+    setTimeout(() => setJustAdded(false), 1200); // only drives the brief "Added ✓" pulse
   };
+
+  // Decide label/state: brief "Added" flash → settles into permanent "Go to Cart"
+  const buttonState = isSoldOut
+    ? "soldout"
+    : justAdded
+    ? "justAdded"
+    : inCart
+    ? "inCart"
+    : "default";
 
   return (
     <div
@@ -162,6 +184,30 @@ function ProductCard({ product, index }) {
           font-family: 'Inter', sans-serif;
         }
 
+        /* In-cart indicator pill on the image itself */
+        .fp-incart-tag {
+          position: absolute;
+          top: 10px; left: 10px;
+          padding: 4px 10px;
+          border-radius: 999px;
+          font-size: 9.5px;
+          font-weight: 600;
+          letter-spacing: 0.06em;
+          z-index: 3;
+          font-family: 'Inter', sans-serif;
+          background: linear-gradient(135deg, #E8A0BF, #C4895A);
+          color: #fff;
+          display: flex;
+          align-items: center;
+          gap: 4px;
+          animation: tagPop 0.4s cubic-bezier(0.34,1.56,0.64,1);
+        }
+
+        @keyframes tagPop {
+          from { transform: scale(0.7); opacity: 0; }
+          to   { transform: scale(1); opacity: 1; }
+        }
+
         /* ── WISHLIST ── */
         .fp-wish {
           position: absolute;
@@ -230,6 +276,7 @@ function ProductCard({ product, index }) {
           border-color: #1A1714;
         }
 
+        /* ── ADD BUTTON — 4 visual states ── */
         .fp-add-btn {
           width: 100%;
           padding: 10px;
@@ -241,17 +288,63 @@ function ProductCard({ product, index }) {
           font-family: 'Inter', sans-serif;
           cursor: pointer;
           border: none;
-          transition: background 0.2s, transform 0.2s;
+          position: relative;
+          overflow: hidden;
+          transition: transform 0.25s cubic-bezier(0.22,1,0.36,1), box-shadow 0.25s, background 0.3s;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 6px;
         }
+
+        .fp-add-btn span {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          animation: btnTextIn 0.3s cubic-bezier(0.22,1,0.36,1);
+        }
+
+        @keyframes btnTextIn {
+          from { opacity: 0; transform: translateY(4px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Default — not yet added */
         .fp-add-btn.available {
           background: #1A1714;
           color: #F5F0E8;
         }
-        .fp-add-btn.available:hover { background: #2D2925; transform: scale(1.01); }
-        .fp-add-btn.added-state {
+        .fp-add-btn.available:hover {
+          background: #2D2925;
+          transform: translateY(-1px);
+          box-shadow: 0 8px 20px rgba(0,0,0,0.18);
+        }
+
+        /* Brief "Added ✓" flash right after clicking */
+        .fp-add-btn.just-added {
           background: linear-gradient(135deg, #E8A0BF, #C4895A);
           color: #fff;
+          box-shadow: 0 8px 22px rgba(196,137,90,0.35);
         }
+
+        /* Permanent state once item is confirmed in cart — "Go to Cart" */
+        .fp-add-btn.in-cart {
+          background: var(--bg-secondary, #EDE8DE);
+          color: var(--text-primary, #1A1714);
+          border: 1px solid rgba(196,137,90,0.4);
+        }
+        .fp-add-btn.in-cart:hover {
+          background: var(--bg-card, #FDFAF5);
+          transform: translateY(-1px);
+          box-shadow: 0 8px 20px rgba(196,137,90,0.18);
+        }
+        .fp-add-btn.in-cart svg {
+          transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+        }
+        .fp-add-btn.in-cart:hover svg {
+          transform: translateX(3px);
+        }
+
         .fp-add-btn.soldout {
           background: #EDE8DE;
           color: #9E9890;
@@ -347,18 +440,22 @@ function ProductCard({ product, index }) {
             </div>
           )}
 
-          {/* Badge */}
-          {product.badge && (
+          {/* Badge — replaced by "In Cart" tag once confirmed in cart */}
+          {buttonState === "inCart" || buttonState === "justAdded" ? (
+            <span className="fp-incart-tag">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+              In Cart
+            </span>
+          ) : product.badge ? (
             <span
               className="fp-badge"
-              style={{
-                background: product.badgeColor || "#E8A0BF",
-                color: "#fff",
-              }}
+              style={{ background: product.badgeColor || "#E8A0BF", color: "#fff" }}
             >
               {product.badge}
             </span>
-          )}
+          ) : null}
 
           {/* Wishlist */}
           <button
@@ -374,10 +471,10 @@ function ProductCard({ product, index }) {
             </svg>
           </button>
 
-          {/* Quick Add Panel */}
+          {/* Quick Add / Go to Cart Panel */}
           {!isSoldOut && (
             <div className="fp-quick-add">
-              {product.sizes?.length > 0 && (
+              {buttonState === "default" && product.sizes?.length > 0 && (
                 <div className="fp-sizes">
                   {product.sizes.map((s) => (
                     <button
@@ -390,18 +487,40 @@ function ProductCard({ product, index }) {
                   ))}
                 </div>
               )}
+
               <button
-                className={`fp-add-btn ${added ? "added-state" : "available"}`}
+                className={`fp-add-btn ${
+                  buttonState === "justAdded" ? "just-added" :
+                  buttonState === "inCart" ? "in-cart" :
+                  "available"
+                }`}
                 onClick={handleAdd}
               >
-                {added ? "Added to cart ✓" : "Quick Add"}
+                {buttonState === "justAdded" ? (
+                  <span>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                    Added ✓
+                  </span>
+                ) : buttonState === "inCart" ? (
+                  <span>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+                      <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+                    </svg>
+                    Go to Cart
+                  </span>
+                ) : (
+                  <span>Quick Add</span>
+                )}
               </button>
             </div>
           )}
 
           {isSoldOut && (
             <div className="fp-quick-add">
-              <button className="fp-add-btn soldout">Sold Out</button>
+              <button className="fp-add-btn soldout" disabled>Sold Out</button>
             </div>
           )}
         </div>
