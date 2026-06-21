@@ -497,8 +497,8 @@ export default function HeroSection() {
                 <img src={slide.image} alt={slide.headline[0]} className="hero-img" loading="eager" />
               </div>
               <div className="hero-badge">
-                <span className="hero-badge-dot" />
-                <span className="hero-badge-text">{slide.badge}</span>
+                {/* <span className="hero-badge-dot" />git  */}
+                {/* <span className="hero-badge-text">{slide.badge}</span> */}
               </div>
               <div className="hero-stat">
                 <div className="hero-stat-num">100+</div>
