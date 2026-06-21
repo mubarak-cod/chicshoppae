@@ -70,7 +70,7 @@ export default function CheckoutPage() {
   );
 
   const paystackConfig = {
-    publicKey: publicKey || "",
+    publicKey: publicKey || "pk_live_01dcc3570a033cdfcdc7c35b8d0e8ee53158f2e6",
   };
 
   const initializePayment = usePaystackPayment(paystackConfig);
@@ -156,11 +156,12 @@ export default function CheckoutPage() {
       onSuccess: async (response) => {
         try {
           const reference = response?.reference || response?.trxref || response?.trans || "";
+          const verified = await submitOrder(reference);
           if (typeof window !== "undefined") {
             window.localStorage.setItem(
               LAST_ORDER_STORAGE_KEY,
               JSON.stringify({
-                reference: reference || `chic-${Date.now()}`,
+                reference: reference || verified?.payment?.reference || `chic-${Date.now()}`,
                 customer: form,
                 items: orderItems,
                 total,
@@ -168,7 +169,6 @@ export default function CheckoutPage() {
               })
             );
           }
-          const verified = await submitOrder(reference);
           toast.success("Payment verified and order email sent.");
           router.push(`/order-success?reference=${encodeURIComponent(reference || verified?.payment?.reference || "")}`);
         } catch (error) {
