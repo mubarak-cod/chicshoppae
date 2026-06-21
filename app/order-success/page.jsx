@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 
@@ -46,6 +46,18 @@ function buildWhatsAppMessage(order, reference) {
 }
 
 export default function OrderSuccessPage() {
+  return (
+    <Suspense fallback={<OrderSuccessFallback />}>
+      <OrderSuccessContent />
+    </Suspense>
+  );
+}
+
+function OrderSuccessFallback() {
+  return <main className="order-success-page" />;
+}
+
+function OrderSuccessContent() {
   const searchParams = useSearchParams();
   const reference = searchParams.get("reference") || "N/A";
   const [order, setOrder] = useState(null);
