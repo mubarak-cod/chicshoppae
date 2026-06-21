@@ -45,6 +45,30 @@ function formatCurrency(value) {
   return Number(value || 0).toLocaleString();
 }
 
+function getWhatsappNumber() {
+  return String(process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "").replace(/\D/g, "");
+}
+
+function buildWhatsAppLink(items, customerMessage, total) {
+  const whatsappNumber = getWhatsappNumber();
+  if (!whatsappNumber) return "#";
+
+  const orderLines = items.map(
+    (item) =>
+      `- ${item.name || "Item"} | Color: ${item.color} | Size: ${item.size} | Qty: ${item.quantity} | Subtotal: ₦${formatCurrency(item.subtotal)}`
+  );
+
+  const messageLines = [
+    "Hello ChicShoppae, I need help with my order.",
+    "Order summary:",
+    ...orderLines,
+    `Total amount: ₦${formatCurrency(total)}`,
+    customerMessage ? `Customer message: ${customerMessage}` : null,
+  ].filter(Boolean);
+
+  return `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(messageLines.join("\n"))}`;
+}
+
 export default function CheckoutPage() {
   const router = useRouter();
   const { cartItems, total } = useCart();
@@ -70,10 +94,11 @@ export default function CheckoutPage() {
   );
 
   const paystackConfig = {
-    publicKey: publicKey || "pk_live_01dcc3570a033cdfcdc7c35b8d0e8ee53158f2e6",
+    publicKey: publicKey || "",
   };
 
   const initializePayment = usePaystackPayment(paystackConfig);
+  const checkoutWhatsAppHref = buildWhatsAppLink(orderItems, form.customerMessage, total);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -246,10 +271,12 @@ export default function CheckoutPage() {
               <h3>Send order details on WhatsApp after checkout.</h3>
               <p>We use your saved message and order summary to prepare a clean handoff for the store team.</p>
             </div>
-            <button
-              type="button"
+            <a
               className="whatsapp-button"
-              onClick={() => toast("Complete payment first, then continue on the confirmation page.")}
+              href={checkoutWhatsAppHref}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Open WhatsApp with your order summary"
             >
               <span className="whatsapp-icon" aria-hidden="true">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
@@ -257,7 +284,7 @@ export default function CheckoutPage() {
                 </svg>
               </span>
               WhatsApp preview
-            </button>
+            </a>
           </div>
         }
 
