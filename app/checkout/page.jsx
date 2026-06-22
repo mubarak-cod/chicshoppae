@@ -1,11 +1,22 @@
 "use client";
 
+export const dynamic = "force-dynamic";
+
 import { useMemo, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { usePaystackPayment } from "react-paystack";
+import dynamicImport from "next/dynamic";
 import toast from "react-hot-toast";
 import { useCart } from "@/context/CartContext";
+
+const PaystackButton = dynamicImport(() => import("@/components/PaystackButton"), {
+  ssr: false,
+  loading: () => (
+    <button className="pay-button" type="button" disabled>
+      <span>Loading payment...</span>
+    </button>
+  ),
+});
 
 const initialForm = {
   fullName: "",
@@ -91,9 +102,6 @@ export default function CheckoutPage() {
     [cartItems]
   );
 
-  const initializePayment = usePaystackPayment({
-    publicKey: publicKey || "",
-  });
   const checkoutWhatsAppHref = buildWhatsAppLink(orderItems, form.customerMessage, total);
 
   const handleChange = (e) => {
@@ -136,113 +144,68 @@ export default function CheckoutPage() {
     return verifyData;
   };
 
-  const handlePay = async () => {
-  if (!cartItems.length) {
-    toast.error("Your cart is empty.");
-    return;
-  }
+  const validateBeforePay = () => {
+    if (!cartItems.length) {
+      toast.error("Your cart is empty.");
+      return false;
+    }
+    const required = ["fullName", "email", "phone", "country", "state", "city", "streetAddress"];
+    const missing = required.find((f) => !form[f].trim());
+    if (missing) {
+      toast.error("Please fill in every delivery field before paying.");
+      return false;
+    }
+    if (!publicKey) {
+      toast.error("Paystack public key is missing.");
+      return false;
+    }
+    setProcessing(true);
+    return true;
+  };
 
-  const required = [
-    "fullName",
-    "email",
-    "phone",
-    "country",
-    "state",
-    "city",
-    "streetAddress",
-  ];
+  const paystackConfig = {
+    email: form.email,
+    amount: Math.round(Number(total) * 100),
+    reference: `chic-${Date.now()}`,
+    currency: "NGN",
+    metadata: {
+      customer: form.fullName,
+      phone: form.phone,
+      address: `${form.streetAddress}, ${form.city}, ${form.state}, ${form.country}`,
+      items: orderItems,
+      customerMessage: form.customerMessage,
+    },
+  };
 
-  const missing = required.find((f) => !form[f].trim());
-  if (missing) {
-    toast.error("Please fill in every delivery field before paying.");
-    return;
-  }
+  const handlePaystackSuccess = async (response) => {
+    try {
+      const ref = response?.reference || response?.trxref || response?.trans || "";
+      const verified = await submitOrder(ref);
+      if (typeof window !== "undefined") {
+        window.localStorage.setItem(
+          LAST_ORDER_STORAGE_KEY,
+          JSON.stringify({
+            reference: ref || verified?.payment?.reference || `chic-${Date.now()}`,
+            customer: form,
+            items: orderItems,
+            total,
+            customerMessage: form.customerMessage,
+          })
+        );
+      }
+      toast.success("Payment verified! Order confirmed.");
+      router.push(`/order-success?reference=${encodeURIComponent(ref || verified?.payment?.reference || "")}`);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Checkout failed.");
+    } finally {
+      setProcessing(false);
+    }
+  };
 
-  if (!publicKey) {
-    toast.error("Paystack public key is missing.");
-    return;
-  }
-
-  setProcessing(true);
-
-  try {
-    // ✅ IMPORTANT: load Paystack ONLY on client
-    const { usePaystackPayment } = await import("react-paystack");
-
-    const initializePayment = usePaystackPayment({
-      publicKey,
-    });
-
-    initializePayment({
-      config: {
-        email: form.email,
-        amount: Math.round(Number(total) * 100),
-        reference: `chic-${Date.now()}`,
-        currency: "NGN",
-        metadata: {
-          customer: form.fullName,
-          phone: form.phone,
-          address: `${form.streetAddress}, ${form.city}, ${form.state}, ${form.country}`,
-          items: orderItems,
-          customerMessage: form.customerMessage,
-        },
-      },
-
-      onSuccess: async (response) => {
-        try {
-          const ref =
-            response?.reference ||
-            response?.trxref ||
-            response?.trans ||
-            "";
-
-          const verified = await submitOrder(ref);
-
-          if (typeof window !== "undefined") {
-            window.localStorage.setItem(
-              LAST_ORDER_STORAGE_KEY,
-              JSON.stringify({
-                reference:
-                  ref ||
-                  verified?.payment?.reference ||
-                  `chic-${Date.now()}`,
-                customer: form,
-                items: orderItems,
-                total,
-                customerMessage: form.customerMessage,
-              })
-            );
-          }
-
-          toast.success("Payment verified! Order confirmed.");
-
-          router.push(
-            `/order-success?reference=${encodeURIComponent(
-              ref || verified?.payment?.reference || ""
-            )}`
-          );
-        } catch (err) {
-          toast.error(
-            err instanceof Error ? err.message : "Checkout failed."
-          );
-        } finally {
-          setProcessing(false);
-        }
-      },
-
-      onClose: () => {
-        setProcessing(false);
-        toast("Payment popup closed. No charge was made.", {
-          icon: "ℹ️",
-        });
-      },
-    });
-  } catch (err) {
+  const handlePaystackClose = () => {
     setProcessing(false);
-    toast.error("Failed to initialize payment.");
-    console.error(err);
-  }
-};
+    toast("Payment popup closed. No charge was made.", { icon: "ℹ️" });
+  };
 
   return (
     <main className="checkout-page">
@@ -647,14 +610,15 @@ export default function CheckoutPage() {
             <span>₦{Number(total).toLocaleString()}</span>
           </div>
 
-          <button
-            className="pay-button"
-            type="button"
-            onClick={handlePay}
+          <PaystackButton
+            publicKey={publicKey}
+            config={paystackConfig}
+            onSuccess={handlePaystackSuccess}
+            onClose={handlePaystackClose}
             disabled={processing || !cartItems.length}
-          >
-            <span>{processing ? "Processing..." : `Pay ₦${Number(total).toLocaleString()}`}</span>
-          </button>
+            label={processing ? "Processing..." : `Pay ₦${Number(total).toLocaleString()}`}
+            onBeforePay={validateBeforePay}
+          />
 
           <p className="checkout-note">
             🔒 Payments are processed securely by Paystack and verified server-side before your order is confirmed.
