@@ -109,13 +109,12 @@ export default function CheckoutPage() {
     [cartItems]
   );
 
-  const paystackConfig = {
-    publicKey: publicKey || "pk_live_01dcc3570a033cdfcdc7c35b8d0e8ee53158f2e6",
-    email: form.email,
-    amount: Math.round(Number(total) * 100),
-    currency: "NGN",
-  };
-
+ const paystackConfig = {
+  publicKey: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY,
+  email: form.email,
+  amount: Math.round(Number(total) * 100),
+  currency: "NGN",
+};
   const checkoutWhatsAppHref = buildWhatsAppLink(orderItems, form.customerMessage, total);
 
   const handleChange = (e) => {
