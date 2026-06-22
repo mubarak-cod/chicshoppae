@@ -5,7 +5,7 @@
     "name": "Aurora Blazer Set",
     "category": "Co-ords",
     "description": "Tailored two-piece set with a soft structured finish for polished everyday wear. The silhouette balances clean lines with an easy drape.",
-    "price": 28500,
+    "price": 500,
     "originalPrice": 36000,
     "placeholderNote": "Local image placeholders only; replace these paths with Cloudinary URLs later.",
     "images": ["/images/one.jpg", "/images/two.jpg", "/images/three.jpg", "/images/four.jpg"],
