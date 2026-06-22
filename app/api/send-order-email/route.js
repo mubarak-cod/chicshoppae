@@ -78,13 +78,17 @@ export async function POST(request) {
       ...items.map((item) => `${item.name} - ${item.color || "N/A"} - ${item.size || "N/A"} - ${item.quantity}`),
     ].join("\n");
 
-    const result = await resend.emails.send({
-      from: `Chic Shoppae <${fromEmail}>`,
-      to: [ownerEmail],
-      subject: `New paid order - ${reference}`,
-      text,
-      html,
-    });
+   const result = await resend.emails.send({
+  from: `Chic Shoppae <${fromEmail}>`,
+  to: [ownerEmail],
+  subject: `New paid order - ${reference}`,
+  text,
+  html,
+});
+
+console.log("Resend result:", result);
+
+return NextResponse.json({ ok: true, result }, { status: 200 });
 
     return NextResponse.json({ ok: true, result }, { status: 200 });
   } catch (error) {
