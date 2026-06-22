@@ -108,7 +108,7 @@ export default function CheckoutPage() {
   );
 
   const paystackConfig = {
-    publicKey: publicKey || "",
+    publicKey: publicKey || "pk_live_01dcc3570a033cdfcdc7c35b8d0e8ee53158f2e6",
     email: form.email,
     amount: Math.round(Number(total) * 100),
     currency: "NGN",
