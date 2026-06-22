@@ -30,14 +30,14 @@ export async function POST(request) {
     }
 
     const payment = payload?.data || {};
-    const expectedAmount = Number(amount) * 100;
-
-    if (expectedAmount && Number(payment?.amount) !== expectedAmount) {
-      return NextResponse.json(
-        { error: "Verified amount does not match the order total." },
-        { status: 400 }
-      );
-    }
+   const expectedAmount = Math.round(Number(amount) * 100);
+const actualAmount = Number(payment?.amount);
+if (expectedAmount && Math.abs(actualAmount - expectedAmount) > 1) {
+  return NextResponse.json(
+    { error: `Amount mismatch. Expected ₦${Number(amount).toLocaleString()}, got ₦${(actualAmount/100).toLocaleString()}.` },
+    { status: 400 }
+  );
+}
 
     return NextResponse.json({ ok: true, payment }, { status: 200 });
   } catch (error) {

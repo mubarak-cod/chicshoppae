@@ -1,28 +1,11 @@
 "use client";
 
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import dynamic from "next/dynamic";
+import { usePaystackPayment } from "react-paystack";
 import toast from "react-hot-toast";
 import { useCart } from "@/context/CartContext";
-
-// ── Dynamically import usePaystackPayment so it never runs on the server
-//    (react-paystack touches "window" which doesn't exist server-side)
-const PaystackHook = dynamic(
-  () => import("react-paystack").then((mod) => {
-    function Inner({ onReady, config }) {
-      const init = mod.usePaystackPayment(config);
-      // ✅ useEffect fires AFTER render — no setState-during-render error
-      useEffect(() => {
-        onReady(init);
-      }, []); // eslint-disable-line react-hooks/exhaustive-deps
-      return null;
-    }
-    return Inner;
-  }),
-  { ssr: false }
-);
 
 const initialForm = {
   fullName: "",
@@ -89,7 +72,6 @@ export default function CheckoutPage() {
   const { cartItems, total } = useCart();
   const [form, setForm] = useState(initialForm);
   const [processing, setProcessing] = useState(false);
-  const [payInit, setPayInit] = useState(null); // stores the paystack init fn once hook resolves
 
   const publicKey = process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY;
 
@@ -109,12 +91,9 @@ export default function CheckoutPage() {
     [cartItems]
   );
 
- const paystackConfig = {
-  publicKey: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY,
-  email: form.email,
-  amount: Math.round(Number(total) * 100),
-  currency: "NGN",
-};
+  const initializePayment = usePaystackPayment({
+    publicKey: publicKey || "",
+  });
   const checkoutWhatsAppHref = buildWhatsAppLink(orderItems, form.customerMessage, total);
 
   const handleChange = (e) => {
@@ -164,11 +143,23 @@ export default function CheckoutPage() {
     const missing = required.find((f) => !form[f].trim());
     if (missing) { toast.error("Please fill in every delivery field before paying."); return; }
     if (!publicKey) { toast.error("Paystack public key is missing."); return; }
-    if (!payInit) { toast.error("Payment system is still loading. Try again in a second."); return; }
 
     setProcessing(true);
 
-    payInit({
+    initializePayment({
+      config: {
+        email: form.email,
+        amount: Math.round(Number(total) * 100),
+        reference: `chic-${Date.now()}`,
+        currency: "NGN",
+        metadata: {
+          customer: form.fullName,
+          phone: form.phone,
+          address: `${form.streetAddress}, ${form.city}, ${form.state}, ${form.country}`,
+          items: orderItems,
+          customerMessage: form.customerMessage,
+        },
+      },
       onSuccess: async (response) => {
         try {
           const ref = response?.reference || response?.trxref || response?.trans || "";
@@ -479,14 +470,6 @@ export default function CheckoutPage() {
           .order-image-wrap { width: 64px; }
         }
       `}</style>
-
-      {/* Hidden Paystack hook loader — runs client-side only, gives us the init fn */}
-      {publicKey && (
-        <PaystackHook
-          config={paystackConfig}
-          onReady={(initFn) => setPayInit(() => initFn)}
-        />
-      )}
 
       <div className="checkout-shell">
         {/* ── LEFT: Delivery form ── */}
