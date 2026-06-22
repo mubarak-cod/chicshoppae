@@ -3,9 +3,24 @@
 import { useMemo, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { usePaystackPayment } from "react-paystack";
+import dynamic from "next/dynamic";
 import toast from "react-hot-toast";
 import { useCart } from "@/context/CartContext";
+
+// ── Dynamically import usePaystackPayment so it never runs on the server
+//    (react-paystack touches "window" which doesn't exist server-side)
+const PaystackHook = dynamic(
+  () => import("react-paystack").then((mod) => {
+    // We expose a tiny wrapper component that gives us the hook
+    function Inner({ onReady, config }) {
+      const init = mod.usePaystackPayment(config);
+      onReady(init);
+      return null;
+    }
+    return Inner;
+  }),
+  { ssr: false }
+);
 
 const initialForm = {
   fullName: "",
@@ -35,9 +50,10 @@ function getColorLabel(color) {
 function getPreviewImage(item) {
   const images = Array.isArray(item.images) ? item.images.filter(Boolean) : [];
   if (!images.length) return "/images/one.jpg";
-
   const colors = Array.isArray(item.colors) ? item.colors : [];
-  const colorIndex = colors.findIndex((color) => getColorKey(color) === getColorKey(item.selectedColor));
+  const colorIndex = colors.findIndex(
+    (color) => getColorKey(color) === getColorKey(item.selectedColor)
+  );
   return images[(colorIndex < 0 ? 0 : colorIndex) % images.length] || images[0];
 }
 
@@ -52,12 +68,10 @@ function getWhatsappNumber() {
 function buildWhatsAppLink(items, customerMessage, total) {
   const whatsappNumber = getWhatsappNumber();
   if (!whatsappNumber) return "#";
-
   const orderLines = items.map(
     (item) =>
       `- ${item.name || "Item"} | Color: ${item.color} | Size: ${item.size} | Qty: ${item.quantity} | Subtotal: ₦${formatCurrency(item.subtotal)}`
   );
-
   const messageLines = [
     "Hello ChicShoppae, I need help with my order.",
     "Order summary:",
@@ -65,7 +79,6 @@ function buildWhatsAppLink(items, customerMessage, total) {
     `Total amount: ₦${formatCurrency(total)}`,
     customerMessage ? `Customer message: ${customerMessage}` : null,
   ].filter(Boolean);
-
   return `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(messageLines.join("\n"))}`;
 }
 
@@ -74,6 +87,7 @@ export default function CheckoutPage() {
   const { cartItems, total } = useCart();
   const [form, setForm] = useState(initialForm);
   const [processing, setProcessing] = useState(false);
+  const [payInit, setPayInit] = useState(null); // stores the paystack init fn once hook resolves
 
   const publicKey = process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY;
 
@@ -95,24 +109,23 @@ export default function CheckoutPage() {
 
   const paystackConfig = {
     publicKey: publicKey || "",
+    email: form.email,
+    amount: Math.round(Number(total) * 100),
+    currency: "NGN",
   };
 
-  const initializePayment = usePaystackPayment(paystackConfig);
   const checkoutWhatsAppHref = buildWhatsAppLink(orderItems, form.customerMessage, total);
 
-  const handleChange = (event) => {
-    const { name, value } = event.target;
-    setForm((current) => ({ ...current, [name]: value }));
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm((curr) => ({ ...curr, [name]: value }));
   };
 
   const submitOrder = async (reference) => {
     const verifyResponse = await fetch("/api/verify-payment", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        reference,
-        amount: total,
-      }),
+      body: JSON.stringify({ reference, amount: total }),
     });
 
     if (!verifyResponse.ok) {
@@ -144,49 +157,26 @@ export default function CheckoutPage() {
   };
 
   const handlePay = () => {
-    if (!cartItems.length) {
-      toast.error("Your cart is empty.");
-      return;
-    }
+    if (!cartItems.length) { toast.error("Your cart is empty."); return; }
 
-    const requiredFields = ["fullName", "email", "phone", "country", "state", "city", "streetAddress"];
-    const missingField = requiredFields.find((field) => !form[field].trim());
+    const required = ["fullName", "email", "phone", "country", "state", "city", "streetAddress"];
+    const missing = required.find((f) => !form[f].trim());
+    if (missing) { toast.error("Please fill in every delivery field before paying."); return; }
+    if (!publicKey) { toast.error("Paystack public key is missing."); return; }
+    if (!payInit) { toast.error("Payment system is still loading. Try again in a second."); return; }
 
-    if (missingField) {
-      toast.error("Please fill in every delivery field before paying.");
-      return;
-    }
-
-    if (!publicKey) {
-      toast.error("Paystack public key is missing.");
-      return;
-    }
-
-    const reference = `chic-${Date.now()}`;
     setProcessing(true);
-    initializePayment({
-      config: {
-        email: form.email,
-        amount: Math.round(Number(total) * 100),
-        reference,
-        currency: "NGN",
-        metadata: {
-          customer: form.fullName,
-          phone: form.phone,
-          address: `${form.streetAddress}, ${form.city}, ${form.state}, ${form.country}`,
-          items: orderItems,
-          customerMessage: form.customerMessage,
-        },
-      },
+
+    payInit({
       onSuccess: async (response) => {
         try {
-          const reference = response?.reference || response?.trxref || response?.trans || "";
-          const verified = await submitOrder(reference);
+          const ref = response?.reference || response?.trxref || response?.trans || "";
+          const verified = await submitOrder(ref);
           if (typeof window !== "undefined") {
             window.localStorage.setItem(
               LAST_ORDER_STORAGE_KEY,
               JSON.stringify({
-                reference: reference || verified?.payment?.reference || `chic-${Date.now()}`,
+                reference: ref || verified?.payment?.reference || `chic-${Date.now()}`,
                 customer: form,
                 items: orderItems,
                 total,
@@ -194,17 +184,17 @@ export default function CheckoutPage() {
               })
             );
           }
-          toast.success("Payment verified and order email sent.");
-          router.push(`/order-success?reference=${encodeURIComponent(reference || verified?.payment?.reference || "")}`);
-        } catch (error) {
-          toast.error(error instanceof Error ? error.message : "Checkout failed.");
+          toast.success("Payment verified! Order confirmed.");
+          router.push(`/order-success?reference=${encodeURIComponent(ref || verified?.payment?.reference || "")}`);
+        } catch (err) {
+          toast.error(err instanceof Error ? err.message : "Checkout failed.");
         } finally {
           setProcessing(false);
         }
       },
       onClose: () => {
         setProcessing(false);
-        toast.error("Payment popup closed before completion.");
+        toast("Payment popup closed. No charge was made.", { icon: "ℹ️" });
       },
     });
   };
@@ -215,85 +205,26 @@ export default function CheckoutPage() {
         .checkout-page {
           padding: clamp(1.25rem, 3vw, 2.5rem) clamp(1rem, 4vw, 3rem) 4rem;
         }
-                  <div className="order-image-wrap">
-                    <Image
-                      src={getPreviewImage(item)}
-                      alt={item.name || item.title || "Product image"}
-                      fill
-                      sizes="96px"
-                      className="order-image"
-                    />
-                  </div>
-                  <div className="order-item-copy">
-                    <h4>{item.name || item.title}</h4>
-                    <p>Color: {getColorLabel(item.selectedColor)}</p>
-                    <p>Size: {item.selectedSize || "N/A"}</p>
-                    <p>Qty: {item.quantity}</p>
-                    <p>₦{formatCurrency(item.price)} each</p>
-          gap: 1.5rem;
-                  <div style={{ textAlign: "right", whiteSpace: "nowrap" }}>
-                    <p className="order-item-subtotal-label">Subtotal</p>
-                    <div>₦{formatCurrency(Number(item.price) * item.quantity)}</div>
+
+        .checkout-shell {
+          max-width: 1100px;
+          margin: 0 auto;
+          display: grid;
+          grid-template-columns: 1fr 420px;
+          gap: 2rem;
+          align-items: start;
+        }
 
         .checkout-panel,
         .checkout-summary {
           background: var(--bg-card);
           border: 1px solid var(--border);
           border-radius: 28px;
-          box-shadow: 0 18px 42px rgba(0, 0, 0, 0.04);
-
-          <div className="checkout-field full" style={{ marginTop: "1rem" }}>
-            <label htmlFor="customerMessage">Customer message</label>
-            <textarea
-              id="customerMessage"
-              name="customerMessage"
-              value={form.customerMessage}
-              onChange={handleChange}
-              placeholder="Tell us anything about your order (special requests, delivery instructions, preferred delivery time, etc.)"
-              rows={5}
-              style={{
-                width: "100%",
-                borderRadius: "16px",
-                border: "1px solid var(--border)",
-                background: "var(--bg-primary)",
-                color: "var(--text-primary)",
-                padding: "13px 14px",
-                outline: "none",
-                resize: "vertical",
-                minHeight: "120px",
-              }}
-            />
-          </div>
-
-          <div className="whatsapp-section">
-            <div className="whatsapp-copy">
-              <span className="whatsapp-kicker">WhatsApp support</span>
-              <h3>Send order details on WhatsApp after checkout.</h3>
-              <p>We use your saved message and order summary to prepare a clean handoff for the store team.</p>
-            </div>
-            <a
-              className="whatsapp-button"
-              href={checkoutWhatsAppHref}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Open WhatsApp with your order summary"
-            >
-              <span className="whatsapp-icon" aria-hidden="true">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 2C6.48 2 2 6.48 2 12c0 1.85.5 3.58 1.36 5.07L2 22l5.07-1.32A9.94 9.94 0 0 0 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2zm0 18c-1.65 0-3.18-.46-4.5-1.25l-.32-.19-3.34.87.9-3.26-.21-.34A7.94 7.94 0 0 1 4 12c0-4.41 3.59-8 8-8s8 3.59 8 8-3.59 8-8 8zm4.4-5.8c-.24-.12-1.43-.71-1.65-.79-.22-.08-.38-.12-.55.12-.16.24-.63.79-.77.95-.14.16-.28.18-.52.06-.24-.12-1.01-.37-1.92-1.18-.71-.63-1.19-1.42-1.33-1.66-.14-.24-.01-.37.11-.49.11-.11.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.55-1.32-.75-1.81-.2-.48-.4-.42-.55-.42-.14 0-.3-.02-.46-.02-.16 0-.42.06-.64.3-.22.24-.84.82-.84 2s.86 2.32.98 2.48c.12.16 1.7 2.6 4.12 3.64.58.25 1.03.4 1.38.51.58.18 1.11.16 1.53.1.47-.07 1.43-.58 1.63-1.15.2-.57.2-1.05.14-1.15-.06-.1-.22-.16-.46-.28z"/>
-                </svg>
-              </span>
-              WhatsApp preview
-            </a>
-          </div>
-        }
-
-        .checkout-panel {
-          padding: 1.3rem;
+          box-shadow: 0 18px 42px rgba(0,0,0,0.04);
+          padding: 1.5rem;
         }
 
         .checkout-summary {
-          padding: 1.3rem;
           position: sticky;
           top: 1.25rem;
         }
@@ -332,7 +263,8 @@ export default function CheckoutPage() {
           color: var(--text-muted);
         }
 
-        .checkout-field input {
+        .checkout-field input,
+        .checkout-field textarea {
           width: 100%;
           border-radius: 16px;
           border: 1px solid var(--border);
@@ -340,34 +272,48 @@ export default function CheckoutPage() {
           color: var(--text-primary);
           padding: 13px 14px;
           outline: none;
+          font-family: inherit;
+          font-size: 0.92rem;
+          transition: border-color 0.2s, box-shadow 0.2s;
         }
 
-        .checkout-field input:focus {
+        .checkout-field input:focus,
+        .checkout-field textarea:focus {
           border-color: var(--accent);
-          box-shadow: 0 0 0 3px rgba(196, 137, 90, 0.12);
+          box-shadow: 0 0 0 3px rgba(196,137,90,0.12);
+        }
+
+        .checkout-field textarea {
+          resize: vertical;
+          min-height: 100px;
         }
 
         .summary-title {
           font-family: 'Cormorant Garamond', serif;
           font-size: 2rem;
           color: var(--text-primary);
-          margin-bottom: 0.75rem;
+          margin-bottom: 0.5rem;
+        }
+
+        .summary-meta {
+          color: var(--text-secondary);
+          font-size: 0.88rem;
         }
 
         .order-list {
           display: grid;
-          gap: 0.9rem;
+          gap: 0;
           margin: 1rem 0;
-          max-height: 360px;
-          overflow: auto;
-          padding-right: 0.15rem;
+          max-height: 340px;
+          overflow-y: auto;
+          padding-right: 0.1rem;
         }
 
         .order-item {
           padding: 0.85rem 0;
           border-top: 1px solid var(--border);
           display: grid;
-          grid-template-columns: 84px minmax(0, 1fr) auto;
+          grid-template-columns: 72px 1fr auto;
           gap: 0.9rem;
           align-items: start;
         }
@@ -377,42 +323,39 @@ export default function CheckoutPage() {
           padding-top: 0;
         }
 
-        .order-item h4 {
-          margin-bottom: 0.2rem;
-          font-size: 0.98rem;
-        }
-
         .order-image-wrap {
           position: relative;
-          width: 84px;
+          width: 72px;
           aspect-ratio: 1 / 1.2;
-          border-radius: 18px;
+          border-radius: 14px;
           overflow: hidden;
-          background: rgba(0,0,0,0.03);
           border: 1px solid var(--border);
+          background: var(--bg-secondary);
+          flex-shrink: 0;
         }
 
-        .order-image {
-          object-fit: cover;
+        .order-image { object-fit: cover; }
+
+        .order-item-copy h4 {
+          font-size: 0.95rem;
+          color: var(--text-primary);
+          margin-bottom: 0.2rem;
+          font-weight: 500;
         }
 
         .order-item-copy p {
-          margin: 0.08rem 0;
-        }
-
-        .order-item-subtotal-label {
-          color: var(--text-muted);
-          font-size: 0.76rem;
-          text-transform: uppercase;
-          letter-spacing: 0.08em;
-          margin-bottom: 0.2rem;
-        }
-
-        .order-item p,
-        .summary-meta {
+          font-size: 0.82rem;
           color: var(--text-secondary);
-          line-height: 1.5;
+          margin: 0.05rem 0;
+          line-height: 1.45;
+        }
+
+        .order-item-price {
           font-size: 0.92rem;
+          font-weight: 600;
+          color: var(--text-primary);
+          white-space: nowrap;
+          text-align: right;
         }
 
         .summary-total-row {
@@ -422,6 +365,7 @@ export default function CheckoutPage() {
           display: flex;
           justify-content: space-between;
           font-weight: 700;
+          font-size: 1rem;
           color: var(--text-primary);
         }
 
@@ -434,109 +378,91 @@ export default function CheckoutPage() {
           background: var(--text-primary);
           color: var(--bg-primary);
           font-weight: 700;
+          font-size: 0.95rem;
           cursor: pointer;
-          transition: transform 0.2s ease, opacity 0.2s ease;
+          transition: transform 0.2s ease, opacity 0.2s ease, box-shadow 0.2s;
+          position: relative;
+          overflow: hidden;
         }
 
-        .pay-button:hover {
-          transform: translateY(-1px);
+        .pay-button::before {
+          content: '';
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(135deg, #E8A0BF, #C4895A);
+          opacity: 0;
+          transition: opacity 0.3s;
         }
-
-        .pay-button:disabled {
-          opacity: 0.65;
-          cursor: not-allowed;
-        }
+        .pay-button:hover::before { opacity: 1; }
+        .pay-button:hover { transform: translateY(-1px); box-shadow: 0 10px 24px rgba(196,137,90,0.28); }
+        .pay-button:disabled { opacity: 0.55; cursor: not-allowed; }
+        .pay-button span { position: relative; z-index: 1; }
 
         .checkout-note {
           margin-top: 0.8rem;
           color: var(--text-muted);
-          font-size: 0.88rem;
+          font-size: 0.82rem;
           line-height: 1.6;
+          text-align: center;
         }
 
         .whatsapp-section {
-          margin-top: 1rem;
-          border: 1px solid rgba(37, 211, 102, 0.18);
-          background: linear-gradient(180deg, rgba(37, 211, 102, 0.08), rgba(37, 211, 102, 0.03));
-          border-radius: 24px;
+          margin-top: 1.2rem;
+          border: 1px solid rgba(37,211,102,0.2);
+          background: linear-gradient(180deg, rgba(37,211,102,0.08), rgba(37,211,102,0.03));
+          border-radius: 20px;
           padding: 1rem;
           position: relative;
           overflow: hidden;
         }
 
-        .whatsapp-section::before {
-          content: '';
-          position: absolute;
-          inset: -40% auto auto -10%;
-          width: 140px;
-          height: 140px;
-          border-radius: 50%;
-          background: rgba(37, 211, 102, 0.12);
-          filter: blur(8px);
-          animation: whatsappGlow 4s ease-in-out infinite;
-        }
-
-        .whatsapp-copy {
-          position: relative;
-          z-index: 1;
-          display: grid;
-          gap: 0.35rem;
-          margin-bottom: 0.85rem;
-        }
-
         .whatsapp-kicker {
-          font-size: 0.76rem;
+          font-size: 0.72rem;
           letter-spacing: 0.18em;
           text-transform: uppercase;
           color: #128C7E;
+          display: block;
+          margin-bottom: 0.25rem;
         }
 
-        .whatsapp-copy h3 {
-          font-size: 1rem;
-          color: var(--text-primary);
-        }
-
-        .whatsapp-copy p {
-          color: var(--text-secondary);
+        .whatsapp-section h3 {
           font-size: 0.9rem;
-          line-height: 1.6;
+          color: var(--text-primary);
+          margin-bottom: 0.3rem;
+        }
+
+        .whatsapp-section p {
+          color: var(--text-secondary);
+          font-size: 0.82rem;
+          line-height: 1.5;
+          margin-bottom: 0.75rem;
         }
 
         .whatsapp-button {
           width: 100%;
           border: none;
           border-radius: 999px;
-          padding: 12px 16px;
+          padding: 11px 16px;
           display: inline-flex;
           align-items: center;
           justify-content: center;
-          gap: 0.55rem;
+          gap: 0.5rem;
           background: linear-gradient(135deg, #25D366, #128C7E);
           color: #fff;
           font-weight: 700;
-          box-shadow: 0 14px 28px rgba(18, 140, 126, 0.18);
-          position: relative;
-          z-index: 1;
-          transition: transform 0.22s ease, box-shadow 0.22s ease, filter 0.22s ease;
+          font-size: 0.88rem;
+          text-decoration: none;
+          transition: transform 0.2s, box-shadow 0.2s;
+          box-shadow: 0 8px 20px rgba(18,140,126,0.2);
         }
 
         .whatsapp-button:hover {
           transform: translateY(-1px);
-          box-shadow: 0 18px 34px rgba(18, 140, 126, 0.24);
-          filter: brightness(1.02);
-        }
-
-        .whatsapp-button:active {
-          transform: translateY(0) scale(0.99);
-        }
-
-        @keyframes whatsappGlow {
-          0%, 100% { transform: scale(1); opacity: 0.6; }
-          50% { transform: scale(1.08); opacity: 1; }
+          box-shadow: 0 14px 28px rgba(18,140,126,0.3);
         }
 
         .empty-state {
-          padding: 2.2rem 0;
+          padding: 2rem 0;
           text-align: center;
           color: var(--text-secondary);
         }
@@ -548,15 +474,26 @@ export default function CheckoutPage() {
 
         @media (max-width: 640px) {
           .checkout-grid { grid-template-columns: 1fr; }
-          .order-item { grid-template-columns: 1fr; }
-          .order-image-wrap { width: 100%; max-width: 220px; }
+          .order-item { grid-template-columns: 64px 1fr auto; gap: 0.65rem; }
+          .order-image-wrap { width: 64px; }
         }
       `}</style>
 
+      {/* Hidden Paystack hook loader — runs client-side only, gives us the init fn */}
+      {publicKey && (
+        <PaystackHook
+          config={paystackConfig}
+          onReady={(initFn) => setPayInit(() => initFn)}
+        />
+      )}
+
       <div className="checkout-shell">
+        {/* ── LEFT: Delivery form ── */}
         <section className="checkout-panel">
           <h1 className="checkout-title">Checkout</h1>
-          <p className="checkout-copy">Complete your delivery details and pay securely with Paystack.</p>
+          <p className="checkout-copy">
+            Complete your delivery details and pay securely with Paystack.
+          </p>
 
           {cartItems.length === 0 ? (
             <div className="empty-state">
@@ -592,24 +529,71 @@ export default function CheckoutPage() {
                 <label htmlFor="streetAddress">Street address</label>
                 <input id="streetAddress" name="streetAddress" value={form.streetAddress} onChange={handleChange} placeholder="12 Adeola Odeku Street" />
               </div>
+              <div className="checkout-field full">
+                <label htmlFor="customerMessage">Message (optional)</label>
+                <textarea
+                  id="customerMessage"
+                  name="customerMessage"
+                  value={form.customerMessage}
+                  onChange={handleChange}
+                  placeholder="Special requests, delivery instructions, preferred time..."
+                />
+              </div>
+            </div>
+          )}
+
+          {/* WhatsApp support section */}
+          {cartItems.length > 0 && (
+            <div className="whatsapp-section">
+              <span className="whatsapp-kicker">WhatsApp support</span>
+              <h3>Send your order summary on WhatsApp</h3>
+              <p>
+                After paying, tap below to open a pre-filled WhatsApp message with your full order summary ready to send.
+              </p>
+              <a
+                className="whatsapp-button"
+                href={checkoutWhatsAppHref}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Open WhatsApp with your order summary"
+              >
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2C6.48 2 2 6.48 2 12c0 1.85.5 3.58 1.36 5.07L2 22l5.07-1.32A9.94 9.94 0 0 0 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2zm0 18c-1.65 0-3.18-.46-4.5-1.25l-.32-.19-3.34.87.9-3.26-.21-.34A7.94 7.94 0 0 1 4 12c0-4.41 3.59-8 8-8s8 3.59 8 8-3.59 8-8 8z"/>
+                </svg>
+                WhatsApp Preview
+              </a>
             </div>
           )}
         </section>
 
+        {/* ── RIGHT: Order summary ── */}
         <aside className="checkout-summary">
           <h2 className="summary-title">Order Summary</h2>
-          <div className="summary-meta">{cartItems.length} item{cartItems.length === 1 ? "" : "s"}</div>
+          <p className="summary-meta">{cartItems.length} item{cartItems.length !== 1 ? "s" : ""}</p>
 
-          {cartItems.length ? (
+          {cartItems.length > 0 ? (
             <div className="order-list">
               {cartItems.map((item) => (
-                <div className="order-item" key={`${item.id}-${getColorKey(item.selectedColor)}-${item.selectedSize || ""}`}>
-                  <div>
+                <div
+                  className="order-item"
+                  key={`${item.id}-${getColorKey(item.selectedColor)}-${item.selectedSize || ""}`}
+                >
+                  <div className="order-image-wrap">
+                    <Image
+                      src={getPreviewImage(item)}
+                      alt={item.name || item.title || "Product"}
+                      fill
+                      sizes="72px"
+                      className="order-image"
+                    />
+                  </div>
+                  <div className="order-item-copy">
                     <h4>{item.name || item.title}</h4>
                     <p>Shade: {getColorLabel(item.selectedColor)}</p>
+                    <p>Size: {item.selectedSize || "N/A"}</p>
                     <p>Qty: {item.quantity}</p>
                   </div>
-                  <div style={{ textAlign: "right", whiteSpace: "nowrap" }}>
+                  <div className="order-item-price">
                     ₦{(Number(item.price) * item.quantity).toLocaleString()}
                   </div>
                 </div>
@@ -619,18 +603,24 @@ export default function CheckoutPage() {
             <div className="empty-state">No items to display.</div>
           )}
 
-          <div className="summary-meta">Shipping calculated at cart level.</div>
+          <p className="summary-meta">Delivery fee is paid directly to the rider on arrival.</p>
+
           <div className="summary-total-row">
             <span>Total</span>
             <span>₦{Number(total).toLocaleString()}</span>
           </div>
 
-          <button className="pay-button" type="button" onClick={handlePay} disabled={processing || !cartItems.length}>
-            {processing ? "Processing..." : "Pay Now"}
+          <button
+            className="pay-button"
+            type="button"
+            onClick={handlePay}
+            disabled={processing || !cartItems.length}
+          >
+            <span>{processing ? "Processing..." : `Pay ₦${Number(total).toLocaleString()}`}</span>
           </button>
 
           <p className="checkout-note">
-            Payments are verified server-side before we send the order email and redirect to your confirmation page.
+            🔒 Payments are processed securely by Paystack and verified server-side before your order is confirmed.
           </p>
         </aside>
       </div>
