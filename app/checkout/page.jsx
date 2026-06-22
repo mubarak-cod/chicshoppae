@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
@@ -11,10 +11,12 @@ import { useCart } from "@/context/CartContext";
 //    (react-paystack touches "window" which doesn't exist server-side)
 const PaystackHook = dynamic(
   () => import("react-paystack").then((mod) => {
-    // We expose a tiny wrapper component that gives us the hook
     function Inner({ onReady, config }) {
       const init = mod.usePaystackPayment(config);
-      onReady(init);
+      // ✅ useEffect fires AFTER render — no setState-during-render error
+      useEffect(() => {
+        onReady(init);
+      }, []); // eslint-disable-line react-hooks/exhaustive-deps
       return null;
     }
     return Inner;
