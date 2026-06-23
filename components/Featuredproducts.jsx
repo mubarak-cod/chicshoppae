@@ -10,11 +10,11 @@ const tabs = ["New Arrivals", "Best Sellers", "Staff Picks"];
 const products = {
   "New Arrivals": [
     { id: 1, name: "Rosette Mini Dress", price: 18500, category: "Gowns", badge: "New", badgeColor: "#E8A0BF", images: ["/images/chan1.jpg"], sizes: ["S","M","L","XL"] },
-    { id: 2, name: "Linen Co-ord Set", price: 22000, category: "2-Piece Sets", badge: "New", badgeColor: "#E8A0BF", images: ["/images/chan2.jpg"], sizes: ["S","M","L"] },
-    { id: 3, name: "Satin Slip Dress", price: 15500, category: "Gowns", badge: "", badgeColor: "", images: ["/images/chan3.jpg"], sizes: ["S","M","L","XL"] },
-    { id: 4, name: "Puff Sleeve Blouse", price: 9800, category: "Tops", badge: "Hot", badgeColor: "#F4A261", images: ["/images/chan4.jpg"], sizes: ["S","M","L"] },
-    { id: 5, name: "Wide Leg Trousers", price: 13500, category: "Trousers", badge: "", badgeColor: "", images: ["/images/chan5.jpg"], sizes: ["M","L","XL"] },
-    { id: 6, name: "Ruched Bodycon", price: 17000, category: "Gowns", badge: "🔥", badgeColor: "#F4A261", images: ["/images/chan6.jpg"], sizes: ["S","M","L"] },
+    { id: 2, name: "Top Nilda", price: 5000, category: "2-Piece Sets", badge: "New", badgeColor: "#E8A0BF", images: ["/images/chan2.jpg"], sizes: ["S","M","L"] },
+    { id: 3, name: "Top Nilda", price: 5000, category: "Tops", badge: "", badgeColor: "", images: ["/images/chan3.jpg"], sizes: ["S","M","L","XL"] },
+    { id: 4, name: "Chantily top", price: 5000, category: "Tops", badge: "Hot", badgeColor: "#F4A261", images: ["/images/chan4.jpg"], sizes: ["S","M","L"] },
+    { id: 5, name: "Top Nilda", price: 5000, category: "Top", badge: "", badgeColor: "", images: ["/images/chan5.jpg"], sizes: ["M","L","XL"] },
+    { id: 6, name: "Top Mirah", price: 5000, category: "Tops", badge: "🔥", badgeColor: "#F4A261", images: ["/images/chan6.jpg"], sizes: ["S","M","L"] },
   ],
   "Best Sellers": [
     { id: 7, name: "Blazer Dress", price: 25000, category: "Gowns", badge: "Top Pick", badgeColor: "#C084FC", images: [""], sizes: ["S","M","L","XL"] },

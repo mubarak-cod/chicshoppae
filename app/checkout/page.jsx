@@ -61,20 +61,33 @@ function getWhatsappNumber() {
   return String(process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "").replace(/\D/g, "");
 }
 
-function buildWhatsAppLink(items, customerMessage, total) {
+function buildWhatsAppLink(items, form, total) {
   const whatsappNumber = getWhatsappNumber();
   if (!whatsappNumber) return "#";
+
   const orderLines = items.map(
-    (item) =>
-      `- ${item.name || "Item"} | Color: ${item.color} | Size: ${item.size} | Qty: ${item.quantity} | Subtotal: ₦${formatCurrency(item.subtotal)}`
+    (item, i) =>
+      `${i + 1}. *${item.name || "Item"}*\n   Color: ${item.color} | Size: ${item.size} | Qty: ${item.quantity}\n   Subtotal: ₦${formatCurrency(item.subtotal)}`
   );
+
   const messageLines = [
-    "Hello ChicShoppae, I need help with my order.",
-    "Order summary:",
+    "👋 Hello ChicShoppae!",
+    "I'd like to confirm my order:",
+    "",
+    "🛍️ *Order Summary*",
     ...orderLines,
-    `Total amount: ₦${formatCurrency(total)}`,
-    customerMessage ? `Customer message: ${customerMessage}` : null,
+    "",
+    `💰 *Total: ₦${formatCurrency(total)}*`,
+    "",
+    "📦 *Delivery Details*",
+    form.fullName ? `Name: ${form.fullName}` : null,
+    form.phone ? `Phone: ${form.phone}` : null,
+    form.streetAddress || form.city || form.state
+      ? `Address: ${[form.streetAddress, form.city, form.state, form.country].filter(Boolean).join(", ")}`
+      : null,
+    form.customerMessage ? `\n📝 Note: ${form.customerMessage}` : null,
   ].filter(Boolean);
+
   return `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(messageLines.join("\n"))}`;
 }
 
@@ -102,7 +115,7 @@ export default function CheckoutPage() {
     [cartItems]
   );
 
-  const checkoutWhatsAppHref = buildWhatsAppLink(orderItems, form.customerMessage, total);
+  const checkoutWhatsAppHref = buildWhatsAppLink(orderItems, form, total);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -161,6 +174,22 @@ export default function CheckoutPage() {
     }
     setProcessing(true);
     return true;
+  };
+
+  const requiredFields = ["fullName", "email", "phone", "country", "state", "city", "streetAddress"];
+
+  const handleWhatsAppClick = (e) => {
+    e.preventDefault();
+    if (!cartItems.length) {
+      toast.error("Your cart is empty.");
+      return;
+    }
+    const missing = requiredFields.find((f) => !form[f].trim());
+    if (missing) {
+      toast.error("Please fill in every delivery field before using WhatsApp.");
+      return;
+    }
+    window.open(checkoutWhatsAppHref, "_blank", "noopener,noreferrer");
   };
 
   const paystackConfig = {
@@ -548,13 +577,12 @@ export default function CheckoutPage() {
               <span className="whatsapp-kicker">WhatsApp support</span>
               <h3>Send your order summary on WhatsApp</h3>
               <p>
-                After paying, tap below to open a pre-filled WhatsApp message with your full order summary ready to send.
+                Tap below to open a pre-filled WhatsApp message with your order details, ready to send.
               </p>
-              <a
-                className="whatsapp-button"
+              
+                <a className="whatsapp-button"
                 href={checkoutWhatsAppHref}
-                target="_blank"
-                rel="noopener noreferrer"
+                onClick={handleWhatsAppClick}
                 aria-label="Open WhatsApp with your order summary"
               >
                 <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor">

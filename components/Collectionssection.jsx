@@ -29,7 +29,7 @@ const collections = [
     name: "2-Piece Sets",
     slug: "2-Piece Sets",
     description: "Matching sets that do the work for you",
-    image: "/images/four.jpg",
+    image: "https://res.cloudinary.com/ddlnqthao/image/upload/v1782191387/IMG-20260618-WA0063_1_v1aftg.jpg",
     count: "12 styles",
     accent: "#9B5E3A",
     size: "small",
