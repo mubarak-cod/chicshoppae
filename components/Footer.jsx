@@ -70,14 +70,31 @@ export default function Footer() {
   const [email, setEmail] = useState("");
   const [subscribed, setSubscribed] = useState(false);
 
-  const handleSubscribe = (e) => {
-    e.preventDefault();
-    if (!email.trim()) return;
-    setSubscribed(true);
-    setEmail("");
-    setTimeout(() => setSubscribed(false), 3000);
-  };
+  const handleSubscribe = async (e) => {
+  e.preventDefault();
+  if (!email.trim()) return;
 
+  try {
+    const res = await fetch("https://formspree.io/f/mpqgwgbg", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify({ email }),
+    });
+
+    if (res.ok) {
+      setSubscribed(true);
+      setEmail("");
+      setTimeout(() => setSubscribed(false), 3000);
+    } else {
+      console.error("Subscribe failed");
+    }
+  } catch (err) {
+    console.error("Subscribe error:", err);
+  }
+};
   return (
     <>
       <style>{`
