@@ -36,8 +36,8 @@ const collections = [
   },
   {
     id: 4,
-    name: "Trousers",
-    slug: "Trousers",
+    name: "Tops",
+    slug: "Tops",
     description: "Tailored cuts, real comfort",
     image: "/images/seven.jpg",
     count: "15 styles",
