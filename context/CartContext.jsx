@@ -7,28 +7,15 @@ const STORAGE_KEY = "chic-shoppae-cart";
 
 function getColorKey(color) {
   if (!color) return "";
-  if (typeof color === "string") return color.toLowerCase();
-  return String(color.name || color.hex || "").toLowerCase();
+  return String(color).toLowerCase();
 }
 
 function normalizeProductColor(product, color) {
   if (!product?.colors?.length) return null;
+  if (!color) return product.colors[0];
 
-  if (color && typeof color === "object") {
-    const match = product.colors.find((option) => getColorKey(option) === getColorKey(color));
-    return match || color;
-  }
-
-  if (typeof color === "string") {
-    const match = product.colors.find(
-      (option) =>
-        getColorKey(option) === getColorKey(color) ||
-        String(option.hex || "").toLowerCase() === String(color).toLowerCase()
-    );
-    return match || product.colors[0];
-  }
-
-  return product.colors[0];
+  const match = product.colors.find((option) => getColorKey(option) === getColorKey(color));
+  return match || product.colors[0];
 }
 
 function isSameVariant(item, id, selectedColor, selectedSize) {

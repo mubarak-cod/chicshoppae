@@ -7,30 +7,12 @@ import { useCart } from "@/context/CartContext";
 
 function getColorKey(color) {
   if (!color) return "";
-  if (typeof color === "string") return color.toLowerCase();
-  return String(color.name || color.hex || "").toLowerCase();
-}
-
-function getColorMeta(color) {
-  if (!color) return { name: "", hex: "#000000" };
-  if (typeof color === "string") {
-    return { name: color, hex: color.startsWith("#") ? color : "#000000" };
-  }
-  return {
-    name: color.name || color.hex || "",
-    hex: color.hex || "#000000",
-  };
+  return String(color).toLowerCase();
 }
 
 function pickPreviewImage(item) {
-  const colors = item.colors || [];
   const images = (item.images || []).filter(Boolean);
-
-  if (!images.length) return "/images/one.jpg";
-
-  const colorIndex = colors.findIndex((color) => getColorKey(color) === getColorKey(item.selectedColor));
-  const safeIndex = colorIndex < 0 ? 0 : colorIndex;
-  return images[safeIndex % images.length] || images[0];
+  return images[0] || "/images/one.jpg";
 }
 
 export default function CartPage() {
@@ -186,7 +168,7 @@ export default function CartPage() {
           background: var(--bg-primary);
           color: var(--text-primary);
           border-radius: 999px;
-          padding: 6px 9px 6px 6px;
+          padding: 6px 12px;
           font-size: 0.82rem;
           cursor: pointer;
         }
@@ -194,13 +176,6 @@ export default function CartPage() {
         .shade-button[aria-pressed="true"] {
           border-color: var(--text-primary);
           box-shadow: 0 0 0 1px var(--text-primary) inset;
-        }
-
-        .shade-swatch {
-          width: 16px;
-          height: 16px;
-          border-radius: 999px;
-          border: 1px solid rgba(0,0,0,0.08);
         }
 
         .summary-line {
@@ -289,26 +264,23 @@ export default function CartPage() {
                   <div>
                     <h3>{item.name || item.title}</h3>
                     <div className="cart-meta">Category: {item.category}</div>
-                    <div className="cart-meta">Shade: {getColorMeta(item.selectedColor).name || "N/A"}</div>
+                    <div className="cart-meta">Color: {item.selectedColor || "N/A"}</div>
                     <div className="cart-meta">Size: {item.selectedSize || "N/A"}</div>
                     <div className="cart-price">₦{Number(item.price).toLocaleString()}</div>
 
                     {!!item.colors?.length && (
-                      <div className="shade-list" aria-label={`Change shade for ${item.name || item.title}`}>
-                        {item.colors.slice(0, 4).map((color) => {
-                          const meta = getColorMeta(color);
+                      <div className="shade-list" aria-label={`Change color for ${item.name || item.title}`}>
+                        {item.colors.map((color) => {
                           const active = getColorKey(item.selectedColor) === getColorKey(color);
                           return (
                             <button
-                              key={meta.name || meta.hex}
+                              key={color}
                               type="button"
                               className="shade-button"
                               aria-pressed={active}
-                              title={meta.name}
                               onClick={() => updateCartItemColor(item.id, item.selectedSize, item.selectedColor, color)}
                             >
-                              <span className="shade-swatch" style={{ background: meta.hex }} />
-                              <span>{meta.name}</span>
+                              {color}
                             </button>
                           );
                         })}

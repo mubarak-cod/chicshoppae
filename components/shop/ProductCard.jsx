@@ -11,20 +11,12 @@ const WISHLIST_STORAGE_KEY = "chic-shoppae-wishlist";
 
 function getColorKey(color) {
   if (!color) return "";
-  if (typeof color === "string") return color.toLowerCase();
-  return String(color.name || color.hex || "").toLowerCase();
+  return String(color).toLowerCase();
 }
 
-function getColorMeta(color) {
-  if (!color) return { name: "", hex: "#000000" };
-  if (typeof color === "string") {
-    return { name: color, hex: color.startsWith("#") ? color : "#000000" };
-  }
-
-  return {
-    name: color.name || color.hex || "",
-    hex: color.hex || "#000000",
-  };
+function getSizeKey(size) {
+  if (!size) return "";
+  return String(size).toLowerCase();
 }
 
 function IconButton({ label, children, onClick, active }) {
@@ -48,6 +40,7 @@ export default function ProductCard({ product }) {
   const { addToCart, cartItems } = useCart();
   const [activeImage, setActiveImage] = useState(0);
   const [selectedColor, setSelectedColor] = useState(product.colors?.[0] || null);
+  const [selectedSize, setSelectedSize] = useState(product.sizes?.[0] || null);
   const [wished, setWished] = useState(false);
   const [buttonState, setButtonState] = useState("idle");
   const flashTimerRef = useRef(null);
@@ -59,7 +52,8 @@ export default function ProductCard({ product }) {
     cartItems?.some(
       (item) =>
         item.id === product.id &&
-        getColorKey(item.selectedColor) === getColorKey(selectedColor)
+        getColorKey(item.selectedColor) === getColorKey(selectedColor) &&
+        getSizeKey(item.selectedSize) === getSizeKey(selectedSize)
     )
   );
 
@@ -115,7 +109,7 @@ export default function ProductCard({ product }) {
       return;
     }
 
-    addToCart(product, { selectedColor });
+    addToCart(product, { selectedColor, selectedSize });
     toast.success(`${productName} added to cart`, {
       style: {
         background: "var(--bg-card)",
@@ -180,14 +174,21 @@ export default function ProductCard({ product }) {
           position: absolute;
           inset: -40%;
           background: radial-gradient(circle at 30% 20%, rgba(232, 160, 191, 0.16), transparent 55%);
-          opacity: 0;
+          opacity: 0.22;
+          animation: ambientGlowPulse 6s ease-in-out infinite;
           transition: opacity 0.5s ease;
           z-index: 0;
           pointer-events: none;
         }
 
+        @keyframes ambientGlowPulse {
+          0%, 100% { opacity: 0.16; }
+          50% { opacity: 0.32; }
+        }
+
         .product-card:hover .product-card-glow {
           opacity: 1;
+          animation-play-state: paused;
         }
 
         .product-card-media {
@@ -213,6 +214,26 @@ export default function ProductCard({ product }) {
           background: linear-gradient(180deg, rgba(0,0,0,0.05) 0%, transparent 26%, transparent 72%, rgba(0,0,0,0.18) 100%);
           pointer-events: none;
           z-index: 1;
+        }
+
+        .product-shimmer {
+          position: absolute;
+          top: 0;
+          left: -60%;
+          width: 35%;
+          height: 100%;
+          background: linear-gradient(115deg, transparent, rgba(255,255,255,0.32), transparent);
+          transform: skewX(-18deg);
+          animation: shimmerSweep 5.5s ease-in-out infinite;
+          z-index: 1;
+          pointer-events: none;
+          mix-blend-mode: overlay;
+        }
+
+        @keyframes shimmerSweep {
+          0% { left: -60%; }
+          45% { left: 130%; }
+          100% { left: 130%; }
         }
 
         .product-card-overlay {
@@ -409,6 +430,13 @@ export default function ProductCard({ product }) {
           background: rgba(196, 137, 90, 0.1);
           padding: 2px 7px;
           border-radius: 5px;
+          display: inline-block;
+          animation: discountPulse 2.6s ease-in-out infinite;
+        }
+
+        @keyframes discountPulse {
+          0%, 100% { transform: scale(1); }
+          50% { transform: scale(1.06); }
         }
 
         .product-colors {
@@ -425,24 +453,29 @@ export default function ProductCard({ product }) {
           letter-spacing: 0.02em;
         }
 
-        .product-color-dot {
-          width: 22px;
-          height: 22px;
-          padding: 0;
-          border: 2px solid var(--bg-card);
-          box-shadow: 0 0 0 1px var(--border);
+        .product-color-chip,
+        .product-size-chip {
+          padding: 5px 12px;
+          font-size: 0.74rem;
+          font-weight: 600;
+          color: var(--text-secondary);
+          background: var(--bg-primary);
+          border: 1px solid var(--border);
           border-radius: 999px;
           cursor: pointer;
-          transition: transform 0.2s, box-shadow 0.2s;
+          transition: transform 0.2s, border-color 0.2s, color 0.2s, background 0.2s;
         }
 
-        .product-color-dot:hover {
-          transform: scale(1.14);
+        .product-color-chip:hover,
+        .product-size-chip:hover {
+          transform: scale(1.05);
         }
 
-        .product-color-dot[aria-pressed="true"] {
-          box-shadow: 0 0 0 2px var(--text-primary);
-          transform: scale(1.08);
+        .product-color-chip[aria-pressed="true"],
+        .product-size-chip[aria-pressed="true"] {
+          background: var(--text-primary);
+          color: var(--bg-primary);
+          border-color: var(--text-primary);
         }
 
         .product-card-footer {
@@ -537,6 +570,7 @@ export default function ProductCard({ product }) {
         </AnimatePresence>
 
         <div className="media-vignette" />
+        <div className="product-shimmer" />
 
         <div className="product-card-overlay">
           <span className="product-badge">{product.category}</span>
@@ -602,22 +636,40 @@ export default function ProductCard({ product }) {
         </div>
 
         {!!product.colors?.length && (
-          <div className="product-colors" aria-label="Available shades">
-            <span className="product-meta-label">Shades</span>
-            {product.colors.slice(0, 4).map((color) => {
-              const meta = getColorMeta(color);
+          <div className="product-colors" aria-label="Available colors">
+            <span className="product-meta-label">Available in</span>
+            {product.colors.map((color) => {
               const active = getColorKey(selectedColor) === getColorKey(color);
               return (
                 <button
-                  key={meta.name || meta.hex}
+                  key={color}
                   type="button"
-                  className="product-color-dot"
-                  title={meta.name}
-                  aria-label={meta.name}
+                  className="product-color-chip"
                   aria-pressed={active}
-                  style={{ background: meta.hex }}
                   onClick={() => setSelectedColor(color)}
-                />
+                >
+                  {color}
+                </button>
+              );
+            })}
+          </div>
+        )}
+
+        {!!product.sizes?.length && (
+          <div className="product-colors" aria-label="Available sizes">
+            <span className="product-meta-label">Sizes</span>
+            {product.sizes.map((size) => {
+              const active = getSizeKey(selectedSize) === getSizeKey(size);
+              return (
+                <button
+                  key={size}
+                  type="button"
+                  className="product-size-chip"
+                  aria-pressed={active}
+                  onClick={() => setSelectedSize(size)}
+                >
+                  {size}
+                </button>
               );
             })}
           </div>

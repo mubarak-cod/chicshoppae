@@ -9,14 +9,17 @@ import dynamicImport from "next/dynamic";
 import toast from "react-hot-toast";
 import { useCart } from "@/context/CartContext";
 
-const PaystackButton = dynamicImport(() => import("@/components/PaystackButton"), {
-  ssr: false,
-  loading: () => (
-    <button className="pay-button" type="button" disabled>
-      <span>Loading payment...</span>
-    </button>
-  ),
-});
+const PaystackButton = dynamicImport(
+  () => import("@/components/PaystackButton"),
+  {
+    ssr: false,
+    loading: () => (
+      <button className="pay-button" type="button" disabled>
+        <span>Loading payment...</span>
+      </button>
+    ),
+  },
+);
 
 const initialForm = {
   fullName: "",
@@ -33,14 +36,11 @@ const LAST_ORDER_STORAGE_KEY = "chic-shoppae-last-order";
 
 function getColorKey(color) {
   if (!color) return "";
-  if (typeof color === "string") return color.toLowerCase();
-  return String(color.name || color.hex || "").toLowerCase();
+  return String(color).toLowerCase();
 }
 
 function getColorLabel(color) {
-  if (!color) return "N/A";
-  if (typeof color === "string") return color;
-  return color.name || color.hex || "N/A";
+  return color || "N/A";
 }
 
 function getPreviewImage(item) {
@@ -48,7 +48,7 @@ function getPreviewImage(item) {
   if (!images.length) return "/images/one.jpg";
   const colors = Array.isArray(item.colors) ? item.colors : [];
   const colorIndex = colors.findIndex(
-    (color) => getColorKey(color) === getColorKey(item.selectedColor)
+    (color) => getColorKey(color) === getColorKey(item.selectedColor),
   );
   return images[(colorIndex < 0 ? 0 : colorIndex) % images.length] || images[0];
 }
@@ -58,7 +58,10 @@ function formatCurrency(value) {
 }
 
 function getWhatsappNumber() {
-  return String(process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "").replace(/\D/g, "");
+  return String(process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "").replace(
+    /\D/g,
+    "",
+  );
 }
 
 function buildWhatsAppLink(items, form, total) {
@@ -67,7 +70,7 @@ function buildWhatsAppLink(items, form, total) {
 
   const orderLines = items.map(
     (item, i) =>
-      `${i + 1}. *${item.name || "Item"}*\n   Color: ${item.color} | Size: ${item.size} | Qty: ${item.quantity}\n   Subtotal: ₦${formatCurrency(item.subtotal)}`
+      `${i + 1}. *${item.name || "Item"}*\n   Color: ${item.color} | Size: ${item.size} | Qty: ${item.quantity}\n   Subtotal: ₦${formatCurrency(item.subtotal)}`,
   );
 
   const messageLines = [
@@ -112,7 +115,7 @@ export default function CheckoutPage() {
         size: item.selectedSize || "N/A",
         image: getPreviewImage(item),
       })),
-    [cartItems]
+    [cartItems],
   );
 
   const checkoutWhatsAppHref = buildWhatsAppLink(orderItems, form, total);
@@ -162,7 +165,15 @@ export default function CheckoutPage() {
       toast.error("Your cart is empty.");
       return false;
     }
-    const required = ["fullName", "email", "phone", "country", "state", "city", "streetAddress"];
+    const required = [
+      "fullName",
+      "email",
+      "phone",
+      "country",
+      "state",
+      "city",
+      "streetAddress",
+    ];
     const missing = required.find((f) => !form[f].trim());
     if (missing) {
       toast.error("Please fill in every delivery field before paying.");
@@ -176,7 +187,15 @@ export default function CheckoutPage() {
     return true;
   };
 
-  const requiredFields = ["fullName", "email", "phone", "country", "state", "city", "streetAddress"];
+  const requiredFields = [
+    "fullName",
+    "email",
+    "phone",
+    "country",
+    "state",
+    "city",
+    "streetAddress",
+  ];
 
   const handleWhatsAppClick = (e) => {
     e.preventDefault();
@@ -208,22 +227,26 @@ export default function CheckoutPage() {
 
   const handlePaystackSuccess = async (response) => {
     try {
-      const ref = response?.reference || response?.trxref || response?.trans || "";
+      const ref =
+        response?.reference || response?.trxref || response?.trans || "";
       const verified = await submitOrder(ref);
       if (typeof window !== "undefined") {
         window.localStorage.setItem(
           LAST_ORDER_STORAGE_KEY,
           JSON.stringify({
-            reference: ref || verified?.payment?.reference || `chic-${Date.now()}`,
+            reference:
+              ref || verified?.payment?.reference || `chic-${Date.now()}`,
             customer: form,
             items: orderItems,
             total,
             customerMessage: form.customerMessage,
-          })
+          }),
         );
       }
       toast.success("Payment verified! Order confirmed.");
-      router.push(`/order-success?reference=${encodeURIComponent(ref || verified?.payment?.reference || "")}`);
+      router.push(
+        `/order-success?reference=${encodeURIComponent(ref || verified?.payment?.reference || "")}`,
+      );
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Checkout failed.");
     } finally {
@@ -532,31 +555,75 @@ export default function CheckoutPage() {
             <div className="checkout-grid">
               <div className="checkout-field full">
                 <label htmlFor="fullName">Full name</label>
-                <input id="fullName" name="fullName" value={form.fullName} onChange={handleChange} placeholder="Amina Bello" />
+                <input
+                  id="fullName"
+                  name="fullName"
+                  value={form.fullName}
+                  onChange={handleChange}
+                  placeholder="Amina Bello"
+                />
               </div>
               <div className="checkout-field">
                 <label htmlFor="email">Email</label>
-                <input id="email" name="email" type="email" value={form.email} onChange={handleChange} placeholder="amina@example.com" />
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  value={form.email}
+                  onChange={handleChange}
+                  placeholder="amina@example.com"
+                />
               </div>
               <div className="checkout-field">
                 <label htmlFor="phone">Phone number</label>
-                <input id="phone" name="phone" type="tel" value={form.phone} onChange={handleChange} placeholder="08012345678" />
+                <input
+                  id="phone"
+                  name="phone"
+                  type="tel"
+                  value={form.phone}
+                  onChange={handleChange}
+                  placeholder="08012345678"
+                />
               </div>
               <div className="checkout-field">
                 <label htmlFor="country">Country</label>
-                <input id="country" name="country" value={form.country} onChange={handleChange} placeholder="Nigeria" />
+                <input
+                  id="country"
+                  name="country"
+                  value={form.country}
+                  onChange={handleChange}
+                  placeholder="Nigeria"
+                />
               </div>
               <div className="checkout-field">
                 <label htmlFor="state">State</label>
-                <input id="state" name="state" value={form.state} onChange={handleChange} placeholder="Lagos" />
+                <input
+                  id="state"
+                  name="state"
+                  value={form.state}
+                  onChange={handleChange}
+                  placeholder="Lagos"
+                />
               </div>
               <div className="checkout-field">
                 <label htmlFor="city">City</label>
-                <input id="city" name="city" value={form.city} onChange={handleChange} placeholder="Ikeja" />
+                <input
+                  id="city"
+                  name="city"
+                  value={form.city}
+                  onChange={handleChange}
+                  placeholder="Ikeja"
+                />
               </div>
               <div className="checkout-field full">
                 <label htmlFor="streetAddress">Street address</label>
-                <input id="streetAddress" name="streetAddress" value={form.streetAddress} onChange={handleChange} placeholder="12 Adeola Odeku Street" />
+                <input
+                  id="streetAddress"
+                  name="streetAddress"
+                  value={form.streetAddress}
+                  onChange={handleChange}
+                  placeholder="12 Adeola Odeku Street"
+                />
               </div>
               <div className="checkout-field full">
                 <label htmlFor="customerMessage">Message (optional)</label>
@@ -577,17 +644,24 @@ export default function CheckoutPage() {
               <span className="whatsapp-kicker">WhatsApp support</span>
               <h3>Send your order summary on WhatsApp</h3>
               <p>
-                Tap below to open a pre-filled WhatsApp message with your order details, ready to send.
+                Tap below to open a pre-filled WhatsApp message with your order
+                details, ready to send.
               </p>
-              
-                <a className="whatsapp-button"
-  href={checkoutWhatsAppHref}
-  target="_blank"
-  rel="noopener noreferrer"
-  aria-label="Open WhatsApp with your order summary"
->
-                <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 2C6.48 2 2 6.48 2 12c0 1.85.5 3.58 1.36 5.07L2 22l5.07-1.32A9.94 9.94 0 0 0 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2zm0 18c-1.65 0-3.18-.46-4.5-1.25l-.32-.19-3.34.87.9-3.26-.21-.34A7.94 7.94 0 0 1 4 12c0-4.41 3.59-8 8-8s8 3.59 8 8-3.59 8-8 8z"/>
+
+              <a
+                className="whatsapp-button"
+                href={checkoutWhatsAppHref}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Open WhatsApp with your order summary"
+              >
+                <svg
+                  width="17"
+                  height="17"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                >
+                  <path d="M12 2C6.48 2 2 6.48 2 12c0 1.85.5 3.58 1.36 5.07L2 22l5.07-1.32A9.94 9.94 0 0 0 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2zm0 18c-1.65 0-3.18-.46-4.5-1.25l-.32-.19-3.34.87.9-3.26-.21-.34A7.94 7.94 0 0 1 4 12c0-4.41 3.59-8 8-8s8 3.59 8 8-3.59 8-8 8z" />
                 </svg>
                 WhatsApp Preview
               </a>
@@ -598,7 +672,9 @@ export default function CheckoutPage() {
         {/* ── RIGHT: Order summary ── */}
         <aside className="checkout-summary">
           <h2 className="summary-title">Order Summary</h2>
-          <p className="summary-meta">{cartItems.length} item{cartItems.length !== 1 ? "s" : ""}</p>
+          <p className="summary-meta">
+            {cartItems.length} item{cartItems.length !== 1 ? "s" : ""}
+          </p>
 
           {cartItems.length > 0 ? (
             <div className="order-list">
@@ -618,7 +694,7 @@ export default function CheckoutPage() {
                   </div>
                   <div className="order-item-copy">
                     <h4>{item.name || item.title}</h4>
-                    <p>Shade: {getColorLabel(item.selectedColor)}</p>
+                    <p>Color: {getColorLabel(item.selectedColor)}</p>
                     <p>Size: {item.selectedSize || "N/A"}</p>
                     <p>Qty: {item.quantity}</p>
                   </div>
@@ -632,7 +708,9 @@ export default function CheckoutPage() {
             <div className="empty-state">No items to display.</div>
           )}
 
-          <p className="summary-meta">Delivery fee is paid directly to the rider on arrival.</p>
+          <p className="summary-meta">
+            Delivery fee is paid directly to the rider on arrival.
+          </p>
 
           <div className="summary-total-row">
             <span>Total</span>
@@ -645,12 +723,17 @@ export default function CheckoutPage() {
             onSuccess={handlePaystackSuccess}
             onClose={handlePaystackClose}
             disabled={processing || !cartItems.length}
-            label={processing ? "Processing..." : `Pay ₦${Number(total).toLocaleString()}`}
+            label={
+              processing
+                ? "Processing..."
+                : `Pay ₦${Number(total).toLocaleString()}`
+            }
             onBeforePay={validateBeforePay}
           />
 
           <p className="checkout-note">
-            🔒 Payments are processed securely by Paystack and verified server-side before your order is confirmed.
+            🔒 Payments are processed securely by Paystack and verified
+            server-side before your order is confirmed.
           </p>
         </aside>
       </div>

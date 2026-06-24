@@ -8,7 +8,7 @@ export default function ShopPage() {
     <main className="min-h-screen bg-[var(--bg-primary)]">
       <ShopHero />
 
-      <PromoSection />
+      {/* <PromoSection /> */}
 
       <ProductGrid products={products} />
       <Footer />
