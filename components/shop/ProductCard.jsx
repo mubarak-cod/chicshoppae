@@ -646,7 +646,10 @@ export default function ProductCard({ product }) {
                   type="button"
                   className="product-color-chip"
                   aria-pressed={active}
-                  onClick={() => setSelectedColor(color)}
+                  onClick={() => {
+                    setSelectedColor(color);
+                    toast(`🎨 ${color} selected`, { duration: 1400 });
+                  }}
                 >
                   {color}
                 </button>
@@ -666,7 +669,10 @@ export default function ProductCard({ product }) {
                   type="button"
                   className="product-size-chip"
                   aria-pressed={active}
-                  onClick={() => setSelectedSize(size)}
+                  onClick={() => {
+                    setSelectedSize(size);
+                    toast(`📏 Size ${size} selected`, { duration: 1400 });
+                  }}
                 >
                   {size}
                 </button>

@@ -115,7 +115,7 @@
     "description": "A compact top with a clean silhouette and polished hardware. It is sized for essentials and styled for impact.",
     "price": 5000,
     "originalPrice": 2500,
-    "images": ["https://res.cloudinary.com/ddlnqthao/image/upload/v1782123339/IMG-20260618-WA0168_ialuew.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782123340/IMG-20260618-WA0169_ycitkr.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782123342/IMG-20260618-WA0155_vbirwu.jpg"],
+    "images": ["https://res.cloudinary.com/ddlnqthao/image/upload/v1782123339/IMG-20260618-WA0168_ialuew.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782123340/IMG-20260618-WA0169_ycitkr.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782123342/IMG-20260618-WA0141_fjbo13.jpg"],
     "colors": ["Black", "pink", "Brown", "Nude", "light-pink","lilac","light-blue","blue", "White"],
     "sizes": ["10", "12", "14"]
   },
@@ -187,7 +187,7 @@
     "description": "Sharp pleats and a relaxed fit give these top a polished profile. They are made to move easily from desk to dinner.",
     "price": 5500,
     "originalPrice": 3000,
-    "images": ["https://res.cloudinary.com/ddlnqthao/image/upload/v1782191372/IMG-20260618-WA0099_1_jckqxm.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782191374/IMG-20260618-WA0095_2_ri01kc.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782191375/IMG-20260618-WA0093_1_gfwlx8.jpg"],
+    "images": ["https://res.cloudinary.com/ddlnqthao/image/upload/v1782123313/IMG-20260618-WA0094_rgyvkf.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782191374/IMG-20260618-WA0095_2_ri01kc.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782191375/IMG-20260618-WA0093_1_gfwlx8.jpg"],
     "colors": ["Black", "Red", "leopard", "pink", "White"],
     "sizes": ["6","8", "10", "12", "14"]
   },
@@ -223,7 +223,7 @@
     "description": "A nice top with a defined waist and elegant finish. It gives a strong silhouette for evening occasions.",
     "price": 5000,
     "originalPrice": 2500,
-    "images": ["https://res.cloudinary.com/ddlnqthao/image/upload/v1782191387/IMG-20260618-WA0063_1_v1aftg.jpg"],
+    "images": ["https://res.cloudinary.com/ddlnqthao/image/upload/v1782123333/IMG-20260618-WA0131_d2sheh.jpg"],
     "colors": ["leopard"],
     "sizes": ["8", "10", "12"]
   },
@@ -295,8 +295,20 @@
     "description": "A lightweight silk top that adds beauty outfits.",
     "price": 4500,
     "originalPrice": 2500,
-    "images": ["https://res.cloudinary.com/ddlnqthao/image/upload/v1782123332/IMG-20260618-WA0147_x0yphr.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782123333/IMG-20260618-WA0125_edvep6.jpg"],
+    "images": ["https://res.cloudinary.com/ddlnqthao/image/upload/v1782123332/IMG-20260618-WA0147_x0yphr.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782123333/IMG-20260618-WA0143_kyvku3.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782123349/IMG-20260618-WA0142_lj44jg.jpg"],
     "colors": ["Black", "wine", "ash", "White"],
+    "sizes": ["8", "10", "12", "14"]
+  },
+    {
+    "id": "ivy-set",
+    "title": "Ivy set",
+    "name": "Ivy set",
+    "category": "Tops",
+    "description": "A lightweight silk top that adds beauty outfits.",
+    "price": 9500,
+    "originalPrice": 4500,
+    "images": ["https://res.cloudinary.com/ddlnqthao/image/upload/v1782191361/IMG-20260618-WA0110_1_lozrom.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782337487/IMG-20260618-WA0112_rudqyz.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782337487/IMG-20260618-WA0109_w8eqdb.jpg"],
+    "colors": ["light-blue", "", "brown"],
     "sizes": ["8", "10", "12", "14"]
   }
 ]
