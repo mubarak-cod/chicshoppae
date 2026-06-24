@@ -581,10 +581,11 @@ export default function CheckoutPage() {
               </p>
               
                 <a className="whatsapp-button"
-                href={checkoutWhatsAppHref}
-                onClick={handleWhatsAppClick}
-                aria-label="Open WhatsApp with your order summary"
-              >
+  href={checkoutWhatsAppHref}
+  target="_blank"
+  rel="noopener noreferrer"
+  aria-label="Open WhatsApp with your order summary"
+>
                 <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M12 2C6.48 2 2 6.48 2 12c0 1.85.5 3.58 1.36 5.07L2 22l5.07-1.32A9.94 9.94 0 0 0 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2zm0 18c-1.65 0-3.18-.46-4.5-1.25l-.32-.19-3.34.87.9-3.26-.21-.34A7.94 7.94 0 0 1 4 12c0-4.41 3.59-8 8-8s8 3.59 8 8-3.59 8-8 8z"/>
                 </svg>
