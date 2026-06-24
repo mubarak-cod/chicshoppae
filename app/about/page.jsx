@@ -3,7 +3,7 @@ import React from "react";
 export default function AboutPrecious() {
   return (
     <div className="min-h-screen w-full bg-[#FBF6EE] text-[#2B2620]">
-      <div className="max-w-3xl mx-auto px-6 py-16 sm:py-20">
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 py-10 sm:py-16 md:py-20">
 
         {/* Eyebrow */}
         <p className="text-xs tracking-[0.25em] uppercase text-[#B5562E] font-semibold mb-6">
@@ -11,15 +11,15 @@ export default function AboutPrecious() {
         </p>
 
         {/* Header: initials badge + name */}
-        <div className="flex items-center gap-5 mb-10">
+        <div className="flex flex-col items-center text-center sm:flex-row sm:items-center sm:text-left gap-4 sm:gap-5 mb-10">
           <div className="w-20 h-20 rounded-full bg-[#2F4A3E] flex items-center justify-center shrink-0 ring-4 ring-[#EADFC8]">
             <span className="text-2xl font-bold text-[#FBF6EE] font-serif">OP</span>
           </div>
           <div>
-            <h1 className="text-3xl sm:text-4xl font-serif font-bold leading-tight">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-serif font-bold leading-tight break-words">
               Oyewole Precious
             </h1>
-            <p className="text-[#6B5E4C] mt-1">
+            <p className="text-[#6B5E4C] mt-1 text-sm sm:text-base">
               Student · Curator of Good Fits
             </p>
           </div>
@@ -56,17 +56,17 @@ export default function AboutPrecious() {
         </div>
 
         {/* Stat strip */}
-        <div className="grid grid-cols-3 gap-4 mt-12 mb-12">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-10 mb-10 sm:mt-12 sm:mb-12">
           <div className="border-l-2 border-[#2F4A3E] pl-3">
-            <p className="text-2xl font-serif font-bold">100%</p>
+            <p className="text-xl sm:text-2xl font-serif font-bold">100%</p>
             <p className="text-xs text-[#6B5E4C] mt-1">Hand-picked pieces</p>
           </div>
           <div className="border-l-2 border-[#2F4A3E] pl-3">
-            <p className="text-2xl font-serif font-bold">Student</p>
+            <p className="text-xl sm:text-2xl font-serif font-bold">Student</p>
             <p className="text-xs text-[#6B5E4C] mt-1">Built around classes</p>
           </div>
           <div className="border-l-2 border-[#2F4A3E] pl-3">
-            <p className="text-2xl font-serif font-bold">Real</p>
+            <p className="text-xl sm:text-2xl font-serif font-bold">Real</p>
             <p className="text-xs text-[#6B5E4C] mt-1">Honest service, no fluff</p>
           </div>
         </div>
