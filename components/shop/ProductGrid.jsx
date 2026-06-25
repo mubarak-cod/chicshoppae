@@ -50,6 +50,7 @@ export default function ProductGrid({ products }) {
           .product-grid-header {
             flex-direction: column;
             align-items: start;
+            grid-template-columns: repeat(1, minmax(0, 1fr));
           }
         }
       `}</style>
