@@ -44,7 +44,7 @@
     "price": 5500,
     "originalPrice": 3000,
     "images": ["https://res.cloudinary.com/ddlnqthao/image/upload/v1782191400/IMG-20260618-WA0079_1_mkgx1l.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782191398/IMG-20260618-WA0078_2_k7uyhy.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782191398/IMG-20260618-WA0081_1_ajfmk6.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782191397/IMG-20260618-WA0082_1_nznlou.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782191397/IMG-20260618-WA0080_1_pqbvui.jpg"],
-    "colors": ["Black", "pinky-white", "yellow", "White"],
+    "colors": ["Black", "yellow", "White"],
     "sizes": ["8", "10", "12", "14"]
   },
   {
