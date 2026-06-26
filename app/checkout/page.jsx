@@ -695,7 +695,7 @@ export default function CheckoutPage() {
                   <div className="order-item-copy">
                     <h4>{item.name || item.title}</h4>
                     <p>Color: {getColorLabel(item.selectedColor)}</p>
-                    <p>Size: {item.selectedSize || "N/A"}</p>
+                    <p>{item.sizes?.length ? "Size" : item.styles?.length ? "Style" : "Size"}: {item.selectedSize || "N/A"}</p>
                     <p>Qty: {item.quantity}</p>
                   </div>
                   <div className="order-item-price">

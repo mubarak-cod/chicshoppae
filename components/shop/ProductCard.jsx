@@ -40,7 +40,9 @@ export default function ProductCard({ product }) {
   const { addToCart, cartItems } = useCart();
   const [activeImage, setActiveImage] = useState(0);
   const [selectedColor, setSelectedColor] = useState(product.colors?.[0] || null);
-  const [selectedSize, setSelectedSize] = useState(product.sizes?.[0] || null);
+  const sizeOptions = product.sizes?.length ? product.sizes : product.styles?.length ? product.styles : [];
+  const sizeLabel = product.sizes?.length ? "Sizes" : "Styles";
+  const [selectedSize, setSelectedSize] = useState(sizeOptions[0] || null);
   const [wished, setWished] = useState(false);
   const [buttonState, setButtonState] = useState("idle");
   const flashTimerRef = useRef(null);
@@ -658,10 +660,10 @@ export default function ProductCard({ product }) {
           </div>
         )}
 
-        {!!product.sizes?.length && (
-          <div className="product-colors" aria-label="Available sizes">
-            <span className="product-meta-label">Sizes</span>
-            {product.sizes.map((size) => {
+        {!!sizeOptions.length && (
+          <div className="product-colors" aria-label={`Available ${sizeLabel.toLowerCase()}`}>
+            <span className="product-meta-label">{sizeLabel}</span>
+            {sizeOptions.map((size) => {
               const active = getSizeKey(selectedSize) === getSizeKey(size);
               return (
                 <button
@@ -671,7 +673,7 @@ export default function ProductCard({ product }) {
                   aria-pressed={active}
                   onClick={() => {
                     setSelectedSize(size);
-                    toast(`📏 Size ${size} selected`, { duration: 1400 });
+                    toast(`📏 ${sizeLabel === "Styles" ? "Style" : "Size"} ${size} selected`, { duration: 1400 });
                   }}
                 >
                   {size}

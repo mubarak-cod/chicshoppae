@@ -265,7 +265,7 @@ export default function CartPage() {
                     <h3>{item.name || item.title}</h3>
                     <div className="cart-meta">Category: {item.category}</div>
                     <div className="cart-meta">Color: {item.selectedColor || "N/A"}</div>
-                    <div className="cart-meta">Size: {item.selectedSize || "N/A"}</div>
+                    <div className="cart-meta">{item.sizes?.length ? "Size" : item.styles?.length ? "Style" : "Size"}: {item.selectedSize || "N/A"}</div>
                     <div className="cart-price">₦{Number(item.price).toLocaleString()}</div>
 
                     {!!item.colors?.length && (
