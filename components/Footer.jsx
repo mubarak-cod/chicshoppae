@@ -75,7 +75,7 @@ export default function Footer() {
   if (!email.trim()) return;
 
   try {
-    const res = await fetch("https://formspree.io/f/mpqgwgbg", {
+    const res = await fetch("https://formspree.io/f/xrewqzyw", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
