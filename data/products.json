@@ -45,7 +45,7 @@
     "originalPrice": 3000,
     "images": ["https://res.cloudinary.com/ddlnqthao/image/upload/v1782191400/IMG-20260618-WA0079_1_mkgx1l.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782191398/IMG-20260618-WA0078_2_k7uyhy.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782191398/IMG-20260618-WA0081_1_ajfmk6.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782191397/IMG-20260618-WA0082_1_nznlou.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782191397/IMG-20260618-WA0080_1_pqbvui.jpg"],
     "colors": ["Black", "yellow", "White"],
-    "sizes": ["8", "10", "12", "14"]
+    "styles": ["Style A", "Style B","Style C","Style D","Style E"]
   },
   {
     "id": "blossom-pie",
@@ -57,7 +57,7 @@
     "originalPrice": 3000,
     "images": ["https://res.cloudinary.com/ddlnqthao/image/upload/v1782191401/IMG-20260618-WA0086_1_mqhixj.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782191401/IMG-20260618-WA0085_1_uzgpni.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782191400/IMG-20260618-WA0084_w2d8wx.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782191400/IMG-20260618-WA0083_1_gc0ohd.jpg"],
     "colors": ["Black", "Green", "Red", "Navy", "Beige", "White"],
-    "sizes": ["8", "10", "12", "14"]
+    "styles": ["Style A", "Style B","Style C","Style D","Style E"]
   },
   {
     "id": "lily-jumpsuit",
@@ -200,8 +200,8 @@
     "price": 5000,
     "originalPrice": 2500,
     "images": ["https://res.cloudinary.com/ddlnqthao/image/upload/v1782191382/IMG-20260618-WA0049_1_jzw6sy.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782191382/IMG-20260618-WA0055_1_rh79if.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782191381/IMG-20260618-WA0053_1_tnskdr.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782191379/IMG-20260618-WA0051_1_vdnpjt.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782191378/IMG-20260618-WA0050_1_b9ahbm.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782191378/IMG-20260618-WA0048_1_hzujbh.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782191377/IMG-20260618-WA0047_1_peoabr.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782191377/IMG-20260618-WA0052_1_k9s9wz.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782191376/IMG-20260618-WA0054_yttem5.jpg"],
-    "colors": ["Black","White","other-styles..."],
-    "sizes": ["8", "10", "12", "14"]
+    "colors": ["Black", "White"],
+    "styles": ["Style A", "Style B", "Style C", "Style D", "Style E", "Style F", "Style G", "Style H", "Style I"]
   },
   {
     "id": "stripe-pant",
@@ -299,7 +299,7 @@
     "colors": ["Black", "wine", "ash", "White"],
     "sizes": ["8", "10", "12", "14"]
   },
-    {
+  {
     "id": "ivy-set",
     "title": "Ivy set",
     "name": "Ivy set",
@@ -308,7 +308,7 @@
     "price": 9500,
     "originalPrice": 4500,
     "images": ["https://res.cloudinary.com/ddlnqthao/image/upload/v1782191361/IMG-20260618-WA0110_1_lozrom.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782337487/IMG-20260618-WA0112_rudqyz.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782337487/IMG-20260618-WA0109_w8eqdb.jpg"],
-    "colors": ["light-blue", "", "brown"],
-    "sizes": ["8", "10", "12", "14"]
+    "colors": ["light-blue", "brown"],
+     "sizes": ["8", "10", "12", "14"]
   }
 ]
