@@ -59,7 +59,7 @@ export function CartProvider({ children }) {
     const payload = {
       ...product,
       selectedColor,
-      selectedSize: options.selectedSize || product.sizes?.[0] || null,
+      selectedSize: options.selectedSize || product.sizes?.[0] || product.styles?.[0] || null,
       quantity: options.quantity || 1,
     };
 
