@@ -19,7 +19,6 @@ export default function CartPage() {
   const {
     cartItems,
     subtotal,
-    shipping,
     discount,
     total,
     updateQuantity,
@@ -307,7 +306,6 @@ export default function CartPage() {
         <aside className="cart-summary">
           <h2 className="cart-title" style={{ fontSize: "2rem" }}>Summary</h2>
           <div className="summary-line"><span>Subtotal</span><span>₦{subtotal.toLocaleString()}</span></div>
-          <div className="summary-line"><span>Shipping</span><span>{shipping === 0 ? "Free" : `₦${shipping.toLocaleString()}`}</span></div>
           <div className="summary-line"><span>Discount</span><span>{discount > 0 ? `-₦${discount.toLocaleString()}` : "₦0"}</span></div>
           <div className="summary-line summary-total"><span>Total</span><span>₦{total.toLocaleString()}</span></div>
           <Link href="/shop" className="summary-button">

@@ -141,9 +141,9 @@ export function CartProvider({ children }) {
     );
     return {
       subtotal,
-      shipping: subtotal > 50000 || subtotal === 0 ? 0 : 100,
+      shipping: 0,
       discount: 0,
-      total: subtotal > 0 ? subtotal + (subtotal > 50000 ? 0 : 100) : 0,
+      total: subtotal,
     };
   }, [cartItems]);
 
