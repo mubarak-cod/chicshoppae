@@ -99,6 +99,7 @@ export default function CheckoutPage() {
   const { cartItems, total } = useCart();
   const [form, setForm] = useState(initialForm);
   const [processing, setProcessing] = useState(false);
+  const [paid, setPaid] = useState(false);
 
   const publicKey = process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY;
 
@@ -244,6 +245,7 @@ export default function CheckoutPage() {
         );
       }
       toast.success("Payment verified! Order confirmed.");
+      setPaid(true);
       router.push(
         `/order-success?reference=${encodeURIComponent(ref || verified?.payment?.reference || "")}`,
       );
@@ -356,8 +358,8 @@ export default function CheckoutPage() {
         }
 
         .summary-meta {
-          color: var(--text-secondary);
-          font-size: 0.88rem;
+          color: red;
+          font-size: 1.2rem;
         }
 
         .order-list {
@@ -514,6 +516,14 @@ export default function CheckoutPage() {
           text-decoration: none;
           transition: transform 0.2s, box-shadow 0.2s;
           box-shadow: 0 8px 20px rgba(18,140,126,0.2);
+          cursor: pointer;
+        }
+
+        .whatsapp-button:disabled {
+          background: var(--bg-secondary);
+          color: var(--text-muted);
+          box-shadow: none;
+          cursor: not-allowed;
         }
 
         .whatsapp-button:hover {
@@ -644,15 +654,22 @@ export default function CheckoutPage() {
               <span className="whatsapp-kicker">WhatsApp support</span>
               <h3>Send your order summary on WhatsApp</h3>
               <p>
-                Tap below to open a pre-filled WhatsApp message with your order
-                details, ready to send.
+                {paid
+                  ? "Tap below to open a pre-filled WhatsApp message with your order details, ready to send."
+                  : "This unlocks after your payment is confirmed."}
               </p>
 
-              <a
+              <button
+                type="button"
                 className="whatsapp-button"
-                href={checkoutWhatsAppHref}
-                target="_blank"
-                rel="noopener noreferrer"
+                disabled={!paid}
+                onClick={() => {
+                  if (!paid) {
+                    toast.error("Complete payment first to send your order on WhatsApp.");
+                    return;
+                  }
+                  window.open(checkoutWhatsAppHref, "_blank", "noopener,noreferrer");
+                }}
                 aria-label="Open WhatsApp with your order summary"
               >
                 <svg
@@ -664,7 +681,7 @@ export default function CheckoutPage() {
                   <path d="M12 2C6.48 2 2 6.48 2 12c0 1.85.5 3.58 1.36 5.07L2 22l5.07-1.32A9.94 9.94 0 0 0 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2zm0 18c-1.65 0-3.18-.46-4.5-1.25l-.32-.19-3.34.87.9-3.26-.21-.34A7.94 7.94 0 0 1 4 12c0-4.41 3.59-8 8-8s8 3.59 8 8-3.59 8-8 8z" />
                 </svg>
                 WhatsApp Preview
-              </a>
+              </button>
             </div>
           )}
         </section>
