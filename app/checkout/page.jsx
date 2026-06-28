@@ -360,6 +360,12 @@ export default function CheckoutPage() {
         .summary-meta {
           color: red;
           font-size: 1.2rem;
+          animation: summaryMetaPulse 1.8s ease-in-out infinite;
+        }
+
+        @keyframes summaryMetaPulse {
+          0%, 100% { opacity: 1; transform: scale(1); }
+          50% { opacity: 0.6; transform: scale(1.03); }
         }
 
         .order-list {
