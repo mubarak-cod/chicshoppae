@@ -17,10 +17,10 @@
     "name": "Ring Top",
     "category": "Tops",
     "description": "A playful and feminine top with a unique design element. Perfect for adding a touch of whimsy to any outfit.",
-    "price": 4500,
+    "price": 5000,
     "originalPrice": 2500,
     "images": ["https://res.cloudinary.com/ddlnqthao/image/upload/v1782989200/IMG-20260702-WA0002_kiyk0u.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782989200/IMG-20260702-WA0001_uynhmt.jpg","https://res.cloudinary.com/ddlnqthao/image/upload/v1782989202/IMG-20260702-WA0000_njnb7t.jpg"],
-    "colors": ["light-blue", "black", "Red", "White"],
+    "colors": ["Red", "black", "White", "pink", "Brown","nude","purple","Green","Baby-pink"],
     "sizes": ["8", "10", "12", "14"]
   },
   {
