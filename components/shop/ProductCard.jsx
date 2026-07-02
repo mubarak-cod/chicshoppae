@@ -41,9 +41,12 @@ export default function ProductCard({ product }) {
   const { addToCart, cartItems } = useCart();
   const [activeImage, setActiveImage] = useState(0);
   const [selectedColor, setSelectedColor] = useState(product.colors?.[0] || null);
-  const sizeOptions = product.sizes?.length ? product.sizes : product.styles?.length ? product.styles : [];
-  const sizeLabel = product.sizes?.length ? "Sizes" : "Styles";
-  const [selectedSize, setSelectedSize] = useState(sizeOptions[0] || null);
+  const hasSizes = !!product.sizes?.length;
+  const hasStyles = !!product.styles?.length;
+  const sizeOptions = hasSizes ? product.sizes : hasStyles ? product.styles : [];
+  const sizeLabel = hasSizes ? "Sizes" : "Styles";
+  const [selectedSize, setSelectedSize] = useState(product.sizes?.[0] || null);
+  const [selectedStyle, setSelectedStyle] = useState(product.styles?.[0] || null);
   const [wished, setWished] = useState(false);
   const [buttonState, setButtonState] = useState("idle");
   const flashTimerRef = useRef(null);
@@ -140,7 +143,7 @@ export default function ProductCard({ product }) {
       return;
     }
 
-    addToCart(product, { selectedColor, selectedSize });
+    addToCart(product, { selectedColor, selectedSize, selectedStyle });
     toast.success(`${productName} added to cart`, {
       style: {
         background: "var(--bg-card)",
@@ -162,19 +165,15 @@ export default function ProductCard({ product }) {
     }, 900);
   };
 
-  const buttonLabel =
-    buttonState === "flash"
-      ? "Added ✓"
-      : inCart || buttonState === "in-cart"
-        ? "Go to Cart"
-        : "Add to Cart";
-
   const activeImageSrc = gallery[activeImage] || gallery[0] || "/images/one.jpg";
 
   const cycleImage = (direction = 1) => {
     if (gallery.length < 2) return;
     setActiveImage((current) => (current + direction + gallery.length) % gallery.length);
   };
+
+  const isInCart = inCart || buttonState === "in-cart";
+  const isFlash = buttonState === "flash";
 
   return (
     <motion.article
@@ -533,7 +532,7 @@ export default function ProductCard({ product }) {
           align-items: center;
           justify-content: center;
           gap: 7px;
-          transition: transform 0.25s, box-shadow 0.25s, background 0.25s;
+          transition: transform 0.25s, box-shadow 0.25s, background 0.35s;
         }
 
         .add-to-cart::before {
@@ -562,12 +561,24 @@ export default function ProductCard({ product }) {
           gap: 7px;
         }
 
-        .add-to-cart.added {
-          background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+        /* flash state — brief green confirm */
+        .add-to-cart.state-flash {
+          background: linear-gradient(135deg, #34D399, #0EA572);
+          box-shadow: 0 8px 22px rgba(16,163,107,0.3);
         }
 
-        .add-to-cart.added::before {
-          display: none;
+        .add-to-cart.state-flash::before { display: none; }
+
+        /* in-cart state — warm gold/pink */
+        .add-to-cart.state-in-cart {
+          background: linear-gradient(135deg, #E8A0BF, #C4895A);
+          box-shadow: 0 8px 22px rgba(196,137,90,0.28);
+        }
+
+        .add-to-cart.state-in-cart::before { display: none; }
+
+        .add-to-cart.state-in-cart:hover {
+          box-shadow: 0 14px 30px rgba(196,137,90,0.38);
         }
 
         @media (max-width: 640px) {
@@ -689,11 +700,11 @@ export default function ProductCard({ product }) {
           </div>
         )}
 
-        {!!sizeOptions.length && (
-          <div className="product-colors" aria-label={`Available ${sizeLabel.toLowerCase()}`}>
-            <span className="product-meta-label">{sizeLabel}</span>
-            {sizeOptions.map((size) => {
-              const active = getSizeKey(selectedSize) === getSizeKey(size);
+        {hasSizes && (
+          <div className="product-colors" aria-label="Available sizes">
+            <span className="product-meta-label">Sizes</span>
+            {product.sizes.map((size) => {
+              const active = selectedSize === size;
               return (
                 <button
                   key={size}
@@ -702,7 +713,7 @@ export default function ProductCard({ product }) {
                   aria-pressed={active}
                   onClick={() => {
                     setSelectedSize(size);
-                    toast(`📏 ${sizeLabel === "Styles" ? "Style" : "Size"} ${size} selected`, { duration: 1400 });
+                    toast(`📏 Size ${size} selected`, { duration: 1400 });
                   }}
                 >
                   {size}
@@ -712,14 +723,56 @@ export default function ProductCard({ product }) {
           </div>
         )}
 
+        {hasStyles && (
+          <div className="product-colors" aria-label="Available styles">
+            <span className="product-meta-label">Styles</span>
+            {product.styles.map((style) => {
+              const active = selectedStyle === style;
+              return (
+                <button
+                  key={style}
+                  type="button"
+                  className="product-size-chip"
+                  aria-pressed={active}
+                  onClick={() => {
+                    setSelectedStyle(style);
+                    toast(`✨ ${style} selected`, { duration: 1400 });
+                  }}
+                >
+                  {style}
+                </button>
+              );
+            })}
+          </div>
+        )}
+
         <div className="product-card-footer">
           <motion.button
             type="button"
-            className={`add-to-cart ${buttonState === "flash" ? "added" : ""}`}
+            className={`add-to-cart ${isFlash ? "state-flash" : isInCart ? "state-in-cart" : ""}`}
             onClick={handleAddToCart}
             whileTap={{ scale: 0.98 }}
           >
-            <span>{buttonLabel}</span>
+            <span>
+              {isFlash ? (
+                <>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                  Added ✓
+                </>
+              ) : isInCart ? (
+                <>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+                  </svg>
+                  Go to Cart
+                </>
+              ) : (
+                "Add to Cart"
+              )}
+            </span>
           </motion.button>
         </div>
       </div>

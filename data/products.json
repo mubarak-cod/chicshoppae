@@ -80,7 +80,8 @@
     "price": 5500,
     "originalPrice": 3000,
     "images": ["https://res.cloudinary.com/ddlnqthao/image/upload/v1782191401/IMG-20260618-WA0086_1_mqhixj.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782191401/IMG-20260618-WA0085_1_uzgpni.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782191400/IMG-20260618-WA0084_w2d8wx.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782191400/IMG-20260618-WA0083_1_gc0ohd.jpg"],
-    "colors": ["Black", "Green", "Red", "Navy", "Beige", "White"],
+   
+    "sizes": ["8", "10", "12", "14"],
     "styles": ["Style A", "Style B","Style C","Style D","Style E"]
   },
   {
@@ -333,6 +334,6 @@
     "originalPrice": 4500,
     "images": ["https://res.cloudinary.com/ddlnqthao/image/upload/v1782191361/IMG-20260618-WA0110_1_lozrom.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782337487/IMG-20260618-WA0112_rudqyz.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782337487/IMG-20260618-WA0109_w8eqdb.jpg"],
     "colors": ["light-blue", "brown"],
-     "sizes": ["8", "10", "12", "14"]
+    "sizes": ["8", "10", "12", "14"]
   }
 ]
