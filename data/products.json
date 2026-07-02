@@ -1,4 +1,28 @@
 [
+   {
+    "id": "Top-kalie",
+    "title": "Top Kalie",
+    "name": "Top Kalie",
+    "category": "Tops",
+    "description": "Tailored two-piece set with a soft structured finish for polished everyday wear. The silhouette balances clean lines with an easy drape.",
+    "price": 6000,
+    "originalPrice": 5000,
+    "images": ["https://res.cloudinary.com/ddlnqthao/image/upload/v1782989177/IMG-20260702-WA0008_kapudp.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782989198/IMG-20260702-WA0007_ht5ks5.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782989199/IMG-20260702-WA0006_n4tzua.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782989199/IMG-20260702-WA0009_re4xc9.jpg"],
+    "colors": ["nude", "black", "Red", "White","Brown"],
+    "sizes": ["8", "10", "12", "14"]
+  },
+   {
+    "id": "ring-top",
+    "title": "Ring Top",
+    "name": "Ring Top",
+    "category": "Tops",
+    "description": "A playful and feminine top with a unique design element. Perfect for adding a touch of whimsy to any outfit.",
+    "price": 4500,
+    "originalPrice": 2500,
+    "images": ["https://res.cloudinary.com/ddlnqthao/image/upload/v1782989200/IMG-20260702-WA0002_kiyk0u.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782989200/IMG-20260702-WA0001_uynhmt.jpg","https://res.cloudinary.com/ddlnqthao/image/upload/v1782989202/IMG-20260702-WA0000_njnb7t.jpg"],
+    "colors": ["light-blue", "black", "Red", "White"],
+    "sizes": ["8", "10", "12", "14"]
+  },
   {
     "id": "sheilia-gown",
     "title": "sheilia-gown",

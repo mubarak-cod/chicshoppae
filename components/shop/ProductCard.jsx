@@ -8,6 +8,7 @@ import toast from "react-hot-toast";
 import { useCart } from "@/context/CartContext";
 
 const WISHLIST_STORAGE_KEY = "chic-shoppae-wishlist";
+const WISHLIST_EVENT = "chic-wishlist-updated";
 
 function getColorKey(color) {
   if (!color) return "";
@@ -64,10 +65,30 @@ export default function ProductCard({ product }) {
 
     try {
       const stored = JSON.parse(window.localStorage.getItem(WISHLIST_STORAGE_KEY) || "[]");
-      setWished(Array.isArray(stored) && stored.includes(product.id));
+      setWished(Array.isArray(stored) && stored.some((entry) => entry?.id === product.id));
     } catch {
       setWished(false);
     }
+  }, [product.id]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const syncFromStorage = () => {
+      try {
+        const stored = JSON.parse(window.localStorage.getItem(WISHLIST_STORAGE_KEY) || "[]");
+        setWished(Array.isArray(stored) && stored.some((entry) => entry?.id === product.id));
+      } catch {
+        setWished(false);
+      }
+    };
+
+    window.addEventListener(WISHLIST_EVENT, syncFromStorage);
+    window.addEventListener("storage", syncFromStorage);
+    return () => {
+      window.removeEventListener(WISHLIST_EVENT, syncFromStorage);
+      window.removeEventListener("storage", syncFromStorage);
+    };
   }, [product.id]);
 
   useEffect(() => {
@@ -90,16 +111,24 @@ export default function ProductCard({ product }) {
       if (typeof window !== "undefined") {
         try {
           const stored = JSON.parse(window.localStorage.getItem(WISHLIST_STORAGE_KEY) || "[]");
+          const list = Array.isArray(stored) ? stored : [];
           const nextList = next
-            ? Array.from(new Set([...(Array.isArray(stored) ? stored : []), product.id]))
-            : Array.isArray(stored)
-              ? stored.filter((id) => id !== product.id)
-              : [];
+            ? [...list.filter((entry) => entry?.id !== product.id), { ...product, savedAt: Date.now() }]
+            : list.filter((entry) => entry?.id !== product.id);
           window.localStorage.setItem(WISHLIST_STORAGE_KEY, JSON.stringify(nextList));
+          window.dispatchEvent(new Event(WISHLIST_EVENT));
         } catch {
-          window.localStorage.setItem(WISHLIST_STORAGE_KEY, JSON.stringify(next ? [product.id] : []));
+          window.localStorage.setItem(
+            WISHLIST_STORAGE_KEY,
+            JSON.stringify(next ? [{ ...product, savedAt: Date.now() }] : [])
+          );
+          window.dispatchEvent(new Event(WISHLIST_EVENT));
         }
       }
+
+      toast(next ? `💗 Added ${productName} to wishlist` : `Removed ${productName} from wishlist`, {
+        duration: 1400,
+      });
 
       return next;
     });
