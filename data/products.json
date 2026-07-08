@@ -1,5 +1,5 @@
 [
-   {
+  {
     "id": "Top-kalie",
     "title": "Top Kalie",
     "name": "Top Kalie",
@@ -8,10 +8,10 @@
     "price": 6000,
     "originalPrice": 5000,
     "images": ["https://res.cloudinary.com/ddlnqthao/image/upload/v1782989177/IMG-20260702-WA0008_kapudp.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782989198/IMG-20260702-WA0007_ht5ks5.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782989199/IMG-20260702-WA0006_n4tzua.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782989199/IMG-20260702-WA0009_re4xc9.jpg"],
-    "colors": ["nude", "black", "Red", "White","Brown"],
+    "colors": ["nude", "black", "Red", "White", "Brown"],
     "sizes": ["8", "10", "12", "14"]
   },
-   {
+  {
     "id": "ring-top",
     "title": "Ring Top",
     "name": "Ring Top",
@@ -19,8 +19,8 @@
     "description": "A playful and feminine top with a unique design element. Perfect for adding a touch of whimsy to any outfit.",
     "price": 5000,
     "originalPrice": 2500,
-    "images": ["https://res.cloudinary.com/ddlnqthao/image/upload/v1782989200/IMG-20260702-WA0002_kiyk0u.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782989200/IMG-20260702-WA0001_uynhmt.jpg","https://res.cloudinary.com/ddlnqthao/image/upload/v1782989202/IMG-20260702-WA0000_njnb7t.jpg"],
-    "colors": ["Red", "black", "White", "pink", "Brown","nude","purple","Green","Baby-pink"],
+    "images": ["https://res.cloudinary.com/ddlnqthao/image/upload/v1782989200/IMG-20260702-WA0002_kiyk0u.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782989200/IMG-20260702-WA0001_uynhmt.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782989202/IMG-20260702-WA0000_njnb7t.jpg"],
+    "colors": ["Red", "black", "White", "pink", "Brown", "nude", "purple", "Green", "Baby-pink"],
     "sizes": ["8", "10", "12", "14"]
   },
   {
@@ -45,7 +45,7 @@
     "originalPrice": 6500,
     "images": ["https://res.cloudinary.com/ddlnqthao/image/upload/v1782123347/IMG-20260618-WA0165_vlmd9l.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782123348/IMG-20260618-WA0161_cqbhkd.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782123349/IMG-20260618-WA0166_ijg8ym.jpg"],
     "colors": ["Black", "Butter-yellow", "Red", "Baby-pink", "White"],
-    "sizes": ["6","8", "10", "12", "14"]
+    "sizes": ["6", "8", "10", "12", "14"]
   },
   {
     "id": "tinkle-top",
@@ -69,7 +69,7 @@
     "originalPrice": 3000,
     "images": ["https://res.cloudinary.com/ddlnqthao/image/upload/v1782191400/IMG-20260618-WA0079_1_mkgx1l.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782191398/IMG-20260618-WA0078_2_k7uyhy.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782191398/IMG-20260618-WA0081_1_ajfmk6.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782191397/IMG-20260618-WA0082_1_nznlou.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782191397/IMG-20260618-WA0080_1_pqbvui.jpg"],
     "colors": ["Black", "yellow", "White"],
-    "styles": ["Style A", "Style B","Style C","Style D","Style E"]
+    "styles": ["Style A", "Style B", "Style C", "Style D", "Style E"]
   },
   {
     "id": "blossom-pie",
@@ -80,9 +80,8 @@
     "price": 5500,
     "originalPrice": 3000,
     "images": ["https://res.cloudinary.com/ddlnqthao/image/upload/v1782191401/IMG-20260618-WA0086_1_mqhixj.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782191401/IMG-20260618-WA0085_1_uzgpni.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782191400/IMG-20260618-WA0084_w2d8wx.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782191400/IMG-20260618-WA0083_1_gc0ohd.jpg"],
-   
     "sizes": ["8", "10", "12", "14"],
-    "styles": ["Style A", "Style B","Style C","Style D","Style E"]
+    "styles": ["Style A", "Style B", "Style C", "Style D", "Style E"]
   },
   {
     "id": "lily-jumpsuit",
@@ -117,7 +116,7 @@
     "price": 5000,
     "originalPrice": 2500,
     "images": ["https://res.cloudinary.com/ddlnqthao/image/upload/v1782191391/IMG-20260618-WA0065_1_wnptp6.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782191390/IMG-20260618-WA0068_2_zqqene.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782191391/IMG-20260618-WA0066_1_reb7ii.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782191390/IMG-20260618-WA0067_1_hkqquu.jpg"],
-    "colors": ["Black", "light-pink","Light-blu","Leopard-print", "Nude", "Brown", "pink", "White"],
+    "colors": ["Black", "light-pink", "Light-blu", "Leopard-print", "Nude", "Brown", "pink", "White"],
     "sizes": ["8", "10", "12", "14"]
   },
   {
@@ -125,12 +124,12 @@
     "title": "Pearl top",
     "name": "Pearl top",
     "category": "Top",
-    "description": "Breathable linen top cut for comfort and clean lines. They pair easily with trousers and lightweight gowns",
+    "description": "Breathable linen top cut for comfort and clean lines. They pair easily with trousers and lightweight gowns.",
     "price": 6000,
     "originalPrice": 3000,
     "images": ["https://res.cloudinary.com/ddlnqthao/image/upload/v1782244905/IMG-20260618-WA0162_lr5cgs.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782244903/IMG-20260618-WA0160_ripvgs.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782244902/IMG-20260618-WA0164_vgl5p4.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782244902/IMG-20260618-WA0163_mynibr.jpg"],
     "colors": ["Red", "Mint-Green", "light-pink", "White"],
-    "sizes": ["6","8", "10", "12", "14"]
+    "sizes": ["6", "8", "10", "12", "14"]
   },
   {
     "id": "top-nilda",
@@ -141,7 +140,7 @@
     "price": 5000,
     "originalPrice": 2500,
     "images": ["https://res.cloudinary.com/ddlnqthao/image/upload/v1782123339/IMG-20260618-WA0168_ialuew.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782123340/IMG-20260618-WA0169_ycitkr.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782123342/IMG-20260618-WA0141_fjbo13.jpg"],
-    "colors": ["Black", "pink", "Brown", "Nude", "light-pink","lilac","light-blue","blue", "White"],
+    "colors": ["Black", "pink", "Brown", "Nude", "light-pink", "lilac", "light-blue", "blue", "White"],
     "sizes": ["10", "12", "14"]
   },
   {
@@ -165,7 +164,7 @@
     "price": 5000,
     "originalPrice": 2500,
     "images": ["https://res.cloudinary.com/ddlnqthao/image/upload/v1782123325/IMG-20260618-WA0106_ggsi3q.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782123325/IMG-20260618-WA0104_hwh6pe.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782123325/IMG-20260618-WA0105_ostjmh.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782191368/IMG-20260618-WA0107_d5zsye.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782191368/IMG-20260618-WA0106_1_r8l0xv.jpg"],
-    "colors": ["Black", "pink", "Nude", "Brown", "light-blue","light-pink","Leopard-print", "White"],
+    "colors": ["Black", "pink", "Nude", "Brown", "light-blue", "light-pink", "Leopard-print", "White"],
     "sizes": ["8", "10", "12", "14"]
   },
   {
@@ -177,8 +176,8 @@
     "price": 5000,
     "originalPrice": 3000,
     "images": ["https://res.cloudinary.com/ddlnqthao/image/upload/v1782191371/IMG-20260618-WA0101_1_clhxvj.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782191371/IMG-20260618-WA0103_1_wyy0nk.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782191369/IMG-20260618-WA0102_1_gjkwbl.jpg"],
-    "colors": ["Black","Green", "yellow"],
-    "sizes": ["6","8", "10", "12", "14"]
+    "colors": ["Black", "Green", "yellow"],
+    "sizes": ["6", "8", "10", "12", "14"]
   },
   {
     "id": "longsleeve-kilo",
@@ -189,8 +188,8 @@
     "price": 6000,
     "originalPrice": 3000,
     "images": ["https://res.cloudinary.com/ddlnqthao/image/upload/v1782191382/IMG-20260618-WA0044_1_ezxuh5.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782191382/IMG-20260618-WA0046_1_mdmsk6.jpg"],
-    "colors": ["Black", "pink", "Brown", "Nude","White"],
-    "sizes": ["8","10", "12"]
+    "colors": ["Black", "pink", "Brown", "Nude", "White"],
+    "sizes": ["8", "10", "12"]
   },
   {
     "id": "top-milky",
@@ -214,7 +213,7 @@
     "originalPrice": 3000,
     "images": ["https://res.cloudinary.com/ddlnqthao/image/upload/v1782123313/IMG-20260618-WA0094_rgyvkf.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782191374/IMG-20260618-WA0095_2_ri01kc.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782191375/IMG-20260618-WA0093_1_gfwlx8.jpg"],
     "colors": ["Black", "Red", "leopard", "pink", "White"],
-    "sizes": ["6","8", "10", "12", "14"]
+    "sizes": ["6", "8", "10", "12", "14"]
   },
   {
     "id": "floral-tube-top",
@@ -237,7 +236,7 @@
     "price": 9500,
     "originalPrice": 6000,
     "images": ["https://res.cloudinary.com/ddlnqthao/image/upload/v1782191389/IMG-20260618-WA0059_1_go3dj9.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782191388/IMG-20260618-WA0061_1_sfoapf.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782191387/IMG-20260618-WA0060_1_ocgvvy.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782191387/IMG-20260618-WA0062_1_rvvdzu.jpg"],
-    "colors": ["Black", "Green", "Red", "pink", "Brown","light-blue", "White"],
+    "colors": ["Black", "Green", "Red", "pink", "Brown", "light-blue", "White"],
     "sizes": ["10", "12", "14"]
   },
   {
@@ -261,7 +260,7 @@
     "price": 5000,
     "originalPrice": 2500,
     "images": ["https://res.cloudinary.com/ddlnqthao/image/upload/v1782249989/IMG-20260618-WA0021_zsasi0.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782249990/IMG-20260618-WA0024_gd0lyt.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782249994/IMG-20260618-WA0023_yokg3b.jpg"],
-    "colors": ["Black", "light-blue","pink", "Red", "blue","nude","lilac", "Beige", "White"],
+    "colors": ["Black", "light-blue", "pink", "Red", "blue", "nude", "lilac", "Beige", "White"],
     "sizes": ["8", "10", "12", "14", "16"]
   },
   {
@@ -310,7 +309,7 @@
     "originalPrice": 3000,
     "images": ["https://res.cloudinary.com/ddlnqthao/image/upload/v1782250000/IMG-20260618-WA0146_dibhdd.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782250000/IMG-20260618-WA0138_m3v4j8.jpg"],
     "colors": ["Black", "pink", "blue", "Nude", "Brown", "White"],
-    "sizes": ["6","8", "10", "12", "14"]
+    "sizes": ["6", "8", "10", "12", "14"]
   },
   {
     "id": "top-tyler",
@@ -334,6 +333,138 @@
     "originalPrice": 4500,
     "images": ["https://res.cloudinary.com/ddlnqthao/image/upload/v1782191361/IMG-20260618-WA0110_1_lozrom.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782337487/IMG-20260618-WA0112_rudqyz.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782337487/IMG-20260618-WA0109_w8eqdb.jpg"],
     "colors": ["light-blue", "brown"],
+    "sizes": ["8", "10", "12", "14"]
+  },
+  {
+    "id": "free-pants",
+    "title": "Free Pants",
+    "name": "Free Pants",
+    "category": "Pants",
+    "description": "Relaxed, wide-leg trousers with a fluid drape that moves beautifully with every step. Effortlessly put-together whether paired with a crop top or a tucked blouse.",
+    "price": 12000,
+    "originalPrice": 12000,
+    "images": ["https://res.cloudinary.com/ddlnqthao/image/upload/v1783537552/IMG-20260708-WA0034_l2fwkv.jpg","https://res.cloudinary.com/ddlnqthao/image/upload/v1783537553/IMG-20260708-WA0027_xikrb8.jpg","https://res.cloudinary.com/ddlnqthao/image/upload/v1783537554/IMG-20260708-WA0030_xkojf8.jpg","https://res.cloudinary.com/ddlnqthao/image/upload/v1783537555/IMG-20260708-WA0033_oru6z2.jpg","https://res.cloudinary.com/ddlnqthao/image/upload/v1783537556/IMG-20260708-WA0031_kg256o.jpg","https://res.cloudinary.com/ddlnqthao/image/upload/v1783537556/IMG-20260708-WA0032_xv2c2m.jpg","https://res.cloudinary.com/ddlnqthao/image/upload/v1783537556/IMG-20260708-WA0029_twual4.jpg","https://res.cloudinary.com/ddlnqthao/image/upload/v1783537557/IMG-20260708-WA0028_mc4svb.jpg"],
+    "colors": ["Black", "Brown", "Ash", "Grey", "Cream", "Lilac", "Purple", "Baby-pink", "Pink", "Army-green", "Mint-green", "Lemon", "Burnt-orange", "Light-blue", "Blue", "Carton-colors", "Nude", "Peach", "Wine", "Green"],
+    "sizes": ["8", "10", "12", "14"]
+  },
+  {
+    "id": "basic-top",
+    "title": "Basic Top",
+    "name": "Basic Top",
+    "category": "Tops",
+    "description": "A wardrobe essential that works harder than it looks. Clean lines, flattering fit — dress it up or keep it simple.",
+    "price": 4500,
+    "originalPrice": 4500,
+    "images": ["https://res.cloudinary.com/ddlnqthao/image/upload/v1783537551/IMG-20260708-WA0038_euiyaj.jpg","https://res.cloudinary.com/ddlnqthao/image/upload/v1783537551/IMG-20260708-WA0037_iqx2jd.jpg","https://res.cloudinary.com/ddlnqthao/image/upload/v1783537552/IMG-20260708-WA0035_fghluj.jpg","https://res.cloudinary.com/ddlnqthao/image/upload/v1783537550/IMG-20260708-WA0036_t957wz.jpg"],
+    "colors": ["Black", "White", "Brown", "Ash", "Cream", "Lilac", "Purple", "Baby-pink", "Pink", "Army-green", "Green", "Lemon", "Burnt-orange", "Light-blue", "Blue", "Orange", "Nude", "Wine"],
+    "sizes": ["8", "10", "12", "14"]
+  },
+  {
+    "id": "long-sleeve-basic-top",
+    "title": "Long Sleeve Basic Top",
+    "name": "Long Sleeve Basic Top",
+    "category": "Tops",
+    "description": "Timeless and soft. Layers beautifully under jackets or stands alone with polished ease.",
+    "price": 5500,
+    "originalPrice": 5500,
+    "images": ["https://res.cloudinary.com/ddlnqthao/image/upload/v1783537550/IMG-20260708-WA0065_jyh36z.jpg","https://res.cloudinary.com/ddlnqthao/image/upload/v1783537549/IMG-20260708-WA0067_gvcrzs.jpg","https://res.cloudinary.com/ddlnqthao/image/upload/v1783537547/IMG-20260708-WA0063_prigfg.jpg","https://res.cloudinary.com/ddlnqthao/image/upload/v1783537546/IMG-20260708-WA0064_aqqxh8.jpg","https://res.cloudinary.com/ddlnqthao/image/upload/v1783537545/IMG-20260708-WA0066_x28869.jpg"],
+    "colors": ["Black", "White", "Brown", "Ash", "Cream", "Lilac", "Purple", "Baby-pink", "Pink", "Army-green", "Green", "Lemon", "Burnt-orange", "Light-blue", "Blue", "Orange", "Nude", "Wine", "Yellow"],
+    "sizes": ["8", "10", "12", "14"]
+  },
+  {
+    "id": "satin-skirt",
+    "title": "Satin Skirt",
+    "name": "Satin Skirt",
+    "category": "Skirts",
+    "description": "Liquid satin that catches the light and turns heads. Wear it to dinner, an event, or anywhere you want to feel expensive.",
+    "price": 7000,
+    "originalPrice": 7000,
+    "images": ["https://res.cloudinary.com/ddlnqthao/image/upload/v1783537543/IMG-20260708-WA0055_dd4zkd.jpg","https://res.cloudinary.com/ddlnqthao/image/upload/v1783537542/IMG-20260708-WA0058_ivptiw.jpg","https://res.cloudinary.com/ddlnqthao/image/upload/v1783537542/IMG-20260708-WA0056_jxshxc.jpg","https://res.cloudinary.com/ddlnqthao/image/upload/v1783537542/IMG-20260708-WA0060_izaf3p.jpg","https://res.cloudinary.com/ddlnqthao/image/upload/v1783537541/IMG-20260708-WA0057_rxqypb.jpg"],
+    "colors": ["Black", "Brown", "Baby-pink", "Pink", "Army-green", "Green", "Lemon", "Burnt-orange", "Light-blue", "Blue", "White", "Orange", "Red", "Wine"],
+    "sizes": ["8", "10", "12", "14"]
+  },
+  {
+    "id": "maxi-skirt",
+    "title": "Maxi Skirt",
+    "name": "Maxi Skirt",
+    "category": "Skirts",
+    "description": "Floor-grazing and feminine with easy movement. Style it with a fitted top for an elegant silhouette that works day to night.",
+    "price": 3000,
+    "originalPrice": 3000,
+    "images": ["https://res.cloudinary.com/ddlnqthao/image/upload/v1783537540/IMG-20260708-WA0052_o7vry4.jpg","https://res.cloudinary.com/ddlnqthao/image/upload/v1783537538/IMG-20260708-WA0053_b3oy8e.jpg","https://res.cloudinary.com/ddlnqthao/image/upload/v1783537538/IMG-20260708-WA0050_qgbddp.jpg","https://res.cloudinary.com/ddlnqthao/image/upload/v1783537538/IMG-20260708-WA0054_izbopx.jpg"],
+    "colors": ["Black", "Brown", "Ash", "Lilac", "Purple", "Baby-pink", "Pink", "Army-green", "Green", "Burnt-orange", "Light-blue", "Blue", "Orange", "Nude", "Wine", "Red"],
+    "sizes": ["8", "10", "12", "14"]
+  },
+  {
+    "id": "nova-top",
+    "title": "Nova Top",
+    "name": "Nova Top",
+    "category": "Tops",
+    "description": "Structured shape that flatters the bust and sits perfectly at the waist. A go-to for brunches, outings, and everything in between.",
+    "price": 4500,
+    "originalPrice": 4500,
+    "images": ["https://res.cloudinary.com/ddlnqthao/image/upload/v1783537536/IMG-20260708-WA0049_gdfdzn.jpg","https://res.cloudinary.com/ddlnqthao/image/upload/v1783537535/IMG-20260708-WA0046_g5dpa8.jpg","https://res.cloudinary.com/ddlnqthao/image/upload/v1783537534/IMG-20260708-WA0047_qivyp3.jpg","https://res.cloudinary.com/ddlnqthao/image/upload/v1783537534/IMG-20260708-WA0044_v4mwuc.jpg","https://res.cloudinary.com/ddlnqthao/image/upload/v1783537533/IMG-20260708-WA0045_djbwld.jpg","https://res.cloudinary.com/ddlnqthao/image/upload/v1783537532/IMG-20260708-WA0048_mwt2yf.jpg"],
+    "colors": ["Black", "Brown", "White", "Ash", "Cream", "Lilac", "Purple", "Baby-pink", "Pink", "Army-green", "Green", "Lemon", "Burnt-orange", "Light-blue", "Blue", "Orange", "Nude", "Wine", "Red"],
+    "sizes": ["8", "10", "12", "14"]
+  },
+  {
+    "id": "top-daphny",
+    "title": "Top Daphny",
+    "name": "Top Daphny",
+    "category": "Tops",
+    "description": "Feminine and refined with a delicate structure that feels dressed-up without the effort.",
+    "price": 5500,
+    "originalPrice": 5500,
+    "images": ["https://res.cloudinary.com/ddlnqthao/image/upload/v1783537533/IMG-20260708-WA0043_ssykst.jpg","https://res.cloudinary.com/ddlnqthao/image/upload/v1783537532/IMG-20260708-WA0040_dez3sw.jpg","https://res.cloudinary.com/ddlnqthao/image/upload/v1783537531/IMG-20260708-WA0041_oo0dtq.jpg","https://res.cloudinary.com/ddlnqthao/image/upload/v1783537468/IMG-20260708-WA0042_gcbh5b.jpg"],
+    "colors": ["Black", "Brown", "Lilac", "Purple", "Baby-pink", "Pink", "Light-blue", "Blue", "Nude", "Wine", "Red", "White"],
+    "sizes": ["8", "10", "12", "14"]
+  },
+  {
+    "id": "tube-top",
+    "title": "Tube Top",
+    "name": "Tube Top",
+    "category": "Tops",
+    "description": "Sleek and form-fitting. Effortlessly chic on its own or layered under a blazer — from brunch to evening without missing a beat.",
+    "price": 4500,
+    "originalPrice": 4500,
+    "images": ["https://res.cloudinary.com/ddlnqthao/image/upload/v1783539052/IMG-20260708-WA0072_abiixm.jpg","https://res.cloudinary.com/ddlnqthao/image/upload/v1783539051/IMG-20260708-WA0069_vhbppd.jpg","https://res.cloudinary.com/ddlnqthao/image/upload/v1783539050/IMG-20260708-WA0071_lhtfg7.jpg","https://res.cloudinary.com/ddlnqthao/image/upload/v1783539050/IMG-20260708-WA0070_gvh77h.jpg"],
+    "colors": ["Black", "Brown", "Lilac", "Purple", "Baby-pink", "Pink", "Light-blue", "Blue", "Nude", "Wine", "Red", "White"],
+    "sizes": ["8", "10", "12", "14"]
+  },
+  {
+    "id": "booty-short",
+    "title": "Booty Short",
+    "name": "Booty Short",
+    "category": "Shorts",
+    "description": "High-cut and confidence-boosting. Smooth, stretchy fabric moves with you — whether you're going out or keeping it casual.",
+    "price": 5500,
+    "originalPrice": 5500,
+    "images": ["https://res.cloudinary.com/ddlnqthao/image/upload/v1783539050/IMG-20260708-WA0076_ttkq1b.jpg","https://res.cloudinary.com/ddlnqthao/image/upload/v1783539049/IMG-20260708-WA0075_isvkny.jpg","https://res.cloudinary.com/ddlnqthao/image/upload/v1783539049/IMG-20260708-WA0074_koxqdj.jpg","https://res.cloudinary.com/ddlnqthao/image/upload/v1783539049/IMG-20260708-WA0073_1_g63vrc.jpg"],
+    "colors": ["Black", "Brown", "Lilac", "Purple", "Baby-pink", "Pink", "Light-blue", "Blue", "Nude", "Wine", "Red", "Ash", "Carton-color"],
+    "sizes": ["8", "10", "12", "14"]
+  },
+  {
+    "id": "top-latifah",
+    "title": "Top Latifah",
+    "name": "Top Latifah",
+    "category": "Tops",
+    "description": "Elegant and body-flattering with a finish that speaks for itself. Easy to dress up, impossible to ignore.",
+    "price": 7500,
+    "originalPrice": 7500,
+    "images": ["https://res.cloudinary.com/ddlnqthao/image/upload/v1783539425/IMG-20260708-WA0081_eznyps.jpg","https://res.cloudinary.com/ddlnqthao/image/upload/v1783539425/IMG-20260708-WA0080_enj0bf.jpg","https://res.cloudinary.com/ddlnqthao/image/upload/v1783539424/IMG-20260708-WA0079_cybguh.jpg","https://res.cloudinary.com/ddlnqthao/image/upload/v1783539420/IMG-20260708-WA0078_demxqj.jpg","https://res.cloudinary.com/ddlnqthao/image/upload/v1783539420/IMG-20260708-WA0077_gel1uu.jpg"],
+    "colors": ["Black", "Brown", "Lilac", "Purple", "Baby-pink", "Pink", "Nude", "Wine", "Red", "White"],
+    "sizes": ["8", "10", "12", "14"]
+  },
+  {
+    "id": "top-wringos",
+    "title": "Top Wringos",
+    "name": "Top Wringos",
+    "category": "Tops",
+    "description": "A polished top with a playful edge. Pairs with everything and always lands right.",
+    "price": 6000,
+    "originalPrice": 6000,
+    "images": ["https://res.cloudinary.com/ddlnqthao/image/upload/v1783539420/IMG-20260708-WA0084_uwz1ua.jpg","https://res.cloudinary.com/ddlnqthao/image/upload/v1783539420/IMG-20260708-WA0085_oxd7jb.jpg","https://res.cloudinary.com/ddlnqthao/image/upload/v1783539419/IMG-20260708-WA0083_pedccx.jpg","https://res.cloudinary.com/ddlnqthao/image/upload/v1783539419/IMG-20260708-WA0082_bnnoca.jpg"],
+    "colors": ["Black", "Brown", "Lilac", "Purple", "Baby-pink", "Pink", "Light-blue", "Blue", "Nude", "Wine", "Red", "White", "Ash", "Lemon"],
     "sizes": ["8", "10", "12", "14"]
   }
 ]

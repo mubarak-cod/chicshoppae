@@ -9,7 +9,7 @@ export default function ShopPage() {
   return (
     <main className="min-h-screen bg-[var(--bg-primary)]">
       <Newsletterpopup />
-      <ShopHero />
+      {/* <ShopHero /> */}
 
       {/* <PromoSection /> */}
 

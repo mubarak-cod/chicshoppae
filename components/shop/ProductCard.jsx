@@ -65,7 +65,6 @@ export default function ProductCard({ product }) {
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-
     try {
       const stored = JSON.parse(window.localStorage.getItem(WISHLIST_STORAGE_KEY) || "[]");
       setWished(Array.isArray(stored) && stored.some((entry) => entry?.id === product.id));
@@ -76,7 +75,6 @@ export default function ProductCard({ product }) {
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-
     const syncFromStorage = () => {
       try {
         const stored = JSON.parse(window.localStorage.getItem(WISHLIST_STORAGE_KEY) || "[]");
@@ -85,7 +83,6 @@ export default function ProductCard({ product }) {
         setWished(false);
       }
     };
-
     window.addEventListener(WISHLIST_EVENT, syncFromStorage);
     window.addEventListener("storage", syncFromStorage);
     return () => {
@@ -99,7 +96,6 @@ export default function ProductCard({ product }) {
       setButtonState("in-cart");
       return;
     }
-
     if (buttonState !== "flash") {
       setButtonState("idle");
     }
@@ -108,32 +104,29 @@ export default function ProductCard({ product }) {
   useEffect(() => () => window.clearTimeout(flashTimerRef.current), []);
 
   const handleWishlistToggle = () => {
-    setWished((current) => {
-      const next = !current;
+    const next = !wished;
+    setWished(next);
 
-      if (typeof window !== "undefined") {
-        try {
-          const stored = JSON.parse(window.localStorage.getItem(WISHLIST_STORAGE_KEY) || "[]");
-          const list = Array.isArray(stored) ? stored : [];
-          const nextList = next
-            ? [...list.filter((entry) => entry?.id !== product.id), { ...product, savedAt: Date.now() }]
-            : list.filter((entry) => entry?.id !== product.id);
-          window.localStorage.setItem(WISHLIST_STORAGE_KEY, JSON.stringify(nextList));
-          window.dispatchEvent(new Event(WISHLIST_EVENT));
-        } catch {
-          window.localStorage.setItem(
-            WISHLIST_STORAGE_KEY,
-            JSON.stringify(next ? [{ ...product, savedAt: Date.now() }] : [])
-          );
-          window.dispatchEvent(new Event(WISHLIST_EVENT));
-        }
+    if (typeof window !== "undefined") {
+      try {
+        const stored = JSON.parse(window.localStorage.getItem(WISHLIST_STORAGE_KEY) || "[]");
+        const list = Array.isArray(stored) ? stored : [];
+        const nextList = next
+          ? [...list.filter((entry) => entry?.id !== product.id), { ...product, savedAt: Date.now() }]
+          : list.filter((entry) => entry?.id !== product.id);
+        window.localStorage.setItem(WISHLIST_STORAGE_KEY, JSON.stringify(nextList));
+        window.dispatchEvent(new Event(WISHLIST_EVENT));
+      } catch {
+        window.localStorage.setItem(
+          WISHLIST_STORAGE_KEY,
+          JSON.stringify(next ? [{ ...product, savedAt: Date.now() }] : [])
+        );
+        window.dispatchEvent(new Event(WISHLIST_EVENT));
       }
+    }
 
-      toast(next ? `💗 Added ${productName} to wishlist` : `Removed ${productName} from wishlist`, {
-        duration: 1400,
-      });
-
-      return next;
+    toast(next ? `💗 Added ${productName} to wishlist` : `Removed ${productName} from wishlist`, {
+      duration: 1400,
     });
   };
 
@@ -561,7 +554,6 @@ export default function ProductCard({ product }) {
           gap: 7px;
         }
 
-        /* flash state — brief green confirm */
         .add-to-cart.state-flash {
           background: linear-gradient(135deg, #34D399, #0EA572);
           box-shadow: 0 8px 22px rgba(16,163,107,0.3);
@@ -569,7 +561,6 @@ export default function ProductCard({ product }) {
 
         .add-to-cart.state-flash::before { display: none; }
 
-        /* in-cart state — warm gold/pink */
         .add-to-cart.state-in-cart {
           background: linear-gradient(135deg, #E8A0BF, #C4895A);
           box-shadow: 0 8px 22px rgba(196,137,90,0.28);
