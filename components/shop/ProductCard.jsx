@@ -20,11 +20,11 @@ function getSizeKey(size) {
   return String(size).toLowerCase();
 }
 
-function getVisibleColors(colors = []) {
-  const list = colors.filter(Boolean);
+function getVisibleItems(items = [], limit = 2) {
+  const list = items.filter(Boolean);
   return {
-    visible: list.slice(0, 4),
-    remaining: Math.max(0, list.length - 4),
+    visible: list.slice(0, limit),
+    remaining: Math.max(0, list.length - limit),
   };
 }
 
@@ -167,7 +167,9 @@ export default function ProductCard({ product }) {
   };
 
   const activeImageSrc = gallery[activeImage] || gallery[0] || "/images/one.jpg";
-  const colorSet = useMemo(() => getVisibleColors(product.colors), [product.colors]);
+  const colorSet = useMemo(() => getVisibleItems(product.colors, 2), [product.colors]);
+  const sizeSet = useMemo(() => getVisibleItems(sizeOptions, 2), [sizeOptions]);
+  const styleSet = useMemo(() => getVisibleItems(product.styles, 2), [product.styles]);
 
   const cycleImage = (direction = 1) => {
     if (gallery.length < 2) return;
@@ -475,8 +477,18 @@ export default function ProductCard({ product }) {
           flex-wrap: nowrap;
           gap: 6px;
           align-items: center;
-          overflow: hidden;
+          overflow-x: auto;
+          overflow-y: hidden;
           width: 100%;
+          scroll-behavior: smooth;
+          -webkit-overflow-scrolling: touch;
+          scrollbar-width: none;
+          -ms-overflow-style: none;
+        }
+
+        .product-colors::-webkit-scrollbar {
+          display: none;
+          height: 0;
         }
 
         .product-meta-label {
@@ -504,9 +516,6 @@ export default function ProductCard({ product }) {
           white-space: nowrap;
           flex: 0 0 auto;
           line-height: 1.2;
-          max-width: 75px;
-          overflow: hidden;
-          text-overflow: ellipsis;
         }
 
         .product-color-chip:hover,
@@ -721,7 +730,7 @@ export default function ProductCard({ product }) {
               );
             })}
             {colorSet.remaining > 0 && (
-              <span className="product-color-more-chip">+{colorSet.remaining} more</span>
+              <span className="product-color-more-chip">+{colorSet.remaining}</span>
             )}
           </div>
         )}
@@ -729,7 +738,7 @@ export default function ProductCard({ product }) {
         {hasSizes && (
           <div className="product-colors" aria-label="Available sizes">
             <span className="product-meta-label">Sizes</span>
-            {product.sizes.map((size) => {
+            {sizeSet.visible.map((size) => {
               const active = selectedSize === size;
               return (
                 <button
@@ -746,6 +755,9 @@ export default function ProductCard({ product }) {
                 </button>
               );
             })}
+            {sizeSet.remaining > 0 && (
+              <span className="product-color-more-chip">+{sizeSet.remaining}</span>
+            )}
           </div>
         )}
 
