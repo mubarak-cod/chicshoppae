@@ -126,14 +126,16 @@ export default function ProductGrid({ products }) {
           display: flex;
           justify-content: center;
           align-items: center;
-          gap: 0.5rem;
+          gap: 0.4rem;
           margin-top: 2rem;
+          flex-wrap: wrap;
         }
 
         .pagination-button,
         .pagination-page {
-          min-width: 38px;
-          height: 38px;
+          min-width: 40px;
+          height: 40px;
+          padding: 0 0.7rem;
           border-radius: 999px;
           border: 1px solid var(--border);
           background: var(--bg-primary);
@@ -144,6 +146,7 @@ export default function ProductGrid({ products }) {
           align-items: center;
           justify-content: center;
           transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
+          touch-action: manipulation;
         }
 
         .pagination-button:hover,
@@ -194,13 +197,28 @@ export default function ProductGrid({ products }) {
             gap: 0.65rem;
           }
           .pagination-row {
-            gap: 0.4rem;
+            gap: 0.35rem;
+            row-gap: 0.6rem;
+          }
+          .pagination-button,
+          .pagination-page {
+            min-width: 36px;
+            height: 36px;
+            padding: 0 0.6rem;
+            font-size: 0.82rem;
+          }
+        }
+
+        @media (max-width: 414px) {
+          .pagination-row {
+            justify-content: center;
           }
           .pagination-button,
           .pagination-page {
             min-width: 34px;
             height: 34px;
-            font-size: 0.82rem;
+            padding: 0 0.45rem;
+            font-size: 0.78rem;
           }
         }
       `}</style>
