@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useMemo } from "react";
 import { useCart } from "@/context/CartContext";
+import ImageFrame from "@/components/ImageFrame";
 
 function getColorKey(color) {
   if (!color) return "";
@@ -251,12 +252,10 @@ export default function CartPage() {
               return (
                 <article key={`${item.id}-${getColorKey(item.selectedColor)}-${item.selectedSize || ""}`} className="cart-item">
                   <div className="cart-image">
-                    <Image
+                    <ImageFrame
                       src={previewImage}
                       alt={item.name || item.title || "Cart item"}
-                      fill
-                      sizes="(max-width: 640px) 80vw, 108px"
-                      style={{ objectFit: "cover" }}
+                      loading="lazy"
                     />
                   </div>
 

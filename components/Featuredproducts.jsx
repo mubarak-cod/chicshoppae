@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/context/CartContext";
+import ImageFrame from "@/components/ImageFrame";
 
 const tabs = ["New Arrivals", "Best Sellers", "Staff Picks"];
 
@@ -54,8 +55,14 @@ function QuickView({ product, onClose }) {
     };
   }, [onClose]);
 
-  const prevImg = () => setImgIndex((i) => (i - 1 + product.images.length) % product.images.length);
-  const nextImg = () => setImgIndex((i) => (i + 1) % product.images.length);
+  const prevImg = () => {
+    const images = (product.images || []).filter(Boolean);
+    setImgIndex((i) => (i - 1 + images.length) % images.length);
+  };
+  const nextImg = () => {
+    const images = (product.images || []).filter(Boolean);
+    setImgIndex((i) => (i + 1) % images.length);
+  };
 
   const handleTouchStart = (e) => { touchStartX.current = e.touches[0].clientX; };
   const handleTouchEnd = (e) => {
@@ -304,9 +311,15 @@ function QuickView({ product, onClose }) {
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}
           >
-            <img src={product.images[imgIndex]} alt={product.name} className="qv-img" />
+            <ImageFrame
+              src={(product.images || []).filter(Boolean)[imgIndex]}
+              alt={product.name}
+              objectPosition="top center"
+              loading="eager"
+              priority
+            />
 
-            {product.images.length > 1 && (
+            {(product.images || []).length > 1 && (
               <>
                 <button className="qv-img-arrow qv-img-arrow--left" onClick={prevImg} aria-label="Previous image">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><polyline points="15 18 9 12 15 6"/></svg>
@@ -514,11 +527,14 @@ function ProductCard({ product, index, onQuickView }) {
 
       <div className="fp-card">
         <div className="fp-img-wrap" onClick={() => onQuickView(product)}>
-          {product.images?.[imgIndex] && (
-            <img src={product.images[imgIndex]} alt={product.name} className="fp-img" loading="lazy" />
-          )}
+          <ImageFrame
+            src={(product.images || []).filter(Boolean)[imgIndex]}
+            alt={product.name}
+            objectPosition="top center"
+            loading="lazy"
+          />
 
-          {product.images?.length > 1 && (
+          {(product.images || []).length > 1 && (
             <div className="fp-img-dots">
               {product.images.map((_, i) => (
                 <button key={i} className={`fp-img-dot ${i === imgIndex ? "active" : ""}`}

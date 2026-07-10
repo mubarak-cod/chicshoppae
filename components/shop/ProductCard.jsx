@@ -1,11 +1,11 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { useCart } from "@/context/CartContext";
+import ImageFrame from "@/components/ImageFrame";
 
 const WISHLIST_STORAGE_KEY = "chic-shoppae-wishlist";
 const WISHLIST_EVENT = "chic-wishlist-updated";
@@ -18,6 +18,14 @@ function getColorKey(color) {
 function getSizeKey(size) {
   if (!size) return "";
   return String(size).toLowerCase();
+}
+
+function getVisibleColors(colors = []) {
+  const list = colors.filter(Boolean);
+  return {
+    visible: list.slice(0, 4),
+    remaining: Math.max(0, list.length - 4),
+  };
 }
 
 function IconButton({ label, children, onClick, active }) {
@@ -159,6 +167,7 @@ export default function ProductCard({ product }) {
   };
 
   const activeImageSrc = gallery[activeImage] || gallery[0] || "/images/one.jpg";
+  const colorSet = useMemo(() => getVisibleColors(product.colors), [product.colors]);
 
   const cycleImage = (direction = 1) => {
     if (gallery.length < 2) return;
@@ -216,14 +225,13 @@ export default function ProductCard({ product }) {
 
         .product-card-media {
           position: relative;
-          aspect-ratio: 1 / 1.18;
+          aspect-ratio: 3 / 4;
           overflow: hidden;
-          background: linear-gradient(180deg, rgba(0,0,0,0.02), rgba(0,0,0,0.08));
+          background: var(--bg-secondary);
           z-index: 1;
         }
 
         .product-card-image {
-          object-fit: cover;
           transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
         }
 
@@ -464,22 +472,28 @@ export default function ProductCard({ product }) {
 
         .product-colors {
           display: flex;
-          flex-wrap: wrap;
-          gap: 8px;
+          flex-wrap: nowrap;
+          gap: 6px;
           align-items: center;
+          overflow: hidden;
+          width: 100%;
         }
 
         .product-meta-label {
-          font-size: 0.75rem;
+          font-size: 0.72rem;
           color: var(--text-muted);
-          width: 100%;
+          width: auto;
+          flex: 0 0 auto;
           letter-spacing: 0.02em;
+          margin-right: 2px;
+          white-space: nowrap;
         }
 
         .product-color-chip,
-        .product-size-chip {
-          padding: 5px 12px;
-          font-size: 0.74rem;
+        .product-size-chip,
+        .product-color-more-chip {
+          padding: 4px 10px;
+          font-size: 0.68rem;
           font-weight: 600;
           color: var(--text-secondary);
           background: var(--bg-primary);
@@ -487,10 +501,17 @@ export default function ProductCard({ product }) {
           border-radius: 999px;
           cursor: pointer;
           transition: transform 0.2s, border-color 0.2s, color 0.2s, background 0.2s;
+          white-space: nowrap;
+          flex: 0 0 auto;
+          line-height: 1.2;
+          max-width: 75px;
+          overflow: hidden;
+          text-overflow: ellipsis;
         }
 
         .product-color-chip:hover,
-        .product-size-chip:hover {
+        .product-size-chip:hover,
+        .product-color-more-chip:hover {
           transform: scale(1.05);
         }
 
@@ -499,6 +520,17 @@ export default function ProductCard({ product }) {
           background: var(--text-primary);
           color: var(--bg-primary);
           border-color: var(--text-primary);
+        }
+
+        .product-color-more-chip {
+          background: transparent;
+          color: var(--text-muted);
+          border-style: dashed;
+          cursor: default;
+        }
+
+        .product-color-more-chip:hover {
+          transform: none;
         }
 
         .product-card-footer {
@@ -591,13 +623,13 @@ export default function ProductCard({ product }) {
             exit={{ opacity: 0, scale: 0.98 }}
             transition={{ duration: 0.3 }}
           >
-            <Image
+            <ImageFrame
               src={activeImageSrc}
               alt={productName}
-              fill
               sizes="(max-width: 768px) 100vw, (max-width: 1180px) 33vw, 25vw"
-              className="product-card-image"
+              imgClassName="product-card-image"
               loading="lazy"
+              priority={false}
             />
           </motion.div>
         </AnimatePresence>
@@ -671,7 +703,7 @@ export default function ProductCard({ product }) {
         {!!product.colors?.length && (
           <div className="product-colors" aria-label="Available colors">
             <span className="product-meta-label">Available in</span>
-            {product.colors.map((color) => {
+            {colorSet.visible.map((color) => {
               const active = getColorKey(selectedColor) === getColorKey(color);
               return (
                 <button
@@ -688,6 +720,9 @@ export default function ProductCard({ product }) {
                 </button>
               );
             })}
+            {colorSet.remaining > 0 && (
+              <span className="product-color-more-chip">+{colorSet.remaining} more</span>
+            )}
           </div>
         )}
 

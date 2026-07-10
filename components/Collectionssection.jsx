@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import ImageFrame from "@/components/ImageFrame";
 
 const collections = [
   {
@@ -302,11 +303,11 @@ export default function CollectionsSection() {
               >
                 {/* Image or placeholder */}
                 {col.image ? (
-                  <img
+                  <ImageFrame
                     src={col.image}
                     alt={col.name}
-                    className="col-card-img"
                     loading="lazy"
+                    priority={false}
                   />
                 ) : (
                   <div className="col-card-placeholder">

@@ -1,20 +1,26 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
+import products from "@/data/products.json";
 
 export default function Navbar() {
   const [darkMode, setDarkMode] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [recentSearches, setRecentSearches] = useState([]);
+  const [showRecentSearches, setShowRecentSearches] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const { cartCount } = useCart();
   const pathname = usePathname();
   const router = useRouter();
+  const debounceTimerRef = useRef(null);
 
   // Apply theme to root
   useEffect(() => {
@@ -25,6 +31,129 @@ export default function Navbar() {
       root.removeAttribute("data-theme");
     }
   }, [darkMode]);
+
+  // Load recent searches from localStorage
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("chic-shoppae-recent-searches");
+      setRecentSearches(stored ? JSON.parse(stored) : []);
+    }
+  }, []);
+
+  // Save search to recent searches
+  const saveSearchToRecent = useCallback((term) => {
+    if (!term.trim()) return;
+    setRecentSearches((prev) => {
+      const filtered = prev.filter((s) => s.toLowerCase() !== term.toLowerCase());
+      const updated = [term, ...filtered].slice(0, 5);
+      if (typeof window !== "undefined") {
+        localStorage.setItem("chic-shoppae-recent-searches", JSON.stringify(updated));
+      }
+      return updated;
+    });
+  }, []);
+
+  // Clear individual recent search
+  const clearRecentSearch = useCallback((term) => {
+    setRecentSearches((prev) => {
+      const updated = prev.filter((s) => s !== term);
+      if (typeof window !== "undefined") {
+        localStorage.setItem("chic-shoppae-recent-searches", JSON.stringify(updated));
+      }
+      return updated;
+    });
+  }, []);
+
+  // Clear all recent searches
+  const clearAllRecentSearches = useCallback(() => {
+    setRecentSearches([]);
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("chic-shoppae-recent-searches");
+    }
+  }, []);
+
+  // Search products with debounce
+  const performSearch = useCallback((query) => {
+    if (!query.trim()) {
+      setSearchResults([]);
+      return;
+    }
+
+    const q = query.toLowerCase();
+    const filtered = products
+      .filter(
+        (p) =>
+          (p.name?.toLowerCase().includes(q)) ||
+          (p.title?.toLowerCase().includes(q)) ||
+          (p.category?.toLowerCase().includes(q)) ||
+          (p.description?.toLowerCase().includes(q))
+      )
+      .slice(0, 6);
+
+    setSearchResults(filtered);
+  }, []);
+
+  // Debounced search
+  const handleSearchChange = useCallback(
+    (e) => {
+      const query = e.target.value;
+      setSearchQuery(query);
+
+      clearTimeout(debounceTimerRef.current);
+
+      if (!query.trim()) {
+        setSearchResults([]);
+        setIsSearching(false);
+        setShowRecentSearches(true);
+        return;
+      }
+
+      setIsSearching(true);
+      setShowRecentSearches(false);
+
+      debounceTimerRef.current = setTimeout(() => {
+        performSearch(query);
+        setIsSearching(false);
+      }, 300);
+    },
+    [performSearch]
+  );
+
+  // Handle search submission
+  const handleSearchSubmit = useCallback(
+    (query) => {
+      if (!query.trim()) return;
+      saveSearchToRecent(query);
+      setSearchOpen(false);
+      setSearchQuery("");
+      setSearchResults([]);
+      setShowRecentSearches(false);
+      router.push(`/shop?search=${encodeURIComponent(query)}`);
+    },
+    [router, saveSearchToRecent]
+  );
+
+  // Handle Enter key
+  const handleSearchKeydown = useCallback(
+    (e) => {
+      if (e.key === "Enter") {
+        handleSearchSubmit(searchQuery);
+      } else if (e.key === "Escape") {
+        setSearchOpen(false);
+        setSearchQuery("");
+        setSearchResults([]);
+        setShowRecentSearches(false);
+      }
+    },
+    [searchQuery, handleSearchSubmit]
+  );
+
+  // Handle search input focus
+  const handleSearchFocus = useCallback(() => {
+    if (!searchQuery.trim()) {
+      setShowRecentSearches(true);
+    }
+  }, [searchQuery]);
 
   // Navbar shadow on scroll
   useEffect(() => {
@@ -43,7 +172,7 @@ export default function Navbar() {
   }, [mobileOpen]);
 
   const isActiveRoute = (route) => pathname === route;
-  const isShop = isActiveRoute("/shop");
+  const isShop = pathname === "/" || pathname === "/shop";
 
   const activeLinkStyle = {
     color: "var(--text-primary)",
@@ -88,7 +217,7 @@ export default function Navbar() {
         <div className="nav-inner">
           {/* Logo */}
           <Link
-            href="/"
+            href="/shop"
             className="group flex items-center gap-2.5 no-underline shrink-0"
           >
             <Image
@@ -112,7 +241,7 @@ export default function Navbar() {
               </Link>
             </li>
             <li>
-              <Link href="/shop" style={getLinkStyle("/shop")}>
+              <Link href="/shop" style={isShop ? activeLinkStyle : undefined}>
                 Shop
               </Link>
             </li>
@@ -290,9 +419,119 @@ export default function Navbar() {
               type="text"
               placeholder="Search for dresses, tops, bags..."
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={handleSearchChange}
+              onKeyDown={handleSearchKeydown}
+              onFocus={handleSearchFocus}
               autoFocus
             />
+
+            {/* Search Results Dropdown */}
+            {(isSearching || searchResults.length > 0 || showRecentSearches) && (
+              <div className="search-dropdown">
+                {isSearching ? (
+                  <div className="search-loading">
+                    <div className="search-spinner" />
+                    <span>Searching...</span>
+                  </div>
+                ) : showRecentSearches && recentSearches.length > 0 ? (
+                  <div className="recent-searches">
+                    <div className="recent-header">
+                      <span className="recent-label">Recent Searches</span>
+                      <button
+                        type="button"
+                        className="clear-all-btn"
+                        onClick={clearAllRecentSearches}
+                      >
+                        Clear all
+                      </button>
+                    </div>
+                    <div className="recent-chips">
+                      {recentSearches.map((term) => (
+                        <div key={term} className="recent-chip">
+                          <svg
+                            width="12"
+                            height="12"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                          >
+                            <circle cx="12" cy="12" r="1" />
+                            <circle cx="19" cy="12" r="1" />
+                            <circle cx="5" cy="12" r="1" />
+                          </svg>
+                          <button
+                            type="button"
+                            className="recent-term"
+                            onClick={() => {
+                              setSearchQuery(term);
+                              performSearch(term);
+                              setShowRecentSearches(false);
+                            }}
+                          >
+                            {term}
+                          </button>
+                          <button
+                            type="button"
+                            className="recent-remove"
+                            onClick={() => clearRecentSearch(term)}
+                          >
+                            <svg
+                              width="12"
+                              height="12"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                            >
+                              <line x1="18" y1="6" x2="6" y2="18" />
+                              <line x1="6" y1="6" x2="18" y2="18" />
+                            </svg>
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ) : searchQuery.trim() && searchResults.length === 0 && !isSearching ? (
+                  <div className="no-results">
+                    <span>No results for "{searchQuery}"</span>
+                  </div>
+                ) : (
+                  searchResults.map((product) => (
+                    <button
+                      key={product.id}
+                      type="button"
+                      className="search-result"
+                      onClick={() => {
+                        handleSearchSubmit(searchQuery);
+                      }}
+                    >
+                      <div className="result-image">
+                        <img
+                          src={product.images?.[0] || "/images/one.jpg"}
+                          alt={product.name || product.title}
+                          onError={(e) => {
+                            e.target.src = "/images/one.jpg";
+                          }}
+                        />
+                      </div>
+                      <div className="result-info">
+                        <div className="result-name">
+                          {product.name || product.title}
+                        </div>
+                        <div className="result-meta">
+                          <span className="result-category">{product.category}</span>
+                          <span className="result-price">
+                            ₦{Number(product.price).toLocaleString()}
+                          </span>
+                        </div>
+                      </div>
+                    </button>
+                  ))
+                )}
+              </div>
+            )}
+
             <button className="icon-btn" onClick={() => setSearchOpen(false)}>
               <svg
                 width="18"
