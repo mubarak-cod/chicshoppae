@@ -208,10 +208,10 @@ export default function Navbar() {
   return (
     <>
       {/* Announcement Bar */}
-      <div className="announce-bar">
+      {/* <div className="announce-bar">
         Free delivery on orders above ₦20,000 &nbsp;✦&nbsp; New arrivals every
         Friday
-      </div>
+      </div> */}
 
       <nav className={`navbar ${scrolled ? "navbar--scrolled" : ""}`}>
         <div className="nav-inner">

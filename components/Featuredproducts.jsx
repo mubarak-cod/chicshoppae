@@ -39,7 +39,7 @@ function QuickView({ product, onClose }) {
   const { addToCart, cartItems } = useCart();
   const [imgIndex, setImgIndex] = useState(0);
   const [selectedColor, setSelectedColor] = useState(product.colors?.[0] || "");
-  const [selectedSize, setSelectedSize] = useState("");
+  const [selectedSize, setSelectedSize] = useState(product.sizes?.[0] || "");
   const [justAdded, setJustAdded] = useState(false);
   const touchStartX = useRef(null);
   const inCart = cartItems?.some((i) => i.id === product.id);
@@ -208,39 +208,23 @@ function QuickView({ product, onClose }) {
         }
 
         /* ── COLORS ── */
-        .qv-colors { display: flex; flex-wrap: wrap; gap: 6px; }
-
-        .qv-color-btn {
-          padding: 6px 13px; border-radius: 999px;
+        .qv-option-group { display: flex; flex-direction: column; gap: 0.5rem; }
+        .qv-select {
+          width: 100%; padding: 0.82rem 0.95rem; border-radius: 999px;
           border: 1.5px solid var(--border, rgba(26,23,20,0.15));
           background: var(--bg-primary); color: var(--text-primary);
-          font-size: 11.5px; cursor: pointer;
-          transition: border-color 0.2s, background 0.2s, color 0.2s, transform 0.15s;
-          font-family: 'Inter', sans-serif;
-          text-transform: capitalize;
+          font-size: 13px; cursor: pointer; font-family: 'Inter', sans-serif;
+          appearance: none;
+          background-image: linear-gradient(45deg, transparent 50%, var(--text-secondary) 50%), linear-gradient(135deg, var(--text-secondary) 50%, transparent 50%);
+          background-position: calc(100% - 18px) calc(50% - 2px), calc(100% - 12px) calc(50% - 2px);
+          background-size: 6px 6px, 6px 6px;
+          background-repeat: no-repeat;
+          transition: border-color 0.2s, box-shadow 0.2s;
         }
-        .qv-color-btn:hover { border-color: var(--text-primary); transform: scale(1.03); }
-        .qv-color-btn.selected {
-          background: var(--text-primary); color: var(--bg-primary);
-          border-color: var(--text-primary);
-        }
-
-        /* ── SIZES ── */
-        .qv-sizes { display: flex; flex-wrap: wrap; gap: 6px; }
-
-        .qv-size-btn {
-          width: 44px; height: 44px; border-radius: 10px;
-          border: 1.5px solid var(--border, rgba(26,23,20,0.15));
-          background: var(--bg-primary); color: var(--text-primary);
-          font-size: 13px; cursor: pointer;
-          display: flex; align-items: center; justify-content: center;
-          transition: border-color 0.2s, background 0.2s, color 0.2s, transform 0.15s;
-          font-family: 'Inter', sans-serif;
-        }
-        .qv-size-btn:hover { border-color: var(--text-primary); transform: scale(1.05); }
-        .qv-size-btn.selected {
-          background: var(--text-primary); color: var(--bg-primary);
-          border-color: var(--text-primary);
+        .qv-select:focus {
+          outline: none;
+          border-color: var(--accent, #C4895A);
+          box-shadow: 0 0 0 3px rgba(196,137,90,0.14);
         }
 
         /* ── CTA ── */
@@ -357,41 +341,39 @@ function QuickView({ product, onClose }) {
 
             <hr className="qv-divider" />
 
-            {/* Colors */}
             {product.colors?.length > 0 && (
-              <div>
-                <p className="qv-label">
-                  Colour — <span style={{ color: "var(--text-primary)", textTransform: "capitalize" }}>{selectedColor}</span>
-                </p>
-                <div className="qv-colors">
-                  {product.colors.filter(Boolean).map((c) => (
-                    <button
-                      key={c}
-                      className={`qv-color-btn ${selectedColor === c ? "selected" : ""}`}
-                      onClick={() => setSelectedColor(c)}
-                    >
-                      {c}
-                    </button>
+              <div className="qv-option-group">
+                <label className="qv-label" htmlFor="qv-color-select">Colour</label>
+                <select
+                  id="qv-color-select"
+                  className="qv-select"
+                  value={selectedColor}
+                  onChange={(event) => setSelectedColor(event.target.value)}
+                >
+                  {product.colors.filter(Boolean).map((color) => (
+                    <option key={color} value={color}>
+                      {color}
+                    </option>
                   ))}
-                </div>
+                </select>
               </div>
             )}
 
-            {/* Sizes */}
             {product.sizes?.length > 0 && (
-              <div>
-                <p className="qv-label">Size {selectedSize && `— ${selectedSize}`}</p>
-                <div className="qv-sizes">
-                  {product.sizes.map((s) => (
-                    <button
-                      key={s}
-                      className={`qv-size-btn ${selectedSize === s ? "selected" : ""}`}
-                      onClick={() => setSelectedSize(s)}
-                    >
-                      {s}
-                    </button>
+              <div className="qv-option-group">
+                <label className="qv-label" htmlFor="qv-size-select">Size</label>
+                <select
+                  id="qv-size-select"
+                  className="qv-select"
+                  value={selectedSize}
+                  onChange={(event) => setSelectedSize(event.target.value)}
+                >
+                  {product.sizes.map((size) => (
+                    <option key={size} value={size}>
+                      {size}
+                    </option>
                   ))}
-                </div>
+                </select>
               </div>
             )}
 

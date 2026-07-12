@@ -20,14 +20,6 @@ function getSizeKey(size) {
   return String(size).toLowerCase();
 }
 
-function getVisibleItems(items = [], limit = 2) {
-  const list = items.filter(Boolean);
-  return {
-    visible: list.slice(0, limit),
-    remaining: Math.max(0, list.length - limit),
-  };
-}
-
 function IconButton({ label, children, onClick, active }) {
   return (
     <motion.button
@@ -48,13 +40,12 @@ export default function ProductCard({ product }) {
   const router = useRouter();
   const { addToCart, cartItems } = useCart();
   const [activeImage, setActiveImage] = useState(0);
-  const [selectedColor, setSelectedColor] = useState(product.colors?.[0] || null);
+  const [selectedColor, setSelectedColor] = useState(null);
   const hasSizes = !!product.sizes?.length;
   const hasStyles = !!product.styles?.length;
   const sizeOptions = hasSizes ? product.sizes : hasStyles ? product.styles : [];
-  const sizeLabel = hasSizes ? "Sizes" : "Styles";
-  const [selectedSize, setSelectedSize] = useState(product.sizes?.[0] || null);
-  const [selectedStyle, setSelectedStyle] = useState(product.styles?.[0] || null);
+  const [selectedSize, setSelectedSize] = useState(null);
+  const [selectedStyle, setSelectedStyle] = useState(null);
   const [wished, setWished] = useState(false);
   const [buttonState, setButtonState] = useState("idle");
   const flashTimerRef = useRef(null);
@@ -167,9 +158,8 @@ export default function ProductCard({ product }) {
   };
 
   const activeImageSrc = gallery[activeImage] || gallery[0] || "/images/one.jpg";
-  const colorSet = useMemo(() => getVisibleItems(product.colors, 2), [product.colors]);
-  const sizeSet = useMemo(() => getVisibleItems(sizeOptions, 2), [sizeOptions]);
-  const styleSet = useMemo(() => getVisibleItems(product.styles, 2), [product.styles]);
+  const colorOptions = useMemo(() => (product.colors || []).filter(Boolean), [product.colors]);
+  const sizeOptionsList = useMemo(() => (sizeOptions || []).filter(Boolean), [sizeOptions]);
 
   const cycleImage = (direction = 1) => {
     if (gallery.length < 2) return;
@@ -472,23 +462,15 @@ export default function ProductCard({ product }) {
           50% { transform: scale(1.06); }
         }
 
-        .product-colors {
-          display: flex;
-          flex-wrap: nowrap;
-          gap: 6px;
-          align-items: center;
-          overflow-x: auto;
-          overflow-y: hidden;
-          width: 100%;
-          scroll-behavior: smooth;
-          -webkit-overflow-scrolling: touch;
-          scrollbar-width: none;
-          -ms-overflow-style: none;
+        .product-option-row {
+          display: grid;
+          gap: 0.6rem;
         }
 
-        .product-colors::-webkit-scrollbar {
-          display: none;
-          height: 0;
+        .product-select-group {
+          display: flex;
+          flex-direction: column;
+          gap: 0.35rem;
         }
 
         .product-meta-label {
@@ -501,45 +483,29 @@ export default function ProductCard({ product }) {
           white-space: nowrap;
         }
 
-        .product-color-chip,
-        .product-size-chip,
-        .product-color-more-chip {
-          padding: 4px 10px;
-          font-size: 0.68rem;
-          font-weight: 600;
-          color: var(--text-secondary);
-          background: var(--bg-primary);
+        .product-select {
+          width: 100%;
           border: 1px solid var(--border);
           border-radius: 999px;
-          cursor: pointer;
-          transition: transform 0.2s, border-color 0.2s, color 0.2s, background 0.2s;
-          white-space: nowrap;
-          flex: 0 0 auto;
+          background: var(--bg-primary);
+          color: var(--text-primary);
+          padding: 0.62rem 0.9rem;
+          font-size: 0.8rem;
+          font-weight: 600;
           line-height: 1.2;
+          appearance: none;
+          cursor: pointer;
+          transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+          background-image: linear-gradient(45deg, transparent 50%, var(--text-secondary) 50%), linear-gradient(135deg, var(--text-secondary) 50%, transparent 50%);
+          background-position: calc(100% - 16px) calc(50% - 2px), calc(100% - 10px) calc(50% - 2px);
+          background-size: 6px 6px, 6px 6px;
+          background-repeat: no-repeat;
         }
 
-        .product-color-chip:hover,
-        .product-size-chip:hover,
-        .product-color-more-chip:hover {
-          transform: scale(1.05);
-        }
-
-        .product-color-chip[aria-pressed="true"],
-        .product-size-chip[aria-pressed="true"] {
-          background: var(--text-primary);
-          color: var(--bg-primary);
-          border-color: var(--text-primary);
-        }
-
-        .product-color-more-chip {
-          background: transparent;
-          color: var(--text-muted);
-          border-style: dashed;
-          cursor: default;
-        }
-
-        .product-color-more-chip:hover {
-          transform: none;
+        .product-select:focus {
+          outline: none;
+          border-color: var(--accent);
+          box-shadow: 0 0 0 3px rgba(196, 137, 90, 0.15);
         }
 
         .product-card-footer {
@@ -709,80 +675,53 @@ export default function ProductCard({ product }) {
           )}
         </div>
 
-        {!!product.colors?.length && (
-          <div className="product-colors" aria-label="Available colors">
-            <span className="product-meta-label">Available in</span>
-            {colorSet.visible.map((color) => {
-              const active = getColorKey(selectedColor) === getColorKey(color);
-              return (
-                <button
-                  key={color}
-                  type="button"
-                  className="product-color-chip"
-                  aria-pressed={active}
-                  onClick={() => {
-                    setSelectedColor(color);
-                    toast(`🎨 ${color} selected`, { duration: 1400 });
-                  }}
-                >
-                  {color}
-                </button>
-              );
-            })}
-            {colorSet.remaining > 0 && (
-              <span className="product-color-more-chip">+{colorSet.remaining}</span>
-            )}
-          </div>
-        )}
+        <div className="product-option-row">
+          {!!colorOptions.length && (
+            <div className="product-select-group" aria-label="Choose color">
+              <label className="product-meta-label" htmlFor={`color-${product.id}`}>Color</label>
+              <select
+                id={`color-${product.id}`}
+                className="product-select"
+                value={selectedColor ?? ""}
+                onChange={(event) => setSelectedColor(event.target.value || null)}
+              >
+                <option value="">Select Color</option>
+                {colorOptions.map((color) => (
+                  <option key={color} value={color}>
+                    {color}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
 
-        {hasSizes && (
-          <div className="product-colors" aria-label="Available sizes">
-            <span className="product-meta-label">Sizes</span>
-            {sizeSet.visible.map((size) => {
-              const active = selectedSize === size;
-              return (
-                <button
-                  key={size}
-                  type="button"
-                  className="product-size-chip"
-                  aria-pressed={active}
-                  onClick={() => {
-                    setSelectedSize(size);
-                    toast(`📏 Size ${size} selected`, { duration: 1400 });
-                  }}
-                >
-                  {size}
-                </button>
-              );
-            })}
-            {sizeSet.remaining > 0 && (
-              <span className="product-color-more-chip">+{sizeSet.remaining}</span>
-            )}
-          </div>
-        )}
-
-        {hasStyles && (
-          <div className="product-colors" aria-label="Available styles">
-            <span className="product-meta-label">Styles</span>
-            {product.styles.map((style) => {
-              const active = selectedStyle === style;
-              return (
-                <button
-                  key={style}
-                  type="button"
-                  className="product-size-chip"
-                  aria-pressed={active}
-                  onClick={() => {
-                    setSelectedStyle(style);
-                    toast(`✨ ${style} selected`, { duration: 1400 });
-                  }}
-                >
-                  {style}
-                </button>
-              );
-            })}
-          </div>
-        )}
+          {(hasSizes || hasStyles) && (
+            <div className="product-select-group" aria-label="Choose size or style">
+              <label className="product-meta-label" htmlFor={`size-${product.id}`}>
+                {hasSizes ? "Size" : "Style"}
+              </label>
+              <select
+                id={`size-${product.id}`}
+                className="product-select"
+                value={hasSizes ? (selectedSize ?? "") : (selectedStyle ?? "")}
+                onChange={(event) => {
+                  if (hasSizes) {
+                    setSelectedSize(event.target.value || null);
+                  } else {
+                    setSelectedStyle(event.target.value || null);
+                  }
+                }}
+              >
+                <option value="">{hasSizes ? "Select Size" : "Select Style"}</option>
+                {sizeOptionsList.map((option) => (
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+        </div>
 
         <div className="product-card-footer">
           <motion.button

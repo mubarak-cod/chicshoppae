@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import ProductCard from "@/components/shop/ProductCard";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 const PRODUCTS_PER_PAGE = 10;
@@ -33,15 +33,6 @@ export default function ProductGrid({ products }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const sectionRef = useRef(null);
-  const [compactPagination, setCompactPagination] = useState(false);
-
-  useEffect(() => {
-    const media = window.matchMedia("(max-width: 640px)");
-    const update = () => setCompactPagination(media.matches);
-    update();
-    media.addEventListener("change", update);
-    return () => media.removeEventListener("change", update);
-  }, []);
 
   const totalPages = Math.max(1, Math.ceil(products.length / PRODUCTS_PER_PAGE));
   const currentPage = useMemo(
@@ -71,22 +62,7 @@ export default function ProductGrid({ products }) {
     router.replace(`/shop?${params.toString()}`, { scroll: false });
   };
 
-  const paginationItems = useMemo(() => {
-    if (compactPagination) return [];
-    if (totalPages <= 5) {
-      return Array.from({ length: totalPages }, (_, index) => index + 1);
-    }
-
-    if (currentPage <= 3) {
-      return [1, 2, 3, 4, "ellipsis", totalPages];
-    }
-
-    if (currentPage >= totalPages - 2) {
-      return [1, "ellipsis", totalPages - 3, totalPages - 2, totalPages - 1, totalPages];
-    }
-
-    return [1, "ellipsis", currentPage - 1, currentPage, currentPage + 1, "ellipsis", totalPages];
-  }, [compactPagination, currentPage, totalPages]);
+  const paginationItems = useMemo(() => buildPaginationRange(totalPages, currentPage), [totalPages, currentPage]);
 
   return (
     <section id="products" className="product-grid-section" ref={sectionRef}>
@@ -189,6 +165,21 @@ export default function ProductGrid({ products }) {
           }
         }
 
+        @media (max-width: 767px) {
+          .pagination-row {
+            gap: 0.6rem;
+            flex-wrap: nowrap;
+            justify-content: center;
+          }
+          .pagination-button,
+          .pagination-page {
+            min-width: 42px;
+            height: 42px;
+            padding: 0 0.7rem;
+            font-size: 0.9rem;
+          }
+        }
+
         @media (max-width: 640px) {
           .product-grid-section {
             padding-inline: 0.85rem;
@@ -202,8 +193,8 @@ export default function ProductGrid({ products }) {
           }
           .pagination-button,
           .pagination-page {
-            min-width: 36px;
-            height: 36px;
+            min-width: 40px;
+            height: 40px;
             padding: 0 0.6rem;
             font-size: 0.82rem;
           }
@@ -215,10 +206,15 @@ export default function ProductGrid({ products }) {
           }
           .pagination-button,
           .pagination-page {
-            min-width: 34px;
-            height: 34px;
+            min-width: 38px;
+            height: 38px;
             padding: 0 0.45rem;
             font-size: 0.78rem;
+          }
+          .pagination-compact-value {
+            min-width: 58px;
+            padding: 0.4rem 0.6rem;
+            font-size: 0.84rem;
           }
         }
       `}</style>
@@ -258,36 +254,19 @@ export default function ProductGrid({ products }) {
           ‹
         </button>
 
-        {compactPagination ? (
-          <>
-            <span className="pagination-page" aria-current="page" style={{ pointerEvents: "none", background: "transparent", color: "var(--text-primary)" }}>
-              {currentPage} / {totalPages}
-            </span>
+        {paginationItems.map((item, index) =>
+          item === "ellipsis" ? (
+            <span key={`ellipsis-${index}`} className="pagination-ellipsis">…</span>
+          ) : (
             <button
+              key={item}
               type="button"
-              className={`pagination-button ${currentPage === totalPages ? "disabled" : ""}`}
-              onClick={() => navigateToPage(currentPage + 1)}
-              aria-label="Next page"
-              aria-disabled={currentPage === totalPages}
+              className={`pagination-page ${item === currentPage ? "active" : ""}`}
+              onClick={() => navigateToPage(item)}
+              aria-current={item === currentPage ? "page" : undefined}
             >
-              ›
+              {item}
             </button>
-          </>
-        ) : (
-          paginationItems.map((item, index) =>
-            item === "ellipsis" ? (
-              <span key={`ellipsis-${index}`} className="pagination-ellipsis">…</span>
-            ) : (
-              <button
-                key={item}
-                type="button"
-                className={`pagination-page ${item === currentPage ? "active" : ""}`}
-                onClick={() => navigateToPage(item)}
-                aria-current={item === currentPage ? "page" : undefined}
-              >
-                {item}
-              </button>
-            )
           )
         )}
 
