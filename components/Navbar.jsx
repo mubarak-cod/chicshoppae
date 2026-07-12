@@ -208,10 +208,9 @@ export default function Navbar() {
   return (
     <>
       {/* Announcement Bar */}
-      {/* <div className="announce-bar">
-        Free delivery on orders above ₦20,000 &nbsp;✦&nbsp; New arrivals every
-        Friday
-      </div> */}
+      <div className="announce-bar">
+       Dress like you mean it ✦ Welcome to Chic Shoppae
+      </div>
 
       <nav className={`navbar ${scrolled ? "navbar--scrolled" : ""}`}>
         <div className="nav-inner">
