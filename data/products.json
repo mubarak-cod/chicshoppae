@@ -1,4 +1,27 @@
-[
+[{
+  "id": "Tommy dress",
+  "title": "Tommy dress",
+  "name": "Tommy Dress",
+  "category": "Dresses",
+  "description":"A beautifully draped wrap gown with a fluid fall and cinched waist. Effortlessly elegant for any occasion.",
+  "price": "10000",
+  "originalPrice":"10000",
+  "images": ["https://res.cloudinary.com/ddlnqthao/image/upload/v1784061811/IMG-20260714-WA0004_l676sl.jpg","https://res.cloudinary.com/ddlnqthao/image/upload/v1784061809/IMG-20260714-WA0002_pq0okv.jpg","https://res.cloudinary.com/ddlnqthao/image/upload/v1784061808/IMG-20260714-WA0003_ctvyj5.jpg"],
+  "colors": ["Black", "Brown","Red","Wine"],
+  "sizes": ["8","10","12","14"]
+},
+{
+  "id": "Nimah jumpsuit",
+  "title": "Nimah jumpsuit",
+  "name": "Nimah Jumpsuit",
+  "category": "Dresses",
+  "description":"A beautifully draped wrap gown with a fluid fall and cinched waist. Effortlessly elegant for any occasion.",
+  "price": "10000",
+  "originalPrice":"10000",
+  "images": ["https://res.cloudinary.com/ddlnqthao/image/upload/v1784061809/IMG-20260714-WA0005_lvinwq.jpg","https://res.cloudinary.com/ddlnqthao/image/upload/v1784061809/IMG-20260714-WA0006_jwvryg.jpg"],
+  "colors": ["Black", "Brown","Red","Wine"],
+  "sizes": ["8","10","12","14"]
+},
   {
     "id": "Top-kalie",
     "title": "Top Kalie",
