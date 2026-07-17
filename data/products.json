@@ -94,18 +94,7 @@
     "colors": ["Black", "yellow", "White"],
     "styles": ["Style A", "Style B", "Style C", "Style D", "Style E"]
   },
-  {
-    "id": "blossom-pie",
-    "title": "Blossom pie",
-    "name": "Blossom pie",
-    "category": "Tops",
-    "description": "Lightweight outerwear for evening layering and clean silhouettes. It brings structure while staying fluid and wearable.",
-    "price": 5500,
-    "originalPrice": 3000,
-    "images": ["https://res.cloudinary.com/ddlnqthao/image/upload/v1782191401/IMG-20260618-WA0086_1_mqhixj.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782191401/IMG-20260618-WA0085_1_uzgpni.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782191400/IMG-20260618-WA0084_w2d8wx.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782191400/IMG-20260618-WA0083_1_gc0ohd.jpg"],
-    "sizes": ["8", "10", "12", "14"],
-    "styles": ["Style A", "Style B", "Style C", "Style D", "Style E"]
-  },
+ 
   {
     "id": "lily-jumpsuit",
     "title": "Lily jumpsuit",
@@ -129,6 +118,18 @@
     "images": ["https://res.cloudinary.com/ddlnqthao/image/upload/v1782191393/IMG-20260618-WA0071_1_mhgvsm.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782191393/IMG-20260618-WA0072_1_zcdxc5.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782191392/IMG-20260618-WA0070_1_ujaquc.jpg"],
     "colors": ["Black-leo-pattern", "Brown-leo-pattern"],
     "sizes": ["10", "12", "14", "16"]
+  },
+   {
+    "id": "blossom-pie",
+    "title": "Blossom pie",
+    "name": "Blossom pie",
+    "category": "Tops",
+    "description": "Lightweight outerwear for evening layering and clean silhouettes. It brings structure while staying fluid and wearable.",
+    "price": 5500,
+    "originalPrice": 3000,
+    "images": ["https://res.cloudinary.com/ddlnqthao/image/upload/v1782191401/IMG-20260618-WA0086_1_mqhixj.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782191401/IMG-20260618-WA0085_1_uzgpni.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782191400/IMG-20260618-WA0084_w2d8wx.jpg", "https://res.cloudinary.com/ddlnqthao/image/upload/v1782191400/IMG-20260618-WA0083_1_gc0ohd.jpg"],
+    "sizes": ["8", "10", "12", "14"],
+    "colors": ["Style A", "Style B", "Style C", "Style D", "Style E"]
   },
   {
     "id": "timo-kim",
