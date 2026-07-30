@@ -79,7 +79,7 @@ export async function POST(request) {
     ].join("\n");
 
    const result = await resend.emails.send({
-  from: `Chic Shoppae <${fromEmail}>`,
+  from: "Chic shoppae orders <orders@raedelaiju.resend.app>",
   to: [ownerEmail],
   subject: `New paid order - ${reference}`,
   text,
