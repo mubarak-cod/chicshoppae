@@ -758,6 +758,7 @@ export default function CheckoutPage() {
             🔒 Payments are processed securely by Paystack and verified
             server-side before your order is confirmed.
           </p>
+          <p>Kindly use the whatsapp preview button after payments.</p>
         </aside>
       </div>
     </main>
