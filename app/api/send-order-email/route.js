@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { Resend } from "resend";
+import { Brevo } from "@getbrevo/brevo";
 
 function renderItems(items) {
   return items
@@ -20,18 +20,17 @@ function renderItems(items) {
 export async function POST(request) {
   try {
     const body = await request.json();
-    const apiKey = process.env.RESEND_API_KEY;
+    const apiKey = process.env.BREVO_API_KEY;
     const ownerEmail = process.env.ADMIN_EMAIL;
     const fromEmail = process.env.FROM_EMAIL;
 
     if (!apiKey || !ownerEmail || !fromEmail) {
       return NextResponse.json(
-        { error: "Resend API key, FROM_EMAIL, or ADMIN_EMAIL is not configured." },
+        { error: "BREVO_API_KEY, FROM_EMAIL, or ADMIN_EMAIL is not configured." },
         { status: 500 }
       );
     }
 
-    const resend = new Resend(apiKey);
     const customer = body.customer || {};
     const items = Array.isArray(body.items) ? body.items : [];
     const reference = body.reference || body?.payment?.reference || "N/A";
@@ -54,7 +53,7 @@ export async function POST(request) {
           <thead>
             <tr>
               <th align="left" style="padding:8px 0; border-bottom:1px solid #d8cfc4;">Item</th>
-              <th align="left" style="padding:8px 0; border-bottom:1px solid #d8cfc4;">Shade</th>
+              <th align="left" style="padding:8px 0; border-bottom:1px solid #d8cfc4;">Color</th>
               <th align="left" style="padding:8px 0; border-bottom:1px solid #d8cfc4;">Size</th>
               <th align="left" style="padding:8px 0; border-bottom:1px solid #d8cfc4;">Qty</th>
               <th align="right" style="padding:8px 0; border-bottom:1px solid #d8cfc4;">Line total</th>
@@ -76,19 +75,19 @@ export async function POST(request) {
       customerMessage ? `Message: ${customerMessage}` : null,
       `Total: ₦${total}`,
       ...items.map((item) => `${item.name} - ${item.color || "N/A"} - ${item.size || "N/A"} - ${item.quantity}`),
-    ].join("\n");
+    ].filter(Boolean).join("\n");
 
-   const result = await resend.emails.send({
-  from: "Chic shoppae orders <orders@raedelaiju.resend.app>",
-  to: [ownerEmail],
-  subject: `New paid order - ${reference}`,
-  text,
-  html,
-});
+    const brevo = new Brevo({ apiKey });
 
-console.log("Resend result:", result);
+    const result = await brevo.transactionalEmails.sendTransacEmail({
+      subject: `New paid order - ${reference}`,
+      htmlContent: html,
+      textContent: text,
+      sender: { name: "Chic Shoppae Orders", email: fromEmail },
+      to: [{ email: ownerEmail }],
+    });
 
-// return NextResponse.json({ ok: true, result }, { status: 200 });
+    console.log("Brevo result:", result);
 
     return NextResponse.json({ ok: true, result }, { status: 200 });
   } catch (error) {
