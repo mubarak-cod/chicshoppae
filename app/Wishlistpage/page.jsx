@@ -146,7 +146,7 @@ export default function WishlistPage() {
         }
 
         .wl-divider {
-          margin: 1.4rem 0 1.8rem;
+          margin: 1.3rem 0 1.8rem;
           height: 1px;
           background: linear-gradient(90deg, transparent, var(--border), transparent);
         }
