@@ -44,15 +44,10 @@ export default function Navbar() {
   const saveSearchToRecent = useCallback((term) => {
     if (!term.trim()) return;
     setRecentSearches((prev) => {
-      const filtered = prev.filter(
-        (s) => s.toLowerCase() !== term.toLowerCase(),
-      );
+      const filtered = prev.filter((s) => s.toLowerCase() !== term.toLowerCase());
       const updated = [term, ...filtered].slice(0, 5);
       if (typeof window !== "undefined") {
-        localStorage.setItem(
-          "chic-shoppae-recent-searches",
-          JSON.stringify(updated),
-        );
+        localStorage.setItem("chic-shoppae-recent-searches", JSON.stringify(updated));
       }
       return updated;
     });
@@ -63,10 +58,7 @@ export default function Navbar() {
     setRecentSearches((prev) => {
       const updated = prev.filter((s) => s !== term);
       if (typeof window !== "undefined") {
-        localStorage.setItem(
-          "chic-shoppae-recent-searches",
-          JSON.stringify(updated),
-        );
+        localStorage.setItem("chic-shoppae-recent-searches", JSON.stringify(updated));
       }
       return updated;
     });
@@ -91,10 +83,10 @@ export default function Navbar() {
     const filtered = products
       .filter(
         (p) =>
-          p.name?.toLowerCase().includes(q) ||
-          p.title?.toLowerCase().includes(q) ||
-          p.category?.toLowerCase().includes(q) ||
-          p.description?.toLowerCase().includes(q),
+          (p.name?.toLowerCase().includes(q)) ||
+          (p.title?.toLowerCase().includes(q)) ||
+          (p.category?.toLowerCase().includes(q)) ||
+          (p.description?.toLowerCase().includes(q))
       )
       .slice(0, 6);
 
@@ -124,7 +116,7 @@ export default function Navbar() {
         setIsSearching(false);
       }, 300);
     },
-    [performSearch],
+    [performSearch]
   );
 
   // Handle search submission
@@ -138,7 +130,7 @@ export default function Navbar() {
       setShowRecentSearches(false);
       router.push(`/shop?search=${encodeURIComponent(query)}`);
     },
-    [router, saveSearchToRecent],
+    [router, saveSearchToRecent]
   );
 
   // Handle Enter key
@@ -153,7 +145,7 @@ export default function Navbar() {
         setShowRecentSearches(false);
       }
     },
-    [searchQuery, handleSearchSubmit],
+    [searchQuery, handleSearchSubmit]
   );
 
   // Handle search input focus
@@ -252,13 +244,13 @@ export default function Navbar() {
       display: inline-flex;
     }
   }
-`}</style>;
+`}</style>
 
   return (
     <>
       {/* Announcement Bar */}
       <div className="announce-bar">
-        Dress like you mean it ✦ Welcome to Chic Shoppae
+       Dress like you mean it ✦ Welcome to Chic Shoppae
       </div>
 
       <nav className={`navbar ${scrolled ? "navbar--scrolled" : ""}`}>
@@ -419,8 +411,8 @@ export default function Navbar() {
             {/* Admin */}
             <Link
               href="/admin/login"
+              className="hidden md:inline-flex items-center gap-1.5 rounded-full border border-(--border) px-3.5 py-[7px] text-[13px] font-medium text-(--text-secondary) transition-colors hover:border-(--text-primary) hover:text-(--text-primary)"
               aria-label="Admin login"
-              className="admin-login-link"
             >
               <svg
                 width="15"
@@ -431,7 +423,6 @@ export default function Navbar() {
                 strokeWidth="1.8"
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                aria-hidden="true"
               >
                 <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
                 <path d="M7 11V7a5 5 0 0 1 10 0v4" />
@@ -496,9 +487,7 @@ export default function Navbar() {
             />
 
             {/* Search Results Dropdown */}
-            {(isSearching ||
-              searchResults.length > 0 ||
-              showRecentSearches) && (
+            {(isSearching || searchResults.length > 0 || showRecentSearches) && (
               <div className="search-dropdown">
                 {isSearching ? (
                   <div className="search-loading">
@@ -564,9 +553,7 @@ export default function Navbar() {
                       ))}
                     </div>
                   </div>
-                ) : searchQuery.trim() &&
-                  searchResults.length === 0 &&
-                  !isSearching ? (
+                ) : searchQuery.trim() && searchResults.length === 0 && !isSearching ? (
                   <div className="no-results">
                     <span>No results for "{searchQuery}"</span>
                   </div>
@@ -594,9 +581,7 @@ export default function Navbar() {
                           {product.name || product.title}
                         </div>
                         <div className="result-meta">
-                          <span className="result-category">
-                            {product.category}
-                          </span>
+                          <span className="result-category">{product.category}</span>
                           <span className="result-price">
                             ₦{Number(product.price).toLocaleString()}
                           </span>
